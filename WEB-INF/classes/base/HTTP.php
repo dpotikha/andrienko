@@ -8,7 +8,7 @@ class HTTPRequest {
 
     function prepare() {
         foreach ( $_GET as $k=>$v ) {
-        	if (get_magic_quotes_gpc() == 1) {
+        	if (false) {
         		if (!is_array($v)) {
             		$this->parameters[$k] = stripslashes($v);
             	} else {
@@ -22,7 +22,7 @@ class HTTPRequest {
             }
         }
         foreach ( $_POST as $k=>$v ) {
-        	if (get_magic_quotes_gpc() == 1) {
+        	if (false) {
             	if (!is_array($v)) {
             		$this->parameters[$k] = stripslashes($v);
             	} else {

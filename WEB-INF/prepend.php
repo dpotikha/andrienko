@@ -26,7 +26,7 @@
 	}
 	function session_clear(){
 		global $MDB;
-		$MDB->Query("DELETE  FROM  dbm_sessions WHERE UNIX_TIMESTAMP(date)<= '".(mktime()-24*3600)."'");
+		$MDB->Query("DELETE  FROM  dbm_sessions WHERE UNIX_TIMESTAMP(date)<= '".(time()-24*3600)."'");
 	}
 	function session_remove($session_id){
 		global $MDB;

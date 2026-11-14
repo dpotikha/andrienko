@@ -11,7 +11,7 @@
 		if(isset($_GET['dateend']))
 			$dateend=$_GET['dateend'];
 		else
-		$dateend=date("d.m.Y 00:00:00",mktime()+3600*24);
+		$dateend=date("d.m.Y 00:00:00",time()+3600*24);
 	}else
 		$dateend=$_POST['stats_data_to'];
 
