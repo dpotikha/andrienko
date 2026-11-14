@@ -82,7 +82,7 @@
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
 <?php }?>
 
-<?php  if($userHasWriteRights && !$restrict_edit) { s?>
+<?php  if($userHasWriteRights && !$restrict_edit) { ?>
 <?php $n = ($active_tab == "dependencies") ? "3" : "2"; ?>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
 <td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=dependencies&node_id=<?=$node->id?>"><?=$AdminTrnsl["Dependent_Classes"]?></a>&nbsp;</td>

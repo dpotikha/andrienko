@@ -18,7 +18,7 @@ function checkPrivileges(&$request) {
 	global $session;
 	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 	if (!$currentLoggedUser->group->canManageUsers) {
-		die(You_Have_not_rights_to_manage_users);
+		die('You_Have_not_rights_to_manage_users');
 	}
 }
 

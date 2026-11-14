@@ -107,7 +107,7 @@ for ($i=0; $i<sizeof($files); $i++) {
 	$fSizeStr;
 	if ($fSize > 1048576) {
 		$fSizeStr = floor($fSize / 1048576) . " Mb";
-	} else if (fSize > 1024){
+	} else if ($fSize > 1024){
 		$fSizeStr = floor($fSize / 1024) . " Kb";
 	} else {
 		$fSizeStr = $fSize . " b";

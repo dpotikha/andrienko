@@ -18,7 +18,7 @@ class ImageField extends StringField {
 		do {
 			$fieldDef = $this->getFieldDef();
 			if ((strlen($rValue) == 0) && $fieldDef->required) {
-				$verror = RequiredField;
+				$verror = 'RequiredField';
 				break;
 			}
 			if (strlen($rValue) != 0) {

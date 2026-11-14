@@ -276,7 +276,7 @@ function add_field(&$request) {
 		$nc->addFieldDef($shortname, $name, $field_type, $required, $shown);
 	} else {
 		$nfParams = array();
-		$nfParams["shortname"] = shortname;
+		$nfParams["shortname"] = $shortname;
 		$nfParams["name"] = $name;
 		$nfParams["fieldtype"] = $field_type;
 		$nfParams["required"] = $rRequired;

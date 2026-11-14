@@ -2,6 +2,8 @@
 require_once($_SERVER["DOCUMENT_ROOT"]. "/WEB-INF/prepend.php");
 require_once($_SERVER["DOCUMENT_ROOT"]. "/WEB-INF/_imgtpmclr.php");
 define('SESSION_LOGGED_USER_ATTR', 'CurrentAdminUser');
+// never defined on this site; PHP 5 read the undefined constant as a string (so "off"), PHP 8 throws
+if (!defined('_MODERATION_FEATURE_')) define('_MODERATION_FEATURE_', false);
 
 
 define('DELIVERY_NODE_ID', 7201);

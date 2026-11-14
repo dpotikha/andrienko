@@ -26,7 +26,7 @@
 <?php  if(strlen($cdirPath)!=0) { ?>
 <b class=h3><a href="/admin/filelib.php?cname=<?=$cname?>"><?=$AdminTrnsl["DownloadLibMainFolder"]?></a></b><?php foreach(explode("/", $cdirPath) as $d){if (!$d){continue;}?><?php $cd=$cd."/".$d?><b> : <a href="/admin/filelib.php?cdir=<?=$cd?>&cname=<?=$cname?>"><?=$d?></a></b><?php }?>
 <?php  } else {?>
-<b><a href="/admin/filelib.php?cname=<?=cname?>"><?=$AdminTrnsl["DownloadLibMainFolder"]?></a></b>
+<b><a href="/admin/filelib.php?cname=<?= htmlspecialchars((string)($cname ?? "")) ?>"><?=$AdminTrnsl["DownloadLibMainFolder"]?></a></b>
 <?php  } ?>
 </td></table>
 <br>

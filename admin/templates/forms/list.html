@@ -28,7 +28,7 @@
 <?php  foreach ($formDefs as $formDef) {?>
 <tr id=back3>
 <td class=td2><a href=/admin/forms.php?do=edit&form_id=<?=$formDef->id?>><?=$formDef->name?></a></td>
-<td nowrap align=center><input type=button value="<?=$AdminTrnsl["Delete"]?>" style="width:60px" onclick='if(confirm("<?=$AdminTrnsl[Warning_form_delete]?>")) document.location.href="/admin/forms.php?do=delete&form_id=<?=$formDef->id?>"' class=button3></td>
+<td nowrap align=center><input type=button value="<?=$AdminTrnsl["Delete"]?>" style="width:60px" onclick='if(confirm("<?=$AdminTrnsl["Warning_form_delete"]?>")) document.location.href="/admin/forms.php?do=delete&form_id=<?=$formDef->id?>"' class=button3></td>
 </tr><?php }?>
 </table>
 <br>

@@ -40,7 +40,7 @@ if ($rmsg) {
 <td><?= $nc->shortname ?></td>
 <td nowrap align=center>
 	<input type=button value="<?=$AdminTrnsl["Class_Dependences"]?>" onclick="document.location.href='/admin/classes.php?do=depends&class_id=<?=$nc->id?>'" class=button1>
-	<input type=button value="<?=$AdminTrnsl["Delete"]?>" onclick='if(confirm("<?=$AdminTrnsl[Warning_All_children_of_this_class_will_be_removed_to]?>")) document.location.href="/admin/classes.php?do=delete&class_id=<?=$nc->id?>"' class=button3>
+	<input type=button value="<?=$AdminTrnsl["Delete"]?>" onclick='if(confirm("<?=$AdminTrnsl["Warning_All_children_of_this_class_will_be_removed_to"]?>")) document.location.href="/admin/classes.php?do=delete&class_id=<?=$nc->id?>"' class=button3>
 </td>
 </tr><?php }?>
 </table>

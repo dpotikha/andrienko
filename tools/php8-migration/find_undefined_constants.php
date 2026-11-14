@@ -3,6 +3,7 @@
  * Lists identifiers used as constants that are never defined (define()/const/class const)
  * and are not PHP built-ins. PHP 5/7 read an undefined constant as its own name (a string);
  * PHP 8 throws "Undefined constant", so every hit is a potential fatal error.
+ * Scans .php, .html (older DBM admin templates) and .properties (language packs).
  * Usage: php -n find_undefined_constants.php <root> [exclude-dir ...]
  */
 $root = rtrim($argv[1] ?? '.', '/\\');
@@ -11,7 +12,7 @@ $exclude = array_slice($argv, 2);
 $files = [];
 $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root, FilesystemIterator::SKIP_DOTS));
 foreach ($it as $f) {
-    if (strtolower($f->getExtension()) !== 'php') continue;
+    if (!in_array(strtolower($f->getExtension()), ['php', 'html', 'properties'])) continue; // DBM admin templates are .html, language packs .properties
     $rel = str_replace('\\', '/', substr($f->getPathname(), strlen($root) + 1));
     foreach ($exclude as $ex) if (strpos($rel, rtrim($ex, '/') . '/') === 0) continue 2;
     $files[$rel] = file_get_contents($f->getPathname());
