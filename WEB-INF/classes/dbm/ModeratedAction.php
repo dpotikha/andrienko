@@ -39,7 +39,7 @@ class ModeratedAction {
 
         $items = array();
         while($rs->next()) {
-        	$item = &new ModeratedAction();
+        	$item = new ModeratedAction();
         	$item->load($rs);
         	$items[] = &$item;
         }
@@ -58,7 +58,7 @@ class ModeratedAction {
 
         $item = null;
         if($rs->next()) {
-        	$item = &new ModeratedAction();
+        	$item = new ModeratedAction();
         	$item->load($rs);
         }
 

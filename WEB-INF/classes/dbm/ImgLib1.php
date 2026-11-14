@@ -180,7 +180,7 @@ class ImgLibFolder {
 
 		usort($dirs, "FILE_COMPARATOR_BY_NAME");
 		foreach ($dirs as $dir) {
-			$folders[] = &new ImgLibFolder($dir);
+			$folders[] = new ImgLibFolder($dir);
 		}
 
 		return $folders;
@@ -195,7 +195,7 @@ class ImgLibFolder {
 	}
 
 	function &getImage($fName) {
-		$image = &new ImgLibImage($this, $fName);
+		$image = new ImgLibImage($this, $fName);
 		return $image;
 	}
 
@@ -204,7 +204,7 @@ class ImgLibFolder {
 		$images = array();
 		usort($imagesFiles, "FILE_COMPARATOR_BY_LASTMODIFIED");
 		foreach ($imagesFiles as $i) {
-			$images[] = &new ImgLibImage($this, basename($i));
+			$images[] = new ImgLibImage($this, basename($i));
 		}
 
 		return $images;
@@ -212,7 +212,7 @@ class ImgLibFolder {
 
 	function& findRoot() {
 		$imglibDirPath =  FIELD_IMGLIB_DIR;
-		$folder = &new ImgLibFolder($imglibDirPath);
+		$folder = new ImgLibFolder($imglibDirPath);
 		return $folder;
 	}
 
@@ -221,7 +221,7 @@ class ImgLibFolder {
 		$imglibThumbnalesDirPath = FIELD_IMGLIB_THUMBNAILS_DIR;
 
 		if (strlen($relDir) == 0) {
-			$folder = &new ImgLibFolder($imglibDirPath);
+			$folder = new ImgLibFolder($imglibDirPath);
 		} else {
 			if (!file_exists($imglibDirPath . '/' . $relDir) || !file_exists($imglibThumbnalesDirPath . '/' . $relDir)) {
 				$subdirs = explode('/', $relDir);
@@ -235,7 +235,7 @@ class ImgLibFolder {
 				}
 				$relDir = substr($dir, 1);
 			}
-			$folder = &new ImgLibFolder($imglibDirPath . '/' . $relDir);
+			$folder = new ImgLibFolder($imglibDirPath . '/' . $relDir);
 		}
 
 		return $folder;
@@ -245,7 +245,7 @@ class ImgLibFolder {
 		$sfFiledir = $this->dir . '/' . $name;
 		mkdir($sfFiledir, 0777);
 
-		$sf = &new ImgLibFolder($sfFiledir);
+		$sf = new ImgLibFolder($sfFiledir);
 
 		$imglibThumbnalesDirPath = FIELD_IMGLIB_THUMBNAILS_DIR;
 		$thumbnailsDir = $imglibThumbnalesDirPath . '/' . $sf->getRelPath();
@@ -310,7 +310,7 @@ class Image {
 	function resizeTo($twidth, $theight) {
 		$im = imagecreatetruecolor  ($twidth, $theight);
 		imagecopyresampled ($im, $this->im, 0, 0, 0, 0, $twidth, $theight, $this->width, $this->height);//imagecopyresized
-		$thumbnail = &new Image();
+		$thumbnail = new Image();
 		$thumbnail->im = $im;
 		$thumbnail->isgif = $this->isgif;
 		$thumbnail->resizable = $this->resizable;
@@ -413,7 +413,7 @@ class ImgLibImage {
 
 		$destFileUrl = $folder->getRelPath() . "/" . $fileName;
 
-		$image = &new Image($tmpFilePath);
+		$image = new Image($tmpFilePath);
 
 		$width = $image->width;
 		$height = $image->height;
@@ -451,7 +451,7 @@ class ImgLibImage {
 			@chmod($imglibThumbnalesDirPath . '/' . $destFileUrl, 0755);
 		}
 
-		$imglibImage = &new ImgLibImage($folder, $fileName);
+		$imglibImage = new ImgLibImage($folder, $fileName);
 		return $imglibImage;
 	}
 
@@ -506,7 +506,7 @@ class ImgLibImage {
 		$folderRelPath = ($pos === false || $pos == 0) ? "" : substr($url, 1, $pos-1);
 		$imageName = substr($url, $pos + 1);
 		$folder = &ImgLibFolder::findByRelDir($folderRelPath);
-		$i = &new ImgLibImage($folder, $imageName);
+		$i = new ImgLibImage($folder, $imageName);
 		if ($i->error == true) {
 			return null;
 		} else {

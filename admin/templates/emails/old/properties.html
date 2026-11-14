@@ -1,7 +1,7 @@
 <?php 
 $request->setAttribute("active_tab", "properties");
 $restrict_edit = $CurrentAdminUser->group->restrictNodeEdit;
-$cuGroupRights = &new NodeGroupRights($CurrentAdminUser->group, $node);
+$cuGroupRights = new NodeGroupRights($CurrentAdminUser->group, $node);
 $userHasWriteRights = $cuGroupRights->hasWriteRight();
 ?>
 <?=usetemplate("emails/_edit_header")?>

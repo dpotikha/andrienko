@@ -1,5 +1,5 @@
 <?php 
-	$cuGroupRights = &new NodeGroupRights($CurrentAdminUser->group, $node);
+	$cuGroupRights = new NodeGroupRights($CurrentAdminUser->group, $node);
 	$userHasWriteRights = $cuGroupRights->hasWriteRight();
 	$request->setAttribute("userHasWriteRights", $userHasWriteRights);
 

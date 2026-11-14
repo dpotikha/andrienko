@@ -40,7 +40,7 @@ function addnode_form(&$request) {
 	}
 
 	if ($parent != null) {
-		$gr = &new NodeGroupRights($currentLoggedUser->group, $parent);
+		$gr = new NodeGroupRights($currentLoggedUser->group, $parent);
 		$request->setAttribute("userHasWriteRights", $gr->hasWriteRight());
 		$pList = &$parent->getParentList();
 		$pList[] = &$parent;
@@ -60,7 +60,7 @@ function addnode_form(&$request) {
 	foreach ($fieldDefsKeys as $k) {
 		$fieldDef = &$fieldDefs[$k];
 
-		$item = &new PHPObject();
+		$item = new PHPObject();
 
 		$field = &$fieldDef->getFieldInstance();
 		$field->setDefaultValue();
@@ -110,7 +110,7 @@ function addnode(&$request) {
 */
 //var_dump($request);
 	if ($parent != null) {
-		$gr = &new NodeGroupRights($currentLoggedUser->group, $parent);
+		$gr = new NodeGroupRights($currentLoggedUser->group, $parent);
 		$request->setAttribute("userHasWriteRights", $gr->hasWriteRight());
 		if (!$gr->hasWriteRight()) {
 			die($AdminTrnsl["You_do_not_have_rights_to_view_this_node"]);
@@ -258,7 +258,7 @@ function addnode(&$request) {
 		foreach ($fieldDefsKeys as $k) {
 			$fieldDef = &$fieldDefs[$k];
 	
-			$item = &new PHPObject();
+			$item = new PHPObject();
 	
 			$shortname = $fieldDef->shortname;
 			$errMsg = $fieldErrors[$shortname];
@@ -368,7 +368,7 @@ function editnode_moder(&$request) {
 	}
 
 	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
-	$gr = &new NodeGroupRights($currentLoggedUser->group, $node);
+	$gr = new NodeGroupRights($currentLoggedUser->group, $node);
 	if (!$gr->hasViewRight()) {
 		die($AdminTrnsl["You_do_not_have_rights_to_view_this_node"]);
 	}
@@ -391,7 +391,7 @@ function editnode_moder(&$request) {
 		$field = &$data->fieldList[$fieldShortname];
 		$params = $field->getParamersForIncludeControlJSP();
 
-		$item = &new PHPObject();
+		$item = new PHPObject();
 		$item->jspname = $field->getJSPControlName();
 		$item->fieldDef = &$fieldDef;
 		$item->params = $params;
@@ -416,7 +416,7 @@ function editnode(&$request) {
 	}
 
 	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
-	$gr = &new NodeGroupRights($currentLoggedUser->group, $node);
+	$gr = new NodeGroupRights($currentLoggedUser->group, $node);
 	if (!$gr->hasViewRight()) {
 		die($AdminTrnsl["You_do_not_have_rights_to_view_this_node"]);
 	}
@@ -438,7 +438,7 @@ function editnode(&$request) {
 		$field = $node->getField($fieldShortname);
 		$params = $field->getParamersForIncludeControlJSP();
 
-		$item = &new PHPObject();
+		$item = new PHPObject();
 		$item->jspname = $field->getJSPControlName();
 		$item->fieldDef = &$fieldDef;
 		$item->params = $params;
@@ -460,7 +460,7 @@ function subnodeslist(&$request, &$node, &$all_deps, &$currentLoggedUser) {
 	foreach ($all_deps_keys as $k) {
 		$nodeClass = &$all_deps[$k];
 
-		$item = &new PHPObject();
+		$item = new PHPObject();
 
 		$item->nodeClass = &$nodeClass;
 		$classChildsCount = $node->getChildrenCountOfClassForGroup($currentLoggedUser->group->id, $nodeClass->id);
@@ -496,9 +496,9 @@ function subnodeslist(&$request, &$node, &$all_deps, &$currentLoggedUser) {
 		foreach ($classChildsKeys as $cck) {
 			$nd = &$classChilds[$cck];
 
-			$ndMap = &new PHPObject();
+			$ndMap = new PHPObject();
 			$ndMap->node = &$nd;
-			$ndGR = &new NodeGroupRights($currentLoggedUser->group, $nd);
+			$ndGR = new NodeGroupRights($currentLoggedUser->group, $nd);
 			$ndMap->hasWriteRight = $ndGR->hasWriteRight();
 			$ndMap->hasViewRight = $ndGR->hasViewRight();
 			$ndMap->hasDeleteRight = $ndGR->hasDeleteRight();
@@ -553,7 +553,7 @@ function updatenode(&$request) {
 	$nodeClass = $node->getNodeClass();
 	$request->setAttribute("nodeClass", $nodeClass);
 
-	$cuGroupRights = &new NodeGroupRights($currentLoggedUser->group, $node);
+	$cuGroupRights = new NodeGroupRights($currentLoggedUser->group, $node);
 	if (!$cuGroupRights->hasWriteRight()) {
 		die($AdminTrnsl["You_do_not_have_rights_to_update_data_of_this_node"]);
 	}
@@ -620,7 +620,7 @@ function updatenode(&$request) {
 	$_keys = array_keys($fieldDefs);
 	foreach ($_keys as $_k) {
 		$fieldDef = &$fieldDefs[$_k];
-		$item = &new phpobject();
+		$item = new phpobject();
 
 		$fieldShortname = $fieldDef->shortname;
 		$field = &$fieldList[$fieldShortname];

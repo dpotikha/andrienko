@@ -10,7 +10,7 @@ foreach($depends as $dep) {
 			$ndMap = new PHPObject();
 			$ndMap->node = $node;
 			$currentLoggedUser = $_SESSION[SESSION_LOGGED_USER_ATTR];
-			$ndGR = &new NodeGroupRights($currentLoggedUser->group, $node);
+			$ndGR = new NodeGroupRights($currentLoggedUser->group, $node);
 			$ndMap->hasWriteRight = $ndGR->hasWriteRight();
 			$ndMap->hasViewRight = $ndGR->hasViewRight();
 			$ndMap->hasDeleteRight = $ndGR->hasDeleteRight();

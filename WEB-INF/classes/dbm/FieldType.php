@@ -149,7 +149,7 @@ $FIELDTYPE_FLOAT = new FieldType(6, "Float", "FloatField", "FLOAT", "Float", $FL
 $WYSIWYG_PARAMLIST = array(
     new FieldParameter("max_length", "Maximum String Length",  "65536")
 );
-$FIELDTYPE_WYSIWYG = &new FieldType(7, "WYSiWYG text", "WysiwygTextField", "TEXT", "String", $WYSIWYG_PARAMLIST);
+$FIELDTYPE_WYSIWYG = new FieldType(7, "WYSiWYG text", "WysiwygTextField", "TEXT", "String", $WYSIWYG_PARAMLIST);
 
 //===================================================================//
 
@@ -181,7 +181,7 @@ $LINK_PARAMLIST = array(
     new FieldParameter("control_type", "Type of the html control",  "popup", array("popup"=>"Pop-Up Window", "readonly"=>"Readonly")),
     new FieldParameter("default_value", "Default value",  "")
 );
-$FIELDTYPE_Link = &new FieldType(10, "Link", "LinkField", "VARCHAR(255)", "String", $LINK_PARAMLIST);
+$FIELDTYPE_Link = new FieldType(10, "Link", "LinkField", "VARCHAR(255)", "String", $LINK_PARAMLIST);
 
 //===================================================================//
 

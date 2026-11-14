@@ -106,7 +106,7 @@ class Question {
 		$newID = DBUtils::getNextSequnceID("dbm_voting_questions");
 		DBUtils::execUpdate($query, array($newID, $question, 0));
 
-		$question = &new Question();
+		$question = new Question();
 		$question->id = $newID;
 		$question->question = $question;
 		$question->isActive = false;
@@ -221,7 +221,7 @@ class Question {
 		$rs = DBUtils::execSelect($query);
 		$questions = array();
 		while($rs->next()) {
-			$question = &new Question();
+			$question = new Question();
 			$question->_load($rs);
 			$questions[] = &$question;
 		}
@@ -234,7 +234,7 @@ class Question {
 		$rs = DBUtils::execSelect($query, array($id));
 		$questions = array();
 		while($rs->next()) {
-			$question = &new Question();
+			$question = new Question();
 			$question->_load($rs);
 			$questions[] = &$question;
 		}
@@ -246,7 +246,7 @@ class Question {
 		$rs = DBUtils::execSelect($query);
 		$question = null;
 		if ($rs->next()) {
-			$question = &new Question();
+			$question = new Question();
 			$question->_load($rs);
 		}
 		return $question;
@@ -257,7 +257,7 @@ class Question {
 		$rs = DBUtils::execSelect($query);
 		$question = null;
 		if ($rs->next()) {
-			$question = &new Question();
+			$question = new Question();
 			$question->_load($rs);
 		}
 		return $question;

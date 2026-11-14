@@ -86,7 +86,7 @@
 	  // require_once (SYSTEM_PEAR_XLS_PATH."PEAR.php"); 
 	   require_once (SYSTEM_PEAR_XLS_PATH."Writer.php"); 
 	  error_reporting(E_ALL);
-	   $xls =& new Spreadsheet_Excel_Writer(); 
+	   $xls = new Spreadsheet_Excel_Writer(); 
 	   $xls->send("stats_".$datestart."-".$dateend.".xls"); 
 	   $sheet =& $xls->addWorksheet('stats'); 
 	   $h2Format =& $xls->addFormat();

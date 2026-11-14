@@ -78,7 +78,7 @@ function create(&$request) {
 	$request->setAttribute("ERRORS", $errors);
 
 	if (sizeof($errors) == 0) {
-		$nc = &new NodeClass();
+		$nc = new NodeClass();
 
 		$nc->name = $name;
 		$nc->setShortname(strtolower($shortname));
@@ -108,7 +108,7 @@ function edit(&$request) {
 
 	$fieldDefsBeans = array();
 	foreach($fieldDefs as $fd) {
-		$fdBean = & new PHPObject();
+		$fdBean =  new PHPObject();
 		$fdBean->id = $fd->id;
 
 		$fdBean->shortname = $fd->shortname;
