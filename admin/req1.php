@@ -116,7 +116,7 @@ function move_node_xmltree_getNodeXML(&$node, &$target, &$currentLoggedUser) {
 	return $strBuffer;
 }
 	$nn=Node::findById(11968);
-	$str= move_node_xmltree_getNodeXML($nn, &$target, &$currentLoggedUser);
+	$str= move_node_xmltree_getNodeXML($nn, $target, $currentLoggedUser);
 	echo $str;
 	//print_r($rdeps);
 echo $JS->encode($arr);
