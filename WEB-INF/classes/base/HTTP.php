@@ -177,9 +177,6 @@ class HTTPSession {
      * @return void
      */
     function setAttribute ( $name, $value ) {
-        if(!session_is_registered( $name ) ) {
-            session_register($name);
-        }
         $_SESSION[$name] = $value;
     }
 
@@ -190,7 +187,7 @@ class HTTPSession {
      * @return mixed
      */
     function getAttribute ( $name ) {
-        if(session_is_registered( $name ) ) {
+        if(isset($_SESSION[$name])) {
             return $_SESSION[$name];
         }
         return null;
@@ -204,7 +201,6 @@ class HTTPSession {
      */
     function removeAttribute ( $name ) {
         global $HTTP_SESSION_VARS;
-        session_unregister ($name);
 		unset($HTTP_SESSION_VARS[$name]);
 		unset($_SESSION[$name]);
     }
