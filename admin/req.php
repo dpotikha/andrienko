@@ -1,8 +1,6 @@
 <?php
 require_once($_SERVER['DOCUMENT_ROOT'].'/WEB-INF/prepend.php');
-require_once($_SERVER['DOCUMENT_ROOT']."/admin/JSON.php");
 
-$JS=new Services_JSON();
 $node_id = urlencode($_GET["node_id"]);
 $page = (int)urlencode($_GET["page"]);
 if($page==0)$page=1;
@@ -48,6 +46,6 @@ if(count($childs)>0){
 
 $arr=array("ResultSet"=>array("Result"=>$newarr));
 //print_r($arr);
-echo $JS->encode($arr);
+echo json_encode($arr, JSON_INVALID_UTF8_SUBSTITUTE);
 
 ?>

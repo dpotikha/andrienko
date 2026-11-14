@@ -1,9 +1,7 @@
 <?php
 
 require_once($_SERVER['DOCUMENT_ROOT'].'/WEB-INF/prepend.php');
-require_once($_SERVER['DOCUMENT_ROOT']."/admin/JSON.php");
 
-$JS=new Services_JSON();
 //$node_id = urlencode($_GET["main_node"]);
 //$movedNode=Node::findById($_GET["main_node"]);
 $page = (int)urlencode($_GET["page"]);
@@ -65,7 +63,7 @@ $newarr=array();
 		}
 	}
 	$arr=array("ResultSet"=>array("Result"=>$newarr));
-echo $JS->encode($arr);
+echo json_encode($arr, JSON_INVALID_UTF8_SUBSTITUTE);
 
 //echo $strBuffer;
 
@@ -119,6 +117,6 @@ function move_node_xmltree_getNodeXML(&$node, &$target, &$currentLoggedUser) {
 	$str= move_node_xmltree_getNodeXML($nn, $target, $currentLoggedUser);
 	echo $str;
 	//print_r($rdeps);
-echo $JS->encode($arr);
+echo json_encode($arr, JSON_INVALID_UTF8_SUBSTITUTE);
 
 ?>
