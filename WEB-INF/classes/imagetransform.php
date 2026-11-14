@@ -177,7 +177,7 @@ class imageTransform
      *
      *  @access private
      */
-    function imageTransform()
+    function __construct()
     {
     
         // Sets default values of the class' properties

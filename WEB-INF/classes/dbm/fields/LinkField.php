@@ -10,7 +10,7 @@ class LinkField extends StringField {
 	var $linkedNodeId = 0;
 	var $nodeName = "";
 
-	function LinkField() {}
+	function __construct() {}
 
 	function init($fieldRS, $tableAlias, $shortname) {
 		Field::init($fieldRS, $tableAlias, $shortname);

@@ -40,7 +40,7 @@ class FieldDef {
 		return $DBM_FIELD_TYPES[$this->fieldTypeId];
 	}
 
-	function FieldDef($nodeClass, $name, $shortname, $ft, $required, $shownInNodeList, $order, $id = -1) {
+	function __construct($nodeClass, $name, $shortname, $ft, $required, $shownInNodeList, $order, $id = -1) {
 		$this->id = $id;
 		$this->nodeClassId = $nodeClass->id;
 		$this->name = $name;

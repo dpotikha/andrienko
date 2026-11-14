@@ -4,7 +4,7 @@ require_once ("dbm/fields/Field.php");
 
 class StringField extends Field {
 	var $dbColumnName = "value_str";
-	function StringField () {}
+	function __construct () {}
 
 	function setValue($o) {
 		global $AdminTrnsl;

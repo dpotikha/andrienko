@@ -5,7 +5,7 @@ require_once ("dbm/fields/Field.php");
 class ServerFileField extends Field {
 	var $dbColumnName = "value_str";
 
-	function ServerFileField() {}
+	function __construct() {}
 
 	function setValue($o) {
 		global $AdminTrnsl, $request;

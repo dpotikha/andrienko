@@ -40,7 +40,7 @@ class my_mime_mail
   var $att	=array();
 
   /////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  function my_mime_mail()
+  function __construct()
   {
     global $boundary;
     $this->from =  "";

@@ -12,7 +12,7 @@ class Connection {
 	function getConnectionId(){
 		return $this->dblink;
 	}
-	function Connection ($url, $properties=null) {
+	function __construct ($url, $properties=null) {
 		$i = strpos($url, "://");
 		if ($i === false)
 			die("mysql Connection()   Bad url.");

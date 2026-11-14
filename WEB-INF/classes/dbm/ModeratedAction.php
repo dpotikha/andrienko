@@ -8,7 +8,7 @@ class ModeratedAction {
 	var $data = null;
 	var $time = null;
 
-	function ModeratedAction() {
+	function __construct() {
 	}
 
 	function findNode() {

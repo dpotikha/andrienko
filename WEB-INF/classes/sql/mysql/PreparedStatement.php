@@ -16,7 +16,7 @@ class PreparedStatement {
 	var $resultSet = null;
 	var $updateCount = -1;
 
-	function PreparedStatement($connection, $sql) {
+	function __construct($connection, $sql) {
 		$this->connection = $connection;
 		if ($sql != null) {
 			$this->_construct($sql);

@@ -3,7 +3,7 @@
 require_once ("dbm/fields/Field.php");
 
 class Stats extends Field {
-	function Stats () {}
+	function __construct () {}
 
 	function getDefaultParamersForIncludeControlJSP() {
 		$params = TextareaField::getDefaultParamersForIncludeControlJSP();

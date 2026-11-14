@@ -1309,7 +1309,7 @@ function list_dir_contents_only_files ($path) {
 
 class PHPObject {
 
-    function PHPObject() {
+    function __construct() {
 
     }
 
@@ -1323,7 +1323,7 @@ class Date {
 
 
 
-	function Date($o = null) {
+	function __construct($o = null) {
 
 		if (is_string($o)) {
 

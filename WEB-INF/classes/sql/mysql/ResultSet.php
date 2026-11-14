@@ -19,7 +19,7 @@ class ResultSet {
     var $currentRowIndex = -1;
     var $currentRow = array();
 
-    function ResultSet ($res_id) {
+    function __construct ($res_id) {
         $this->result_id = $res_id;
         $this->rowCount = mysql_num_rows($this->result_id);
         $this->columnCount = mysql_num_fields($this->result_id);
@@ -149,7 +149,7 @@ class CachedResultSet extends ResultSet {
 
     var $currentRow = array();
 
-	function CachedResultSet($rs) {
+	function __construct($rs) {
 		$this->rowCount = $rs->rowCount;
 	    $this->columnIndexes = $rs->columnIndexes;
 	    $this->columnNames = $rs->columnNames;

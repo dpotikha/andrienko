@@ -3,7 +3,7 @@
 require_once ("dbm/fields/TextareaField.php");
 
 class WysiwygTextField extends TextareaField {
-	function WysiwygTextField () {}
+	function __construct () {}
 
 	function getDefaultParamersForIncludeControlJSP() {
 		$params = TextareaField::getDefaultParamersForIncludeControlJSP();

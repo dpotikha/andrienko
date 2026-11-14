@@ -19,7 +19,7 @@ class FormFieldType {
      * No public constructor!
      * Only several instances for each form field type
      */
-    function FormFieldType($shortname, $name) {
+    function __construct($shortname, $name) {
         $this->shortname = $shortname;
         $this->name = $name;
         if (!array_key_exists("__shortname_form_type_hash", $GLOBALS)) $GLOBALS["__shortname_form_type_hash"] = array();

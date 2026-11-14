@@ -62,7 +62,7 @@ class NodeGroupRights {
     }
 
 
-    function NodeGroupRights($cgroup, $cnode) {
+    function __construct($cgroup, $cnode) {
         $this->group = $cgroup;
         $this->node = $cnode;
 

@@ -3,7 +3,7 @@
 require_once ("dbm/fields/TextareaField.php");
 
 class fTinyTextField extends TextareaField {
-	function fTinyTextField () {}
+	function __construct () {}
 
 	function getDefaultParamersForIncludeControlJSP() {
 		$params = TextareaField::getDefaultParamersForIncludeControlJSP();

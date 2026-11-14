@@ -97,7 +97,7 @@ class UploadedFile extends PHPObject{
     var $tmp_name = "";
     var $size = 0;
 
-    function UploadedFile($vals = null) {
+    function __construct($vals = null) {
         if($vals != null) {
             $this->name = name2shortname($vals["name"]);
             $this->type = $vals["type"];
@@ -161,7 +161,7 @@ class HTTPSession {
      * Then tries to sen cookie to remote mashine
      * @param confParams array config. params from conf.xml
      */
-    function HTTPSession ( $confParams ) {
+    function __construct ( $confParams ) {
         session_name($confParams["name"]);
         session_start();
         $this->id = session_id();

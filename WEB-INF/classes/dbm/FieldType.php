@@ -11,7 +11,7 @@ class FieldParameter {
     var $default_value = "";
     var $values_list = null;
 
-    function FieldParameter($shortname, $name, $default_value, $values_list=array()) {
+    function __construct($shortname, $name, $default_value, $values_list=array()) {
         $this->default_value = $default_value;
         $this->shortname = $shortname;
         $this->name = $name;
@@ -70,7 +70,7 @@ class FieldType {
         return $field;
     }
 
-    function FieldType($type_id, $name, $phpClass, $dbType, $rsType, $paramlist) {
+    function __construct($type_id, $name, $phpClass, $dbType, $rsType, $paramlist) {
     	global $DBM_FIELD_TYPES;
         $this->name = $name;
         $this->phpClass = $phpClass;

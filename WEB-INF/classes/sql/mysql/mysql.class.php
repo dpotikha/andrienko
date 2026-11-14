@@ -5,7 +5,7 @@ class QueryBuilder
 	var $pattern = array();
 	var $replacement = array();
 	var $query="";
-	function QueryBuilder($query)
+	function __construct($query)
 	{
 		$this->query=$query;
 	}
@@ -30,7 +30,7 @@ class ModernDataBase
 	var $query_time_end;
 	var $SQL;
 	var $debug=false;
-	function ModernDataBase($connection)
+	function __construct($connection)
 	{
 		$this->connection_id=$connection->getConnectionId();
 	}

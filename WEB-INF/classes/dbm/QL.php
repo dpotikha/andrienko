@@ -13,7 +13,7 @@ class NodeQueryBuilder {
 	var $offset = -1;
 	var $limit = -1;
 
-	function NodeQueryBuilder() {
+	function __construct() {
 	}
 
 	function error($str) {
@@ -122,7 +122,7 @@ class JoinSpec {
 	var $tableAlias = "";
 	var $joinCondition = "";
 
-	function JoinSpec($joinType, $tableDef, $tableAlias, $joinCondition) {
+	function __construct($joinType, $tableDef, $tableAlias, $joinCondition) {
 		$this->joinType = $joinType;
 		$this->tableDef = $tableDef;
 		$this->tableAlias = $tableAlias;
@@ -133,7 +133,7 @@ class JoinSpec {
 class NodeQueryResultSet extends ResultSet {
 	var $tableAliases = array();
 
-	function NodeQueryResultSet($rs, $query) {
+	function __construct($rs, $query) {
 		$this->result_id = $rs->result_id;
 		$this->rowCount = $rs->rowCount;
 
@@ -260,7 +260,7 @@ class NodeQuery {
 		return $this->count;
 	}
 
-	function NodeQuery($dbmQL, $groupId=-1) {
+	function __construct($dbmQL, $groupId=-1) {
 		$this->groupId = $groupId;
 		$this->dbmQL = $dbmQL;
 		$this->parse();

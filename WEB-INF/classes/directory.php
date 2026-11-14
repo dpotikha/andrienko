@@ -1,6 +1,6 @@
 <?php
 	class directoryClass{
-		function directoryClass()
+		function __construct()
 		{
 		
 		}	

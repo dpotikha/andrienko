@@ -49,7 +49,7 @@ class Node {
 		return $nc;
 	}
 
-	function Node() {
+	function __construct() {
 	}
 
 

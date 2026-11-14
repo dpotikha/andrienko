@@ -4,7 +4,7 @@ require_once ("dbm/fields/Field.php");
 
 class NumberField extends Field {
 	var $dbColumnName = "value_float";
-	function NumberField () {}
+	function __construct () {}
 
 	function getJSPControlName() {
 		$class = strtolower(get_class($this));

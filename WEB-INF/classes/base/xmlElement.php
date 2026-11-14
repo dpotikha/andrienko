@@ -29,7 +29,7 @@ class xmlElement extends PHPObject {
      */
     var $cdata = "";
 
-    function xmlElement($tagname="") {
+    function __construct($tagname="") {
         $this->tagname = $tagname;
     }
 

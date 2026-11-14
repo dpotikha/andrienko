@@ -11,7 +11,7 @@ class FileField extends Field {
 	var $fileName = "";
 	var $deleteOnStore = false;
 
-	function FileField() {}
+	function __construct() {}
 
 	function computeFileName($node_id=0, $field_id=0, $ext="") {
 		if ($node_id != 0) {

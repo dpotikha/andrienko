@@ -12,7 +12,7 @@ class UserGroup {
 	var $restrictNodeEdit = true;
 	var $isModerator = true;
 
-	function UserGroup($id) {
+	function __construct($id) {
 		$this->id = $id;
 	}
 

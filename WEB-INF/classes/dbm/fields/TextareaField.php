@@ -3,7 +3,7 @@
 require_once ("dbm/fields/StringField.php");
 
 class TextareaField extends StringField {
-	function TextareaField () {}
+	function __construct () {}
 
 	function setValue($o) {
 		global $AdminTrnsl;

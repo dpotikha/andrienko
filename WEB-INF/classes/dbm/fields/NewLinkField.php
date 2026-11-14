@@ -7,7 +7,7 @@ class NewLinkField extends IntegerField {
 	var $lazyLoading = false;
 	var $alreadyTriedToLoad = false;
 
-	function NewLinkField() {}
+	function __construct() {}
 
 	function init($fieldRS, $tableAlias, $shortname) {
 		$fieldDef = $this->getFieldDef();

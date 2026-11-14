@@ -56,7 +56,7 @@ class XmlReader2 extends PHPObject {
      * Creates xml parser and prepares it to parse any text using startElement,endElement,characterData
      * functions of this object
      */
-    function XmlReader2() {
+    function __construct() {
         //$this->super();
         $this->parser = xml_parser_create();
         xml_parser_set_option($this->parser, XML_OPTION_CASE_FOLDING, 0);

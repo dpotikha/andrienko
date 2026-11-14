@@ -5,7 +5,7 @@ require_once ("dbm/fields/DateTimeField.php");
 define("DATE_FORMAT", "d.m.Y");
 
 class DateField extends DateTimeField {
-	function DateField() {}
+	function __construct() {}
 
 	function getParamersForIncludeControlJSP() {
 		$params = array();

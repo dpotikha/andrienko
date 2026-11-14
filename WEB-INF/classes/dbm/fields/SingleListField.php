@@ -4,7 +4,7 @@ require_once ("dbm/fields/IntegerField.php");
 
 class SingleListField extends IntegerField {
 
-	function SingleListField() {}
+	function __construct() {}
 
 	function setValue($o) {
 		global $AdminTrnsl;

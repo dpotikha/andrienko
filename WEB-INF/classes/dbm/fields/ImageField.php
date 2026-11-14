@@ -4,7 +4,7 @@ require_once ("dbm/fields/StringField.php");
 //require_once ("dbm/ImgLib.php");
 
 class ImageField extends StringField {
-	function ImageField() {
+	function __construct() {
 	}
 
 	function setValue($o) {

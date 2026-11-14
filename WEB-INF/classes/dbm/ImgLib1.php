@@ -47,7 +47,7 @@ function FILE_COMPARATOR_BY_LASTMODIFIED ($o1, $o2) {
 class ImgLibFolder {
 	var $dir = "";
 
-	function ImgLibFolder($path) {
+	function __construct($path) {
 		$this->dir = $path;
 		if (!file_exists($this->dir)) {
 			die("Can't instantiate ImgLibFolder object for non-existent path : '$path'");
@@ -277,7 +277,7 @@ class Image {
 	var $isgif = false;
 	var $resizable = true;
 
-	function Image($filename = null) {
+	function __construct($filename = null) {
 		if ($filename != null) {
 			$this->resizable = true;
 			$this->isgif = false;
@@ -344,7 +344,7 @@ class ImgLibImage {
 	var $thumbnailWidth = 0;
 	var $thumbnailHeight = 0;
 
-	function ImgLibImage(&$folder, $fileName) {
+	function __construct(&$folder, $fileName) {
 		$this->folder = $folder;
 		$this->file = $folder->getAbsolutePath() . '/' . $fileName;
 		$this->name = basename($this->file);

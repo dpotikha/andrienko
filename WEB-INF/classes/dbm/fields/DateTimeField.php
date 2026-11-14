@@ -6,7 +6,7 @@ define("DATETIME_FORMAT", "d.m.Y H:i:s");
 
 class DateTimeField extends Field {
 	var $dbColumnName = "value_timestamp";
-	function DateTimeField() {}
+	function __construct() {}
 
 	function getDefaultValue($fd) {
 		$value = new Date();

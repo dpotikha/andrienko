@@ -53,7 +53,7 @@ class Question {
 	var $answer_vote_counts = array();
 	var $answer_vote_real_counts = array();
 
-	function Question() {
+	function __construct() {
 	}
 
 	function _load(&$rs) {

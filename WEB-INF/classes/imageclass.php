@@ -18,7 +18,7 @@ class imageClass
     var $error;
 	var $o_width=0;
 	var $o_height=0;
-    function imageClass()
+    function __construct()
     {
         $this->chmodValue = 0755;
         $this->preserveSourceFileTime = true;

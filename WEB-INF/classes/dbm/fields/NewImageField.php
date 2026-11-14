@@ -13,7 +13,7 @@ class NewImageField extends Field {
 
 	var $oldValue = "";
 
-	function NewImageField() {}
+	function __construct() {}
 
 	function crop($exp,$fieldDef,$is_thumb=true){
 	
