@@ -1275,7 +1275,7 @@ function subnodeslist($request1, $node, $all_deps, $currentLoggedUser) {
 
 		} else {
 
-			$page = $pageNumMap[$nodeClass->shortname];
+            $page = (int)($pageNumMap[$nodeClass->shortname] ?? 0); // "" or junk: 0 on PHP 5, TypeError in PHP 8 (and it reaches SQL as the offset)
 
 			$pagesCount = floor($classChildsCount / NODES_PER_PAGE) + ($classChildsCount % NODES_PER_PAGE != 0 ? 1 : 0);
 

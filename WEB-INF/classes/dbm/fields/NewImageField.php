@@ -19,15 +19,18 @@ class NewImageField extends Field {
 	
 			$tmp_dir="/_newimage/tmp/".$exp[0]."/finish/";
 			if($is_thumb){
-					$img_thumb_exp=explode(":",$exp[2]);
+					// (float)/(int): empty crop or size values are 0 in PHP 5 arithmetic but a TypeError in PHP 8
+					$img_thumb_exp=explode(":",(string)($exp[2] ?? ""));
 					foreach($img_thumb_exp as $k=>$v){
+						$v=(float)$v;
 						if($v<0)$v=0;
 						$img_thumb_exp[$k]=abs(ceil($v));
 					}
+					$img_thumb_exp += array(0, 0, 0, 0); // a short crop string left [2]/[3] undefined
 					$cropHeight=$img_thumb_exp[3]-$img_thumb_exp[2];
 					$cropWidth=$img_thumb_exp[1]-$img_thumb_exp[0];
-					$height=$fieldDef->fieldParameters["thumbnail_height"];
-					$width=$fieldDef->fieldParameters["thumbnail_width"];
+					$height=(int)($fieldDef->fieldParameters["thumbnail_height"] ?? 0);
+					$width=(int)($fieldDef->fieldParameters["thumbnail_width"] ?? 0);
 					$rs=$fieldDef->fieldParameters["thumb_resize_strategy"];
 					if($height>$cropHeight||$width>$cropWidth){
 						$height=$cropHeight;
@@ -87,15 +90,18 @@ class NewImageField extends Field {
 					//$img->setJpegOutputQuality(90);	
 			}else{
 
-					$img_exp=explode(":",$exp[3]);
+					// (float)/(int): empty crop or size values are 0 in PHP 5 arithmetic but a TypeError in PHP 8
+					$img_exp=explode(":",(string)($exp[3] ?? ""));
 					foreach($img_exp as $k=>$v){
+						$v=(float)$v;
 						if($v<0)$v=0;
 						$img_exp[$k]=abs(ceil($v));
 					}
+					$img_exp += array(0, 0, 0, 0); // a short crop string left [2]/[3] undefined
 					$cropHeight=$img_exp[3]-$img_exp[2];
 					$cropWidth=$img_exp[1]-$img_exp[0];
-					$height=$fieldDef->fieldParameters["height"];
-					$width=$fieldDef->fieldParameters["width"];
+					$height=(int)($fieldDef->fieldParameters["height"] ?? 0);
+					$width=(int)($fieldDef->fieldParameters["width"] ?? 0);
 					$rs=$fieldDef->fieldParameters["resize_strategy"];
 					
 					/*if($height>$cropHeight||$width>$cropWidth){

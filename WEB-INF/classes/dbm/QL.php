@@ -309,8 +309,9 @@ class NodeQuery {
 		//}
 
 		$dbmQLfromClause = trim($matches[2]);
-		$this->dbmQLwhereClause = trim($matches[4]);
-		$this->dbmQLgroupByClause = trim($matches[6]);
+		// trailing optional groups are absent from $matches when they don't match
+		$this->dbmQLwhereClause = trim($matches[4] ?? '');
+		$this->dbmQLgroupByClause = trim($matches[6] ?? '');
 
 		if ($this->dbmQLgroupByClause) {
 			$dbmQLgroupByClauseParts = explode(",", $this->dbmQLgroupByClause);
@@ -319,9 +320,9 @@ class NodeQuery {
 				$this->dbmQLgroupByClauseParts[] = trim($gbp);
 			}
 		}
-		$this->dbmQLhavingClause = trim($matches[8]);
-		$this->dbmQLorderByClause = trim($matches[10]);
-		$this->dbmQLlimitClause = trim($matches[12]);
+		$this->dbmQLhavingClause = trim($matches[8] ?? '');
+		$this->dbmQLorderByClause = trim($matches[10] ?? '');
+		$this->dbmQLlimitClause = trim($matches[12] ?? '');
 		
 		$this->dbmQLfieldsClause_AllClassFieldsParts = array();
 		$this->dbmQLfieldsClause_OtherParts = array();
@@ -358,9 +359,11 @@ class NodeQuery {
 		$this->dbmQLbaseTableDef = trim($matches[0]);
 		$this->dbmQLbaseTableAlias = trim($matches[1]);
 		$dbmQLjoinClause = trim($matches[2]);
-		if (in_array($baseTableAlias, array("LEFT", "JOIN", "INNER", "NATURAL"))) {
-			die("Can't parse dbmQL: please specify alias for table definition <b>" . $baseTableDef);
-		}
+		// This check never ran: it tested undefined variables ($baseTableAlias, $baseTableDef).
+		// Kept disabled so existing queries behave as before.
+		// if (in_array($this->dbmQLbaseTableAlias, array("LEFT", "JOIN", "INNER", "NATURAL"))) {
+		// 	die("Can't parse dbmQL: please specify alias for table definition <b>" . $this->dbmQLbaseTableDef);
+		// }
 
 		$this->dbmQLjoinSpecs = array();
 

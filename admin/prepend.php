@@ -8,7 +8,7 @@ if (!defined('_MODERATION_FEATURE_')) define('_MODERATION_FEATURE_', false);
 
 define('DELIVERY_NODE_ID', 7201);
 $_settingsNode = Node::findByPath("/_site_settings");
-define("ADMIN_EMAIL_FROM", $_settingsNode->tfields["admin_email_from"]);
+define("ADMIN_EMAIL_FROM", $_settingsNode->tfields["admin_email_from"] ?? null);
 
 function send_Emails($post){
 /*	switch($post["lang"]){
