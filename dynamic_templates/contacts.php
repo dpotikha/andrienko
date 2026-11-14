@@ -9,6 +9,7 @@ switch($action) {
 		$form->email = $request->getParameter("email");
 		$form->text = $request->getParameter("text");
 
+		$errors = array(); // sizeof() of an unset variable is a TypeError in PHP 8
 		$requiredStringFields = array("name", "email", "text");
 		foreach($requiredStringFields as $fieldShortname) {
 			if (strlen($form->$fieldShortname) == 0 || $form->$fieldShortname == "Обязательное поле!") {

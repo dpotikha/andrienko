@@ -59,7 +59,7 @@ if (count($photoes)) { ?>
 				</tr>
 			</table>
 		</td>
-	<?php  if ($i%2 == 0 || $i == count($photos)) { ?>
+	<?php  if ($i%2 == 0 || $i == count($photoes)) { ?>
 	</tr>
 	<?php  } ?>	
 <?php  } ?>
