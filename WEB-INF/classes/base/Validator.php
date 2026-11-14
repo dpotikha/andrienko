@@ -30,7 +30,7 @@ class Validator {
      * @return bool
      */
     function isCorrectLogin ( $login ) {
-        if(ereg("^([A-Za-z]{1})([A-Za-z0-9_]{2,15})$", $login, $matches))
+        if(preg_match("~^([A-Za-z]{1})([A-Za-z0-9_]{2,15})$~D", $login, $matches))
             return true;
         else 
             return false;
@@ -46,7 +46,7 @@ class Validator {
      * @return bool
      */
     function isCorrectPassword ( $password ) {
-        if(ereg("^[A-Za-z0-9_,]{3,16}$", $password, $matches))
+        if(preg_match("~^[A-Za-z0-9_,]{3,16}$~D", $password, $matches))
             return true;
         else 
             return false;
@@ -59,7 +59,7 @@ class Validator {
      * @return void
      */
     function isCorrectURL ( $url ) {
-        if(!ereg( "^http|https(:\/\/)([_0-9a-zA-Z_-]+\\.){1,}([a-z]{2,3})$", $url ))
+        if(!preg_match( "~^http|https(:\/\/)([_0-9a-zA-Z_-]+\\.){1,}([a-z]{2,3})$~D", $url ))
             return false;
         else
             return true;
@@ -73,7 +73,7 @@ class Validator {
      */
     function isCorrectDate ( $date ) {
         $ok = false;
-        if ( ereg ( "([0-9]{4})-([0-9]{2})-([0-9]{2})", $date, $regs) ) {
+        if ( preg_match ( "~([0-9]{4})-([0-9]{2})-([0-9]{2})~", $date, $regs) ) {
             if ( checkdate( $regs[2], $regs[3], $regs[1] ) ) {
                 $ok = true;
             }
@@ -85,7 +85,7 @@ class Validator {
     function validateShortname($shortName) {
     	if (strlen($shortName) == 0)
     		return true;
-        if(ereg("^([A-Za-z0-9_\\-]{1,30})$", $shortName, $matches))
+        if(preg_match("~^([A-Za-z0-9_\\-]{1,30})$~D", $shortName, $matches))
             return true;
         else 
             return false;

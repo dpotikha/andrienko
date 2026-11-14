@@ -44,9 +44,9 @@ function validateClassFields($shortname, $name, $class_id) {
 		$errors["shortname"] = "sn_zerolen";
 	} elseif (strlen($shortname) < 2) {
 		$errors["shortname"] = "sn_short";
-	} elseif(!ereg("^([A-Za-z_]{1})(.*)$", $shortname, $matches)) {
+	} elseif(!preg_match("~^([A-Za-z_]{1})(.*)$~D", $shortname, $matches)) {
 		$errors["shortname"] = "sn_badfl";
-	} elseif(!ereg("^([A-Za-z_]{1})([A-Za-z0-9_]*)$", $shortname, $matches)) {
+	} elseif(!preg_match("~^([A-Za-z_]{1})([A-Za-z0-9_]*)$~D", $shortname, $matches)) {
 		$errors["shortname"] = "sn_bad";
 	} else {
 		$shClass = &NodeClass::findByShortname($shortname);

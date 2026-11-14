@@ -37,7 +37,7 @@ class StringField extends Field {
 				$verror = $AdminTrnsl["Length_of_string_too_short"] . $max_length;
 				break;
 			}
-			if ($regex && !ereg($regex, $rValue)) {
+			if ($regex && !preg_match('~' . str_replace('~', '\~', $regex) . '~D', $rValue)) {
 				$verror = $regex_error_msg;
 				break;
 			}

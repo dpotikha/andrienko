@@ -115,7 +115,7 @@ class UploadedFile extends PHPObject{
     }
 
     function isImage() {
-        return ereg("^image/", $this->type);
+        return preg_match("~^image/~", $this->type);
     }
 
     function moveTo($destDir, $destName = null) {

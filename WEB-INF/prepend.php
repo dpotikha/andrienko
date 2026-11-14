@@ -247,7 +247,7 @@ function remove_illegal_characters($shortname)
 
 		$l = substr($shortname,$i,1);
 
-		if(ereg("[0-9a-z_\.]",$l))
+		if(preg_match("~[0-9a-z_\.]~",$l))
 
 		$new_shortname.=$l;
 
@@ -1327,7 +1327,7 @@ class Date {
 
 		if (is_string($o)) {
 
-			if (ereg("([0-9]{1,2})\\.([0-9]{1,2})\\.([0-9]{4})", $o)) {
+			if (preg_match("~([0-9]{1,2})\\.([0-9]{1,2})\\.([0-9]{4})~", $o)) {
 
 				list($d,$m,$y) = explode(".", $o);
 
