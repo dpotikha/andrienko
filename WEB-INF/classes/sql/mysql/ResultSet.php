@@ -21,17 +21,48 @@ class ResultSet {
 
     function __construct ($res_id) {
         $this->result_id = $res_id;
-        $this->rowCount = mysql_num_rows($this->result_id);
-        $this->columnCount = mysql_num_fields($this->result_id);
+        $this->rowCount = mysqli_num_rows($this->result_id);
+        $this->columnCount = mysqli_num_fields($this->result_id);
         for ($i = 0; $i < $this->columnCount; $i++) {
-        	$this->columnTypeNames[$i] = mysql_field_type($this->result_id, $i);
-        	$this->columnNames[$i] = mysql_field_name($this->result_id, $i);
+        	$field = mysqli_fetch_field_direct($this->result_id, $i);
+        	$this->columnTypeNames[$i] = ResultSet::typeName($field->type);
+        	$this->columnNames[$i] = $field->name;
         	$this->columnIndexes[$this->columnNames[$i]] = $i;
         }
     }
 
+    /**
+     * Map a mysqli type code to the name the old mysql_field_type() returned.
+     */
+    static function typeName($type) {
+        switch ($type) {
+            case MYSQLI_TYPE_TINY: case MYSQLI_TYPE_SHORT: case MYSQLI_TYPE_LONG:
+            case MYSQLI_TYPE_LONGLONG: case MYSQLI_TYPE_INT24:
+                return "int";
+            case MYSQLI_TYPE_FLOAT: case MYSQLI_TYPE_DOUBLE:
+            case MYSQLI_TYPE_DECIMAL: case MYSQLI_TYPE_NEWDECIMAL:
+                return "real";
+            case MYSQLI_TYPE_STRING: case MYSQLI_TYPE_VAR_STRING:
+                return "string";
+            case MYSQLI_TYPE_TINY_BLOB: case MYSQLI_TYPE_MEDIUM_BLOB:
+            case MYSQLI_TYPE_LONG_BLOB: case MYSQLI_TYPE_BLOB:
+                return "blob";
+            case MYSQLI_TYPE_DATE: case MYSQLI_TYPE_NEWDATE:
+                return "date";
+            case MYSQLI_TYPE_DATETIME:  return "datetime";
+            case MYSQLI_TYPE_TIMESTAMP: return "timestamp";
+            case MYSQLI_TYPE_TIME:      return "time";
+            case MYSQLI_TYPE_YEAR:      return "year";
+            case MYSQLI_TYPE_ENUM:      return "enum";
+            case MYSQLI_TYPE_SET:       return "set";
+            case MYSQLI_TYPE_GEOMETRY:  return "geometry";
+            case MYSQLI_TYPE_NULL:      return "null";
+            default:                    return "unknown";
+        }
+    }
+
 	function close() {
-		mysql_free_result($this->result_id);
+		mysqli_free_result($this->result_id);
 	}
 
 	function absolute($i) {
@@ -75,8 +106,8 @@ class ResultSet {
 	}
 
 	function fetchRow() {
-		mysql_data_seek ($this->result_id, $this->currentRowIndex);
-		$this->currentRow = mysql_fetch_row($this->result_id);
+		mysqli_data_seek ($this->result_id, $this->currentRowIndex);
+		$this->currentRow = mysqli_fetch_row($this->result_id);
 	}
 
 	function checkColumnIndex(&$i) {

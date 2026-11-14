@@ -58,8 +58,16 @@ class Connection {
 			$password = $properties["password"];
 		}
 
-		$this->dblink = mysql_connect("$host:$port", $user, $password) or die(mysql_error()."Can't connect to mysql server.");
-		mysql_select_db($dbname, $this->dblink) or die("Can't select db.");
+		// keep the legacy behaviour: failed queries return false instead of throwing (PHP 8.1+ default)
+		mysqli_report(MYSQLI_REPORT_OFF);
+		$this->dblink = @mysqli_connect($host, $user, $password, $dbname, $port);
+		if (!$this->dblink) {
+			error_log("mysql Connection(): " . mysqli_connect_error());
+			die("Can't connect to database.");
+		}
+		mysqli_set_charset($this->dblink, defined('DB_CHARSET') ? DB_CHARSET : 'utf8');
+		// same as the live server today (empty sql_mode), independent of the server default
+		mysqli_query($this->dblink, "SET SESSION sql_mode = ''");
 	}
 
 	function prepareStatement($sql) {
@@ -73,8 +81,16 @@ class Connection {
 	}
 
     function close() {
-        mysql_close($this->dblink);
+        mysqli_close($this->dblink);
     }
+}
+
+/**
+ * Escape a string for use inside a quoted SQL literal (replacement for mysql_escape_string).
+ */
+function db_escape($s) {
+	global $connection;
+	return mysqli_real_escape_string($connection->dblink, (string)$s);
 }
 
 ?>

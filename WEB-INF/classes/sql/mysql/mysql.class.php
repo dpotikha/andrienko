@@ -13,7 +13,7 @@ class QueryBuilder
 	{
 		foreach($p as $k=>$v){
 			$this->pattern[$k]="/\?/";
-			$this->replacement[$k]=mysql_escape_string($v);
+			$this->replacement[$k]=db_escape($v);
 		}
 		$this->query=preg_replace($this->pattern, $this->replacement, $this->query,1);
 		return $this->query;
@@ -49,8 +49,8 @@ class ModernDataBase
 	{
 			if($this->debug&&!$this->QR())
 			{
-				echo "<br><font color='#ff0000'><b>QUERY ERROR # ".mysql_errno()." <br> ";	
-				echo mysql_error()." <br> ";	
+				echo "<br><font color='#ff0000'><b>QUERY ERROR # ".mysqli_errno($this->connection_id)." <br> ";
+				echo mysqli_error($this->connection_id)." <br> ";
 				echo $sql."</b></font><br>";
 			}elseif($this->debug)
 			{
@@ -121,7 +121,7 @@ class ModernDataBase
 		  	  `id` int(11) NOT NULL auto_increment,
 			  PRIMARY KEY  (`id`),
 			  UNIQUE KEY `id` (`id`)
-			) TYPE=MyISAM DEFAULT CHARSET=".$charset." COLLATE=".$collate."");
+			) ENGINE=MyISAM DEFAULT CHARSET=".$charset." COLLATE=".$collate."");
 		return $this->QR();
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////	
@@ -176,21 +176,16 @@ class ModernDataBase
 ////////////////////////////////////////////////////////////////////////////////////////////	
 	function DataSeek($i)
 	{
-		return @mysql_data_seek($this->query,$i);
+		if (!($this->query instanceof mysqli_result)) return false;
+		return mysqli_data_seek($this->query,$i);
 	}
 
-////////////////////////////////////////////////////////////////////////////////////////////	
-	
+////////////////////////////////////////////////////////////////////////////////////////////
+
 	function GetConnectionEncoding()
 	{
-		$charset = mysql_client_encoding($this->connection_id);
+		$charset = mysqli_character_set_name($this->connection_id);
 		return $charset;
-	}
-////////////////////////////////////////////////////////////////////////////////////////////	
-
-	function ChangeUser()
-	{
-		return @mysql_change_user($user, $password ,$this->database_name, $this->connection_id);
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////
 	function parseQuery($query){
@@ -206,14 +201,17 @@ class ModernDataBase
 			$replacement=array();
 			foreach($parameters as $k=>$v){
 				$pattern[$k]="/\?/";
-				$replacement[$k]=mysql_escape_string($v);
+				$replacement[$k]=db_escape($v);
 			}
 			$query=preg_replace($pattern, $replacement, $query,1);
 		}
 		$query=preg_replace("/\{(.*)\}/iU", "dbm_nfv_$1", $query);
 		$query=preg_replace("/\[(.*)\]/iU", "dbm_$1", $query);
 //		echo $query;
-		$this->query = mysql_query($query,$this->connection_id);
+		$this->query = mysqli_query($this->connection_id,$query);
+		if(!$this->query){
+			error_log("SQL error: " . mysqli_error($this->connection_id) . " | query: " . $query);
+		}
 	}
 	/////////////////////////////////////////////////////////////////////////////////////////
 	function Query($query,$parameters=array())
@@ -223,14 +221,18 @@ class ModernDataBase
 			$replacement=array();
 			foreach($parameters as $k=>$v){
 				$pattern[$k]="/\?/";
-				$replacement[$k]=mysql_escape_string($v);
+				$replacement[$k]=db_escape($v);
 			}
 			$query=preg_replace($pattern, $replacement, $query,1);
 		}
 //		echo $query;
 		$this->query_time_start=$this->getmicrotime();
-		$this->query = mysql_query($query,$this->connection_id);
+		$this->query = mysqli_query($this->connection_id,$query);
+		if(!$this->query){
+			error_log("SQL error: " . mysqli_error($this->connection_id) . " | query: " . $query);
+		}
 		$this->query_time_end=$this->getmicrotime();
+		return $this->query;
 	}
 ////////////////////////////////////////////////////////////////////////////////////////////	
 	function QR()
@@ -240,22 +242,24 @@ class ModernDataBase
 ////////////////////////////////////////////////////////////////////////////////////////////	
 	function QUR()
 	{
-		return mysql_affected_rows($this->connection_id);
+		return mysqli_affected_rows($this->connection_id);
 	}
-////////////////////////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////////////////////////
 	function NumRows()
 	{
-		return mysql_num_rows($this->query);
+		if (!($this->query instanceof mysqli_result)) return 0;
+		return mysqli_num_rows($this->query);
 	}
-////////////////////////////////////////////////////////////////////////////////////////////	
+////////////////////////////////////////////////////////////////////////////////////////////
 	function LastId()
 	{
-		return mysql_insert_id($this->connection_id);
+		return mysqli_insert_id($this->connection_id);
 	}
- //////////////////////////////////////////////Query//////////////////////////////////////////// 
+ //////////////////////////////////////////////Query////////////////////////////////////////////
 	function NextResult($index=false)
 	{
-		return mysql_fetch_array($this->query,MYSQL_ASSOC);
+		if (!($this->query instanceof mysqli_result)) return false;
+		return mysqli_fetch_array($this->query,MYSQLI_ASSOC);
 	}
 	
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -269,7 +273,7 @@ class ModernDataBase
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 function my_addslashes($string)
 {
-    $string = mysql_escape_string($string);
+    $string = db_escape($string);
 	return $string;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

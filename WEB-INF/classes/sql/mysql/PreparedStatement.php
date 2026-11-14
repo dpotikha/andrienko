@@ -44,6 +44,7 @@ class PreparedStatement {
 		}
 		$this->parts[] = $currentPart;
 		$this->numValues = sizeof($this->parts) - 1;
+                //sdump(array($sql,$this->parts,$this->numValues));
 	}
 
 	function createStatement($connection, $sql) {
@@ -108,30 +109,8 @@ class PreparedStatement {
 		if ($s === null) {
 			$this->setNull($i);
 		} else {
-			$sql .= "'";
-			$j = strlen($s);
-			for ($k = 0; $k < $j; $k++) {
-				$c = $s[$k];
-				if ($c == "'")
-					$sql .= "\\'";
-				else if ($c == '"')
-					$sql .= "\\\"";
-				else if (ord($c) == 0)
-					$sql .= "\\0";
-				else if ($c == "\\") {
-					$sql .= "\\\\";
-				} else
-					$sql .= $c;
-			}
-
-			$sql .= "'";
+			$sql .= "'" . mysqli_real_escape_string($this->connection->dblink, (string)$s) . "'";
 			$this->values[$i] = $sql;
-		}
-		 $___logFile = @fopen($_SERVER["DOCUMENT_ROOT"]."/log/string_".date("Y-m-d").".log", "a+");
-			if($___logFile){
-				fwrite($___logFile, date("Y-m-d h:i:s") . "\t\r\n" . $s . "\r\n\r\n");
-				fwrite($___logFile, $sql . "\r\n\r\n\r\n");
-				fclose($___logFile);
 		}
 	}
 
@@ -161,7 +140,7 @@ class PreparedStatement {
 		}
 		$sql .= $this->parts[$i];
 
-		if(substr_count($sql,'INSERT INTO')){
+		/*if(substr_count($sql,'INSERT INTO')){
 			$___logFile = @fopen($_SERVER["DOCUMENT_ROOT"]."/log/sql_".date("Y-m-d_H").".log", "a+");
 			if($___logFile){
 				fwrite($___logFile, date("Y-m-d h:i:s") . "\t\r\n" . $sql . "\r\n\r\n\r\n");
@@ -227,21 +206,21 @@ class PreparedStatement {
 				fwrite($___logFile, date("Y-m-d h:i:s") . "\t\r\n" . $__request . "\r\n\r\n\r\n");
 				fclose($___logFile);
 			}
-		}
+		}*/
 
-		$res = mysql_query($sql, $this->connection->dblink) or die($sql."<br>".mysql_error());
-		if ($res == false) {
-			$this->resultSet = null;
-			$updateCount = -1;
-			return false;
+		$res = mysqli_query($this->connection->dblink, $sql);
+		if ($res === false) {
+			error_log("SQL error: " . mysqli_error($this->connection->dblink) . " | query: " . $sql);
+			die("Database error.");
 		}
+                //dump($sql);
 
-		if (is_resource($res)) {
+		if ($res instanceof mysqli_result) {
 			$this->resultSet = new ResultSet($res);
 			$updateCount = -1;
 			$result = false;
 		} else {
-			$this->updateCount = mysql_affected_rows ($this->connection->dblink);
+			$this->updateCount = mysqli_affected_rows ($this->connection->dblink);
 			$this->resultSet = null;
 			$result = true;
 		}
