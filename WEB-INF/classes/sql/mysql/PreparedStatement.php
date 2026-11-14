@@ -27,19 +27,19 @@ class PreparedStatement {
 		$currentPart = "";
 		$strLen = strlen($sql);
 		for ($j = 0; $j < $strLen; $j++) {
-			$c = $sql{$j};
+			$c = $sql[$j];
 			if ($c == '?') {
 				$this->parts[] = $currentPart;
 				$currentPart = "";
 			} else if ($c == "'") {
 				$currentPart .= "'";
-				for ($j++; $j < $strLen && $sql{$j} != "'"; $j++) {
-					$currentPart .= $sql{$j};
+				for ($j++; $j < $strLen && $sql[$j] != "'"; $j++) {
+					$currentPart .= $sql[$j];
 				}
 
 				$currentPart .= "'";
 			} else {
-				$currentPart .= $sql{$j};
+				$currentPart .= $sql[$j];
 			}
 		}
 		$this->parts[] = $currentPart;
@@ -111,7 +111,7 @@ class PreparedStatement {
 			$sql .= "'";
 			$j = strlen($s);
 			for ($k = 0; $k < $j; $k++) {
-				$c = $s{$k};
+				$c = $s[$k];
 				if ($c == "'")
 					$sql .= "\\'";
 				else if ($c == '"')

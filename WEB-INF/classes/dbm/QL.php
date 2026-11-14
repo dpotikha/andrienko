@@ -978,13 +978,13 @@ class NodeQuery {
 
 		$tokenStr = "";
 		for ($j = 0; $j < strlen($s); $j++) {
-			$c = $s{$j};
+			$c = $s[$j];
 
 			if ($c == $QUOTE_CHARACTER) {
 				$tokenStr .= $QUOTE_CHARACTER;
 
-				for ($j++; $j < strlen($s) && $s{$j} != "'"; $j++)
-					$tokenStr .= $s{$j};
+				for ($j++; $j < strlen($s) && $s[$j] != "'"; $j++)
+					$tokenStr .= $s[$j];
 
 				$tokenStr .= $QUOTE_CHARACTER;
 			} else if (_isSQLDelimiter($c)) {

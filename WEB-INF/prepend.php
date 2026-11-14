@@ -647,7 +647,7 @@ function prepareStringForXML($str) {
 
 	for($i=0; $i < strlen($str); $i++) {
 
-		$c = $str{$i};
+		$c = $str[$i];
 
 		switch($c) {
 
@@ -707,7 +707,7 @@ function prepareStringForHTML($str) {
 
 	for($i=0; $i < strlen($str); $i++) {
 
-		$c = $str{$i};
+		$c = $str[$i];
 
 		switch($c) {
 
@@ -761,7 +761,7 @@ function encodeURL($uri) {
 
 	for ($i = 0; $i < strlen($uri); $i++) {
 
-		$ch = $uri{$i};
+		$ch = $uri[$i];
 
 		switch ($ch) {
 
@@ -861,15 +861,15 @@ function strReplaceButNotInQuotes($patt, $replacement, $s, $QUOTE_CHARACTER = "'
 
 	for ($j = 0; $j < strlen($s); $j++) {
 
-		$c = $s{$j};
+		$c = $s[$j];
 
 		if ($c == $QUOTE_CHARACTER) {
 
 			$charbuffer .= $QUOTE_CHARACTER;
 
-			for ($j++; $j < strlen($s) && $s{$j} != "'"; $j++)
+			for ($j++; $j < strlen($s) && $s[$j] != "'"; $j++)
 
-				$charbuffer .= $s{$j};
+				$charbuffer .= $s[$j];
 
 			$charbuffer .= $QUOTE_CHARACTER;
 
@@ -877,7 +877,7 @@ function strReplaceButNotInQuotes($patt, $replacement, $s, $QUOTE_CHARACTER = "'
 
 			$k = $j;
 
-			for (; $k < strlen($s) && $k - $j < strlen($patt) && $s{$k} == $patt{$k - $j}; $k++) {}
+			for (; $k < strlen($s) && $k - $j < strlen($patt) && $s[$k] == $patt[$k - $j]; $k++) {}
 
 			if (($k - $j) == strlen($patt)) {
 
