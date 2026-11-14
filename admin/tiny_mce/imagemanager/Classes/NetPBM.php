@@ -42,7 +42,7 @@ Class Image_Transform_Driver_NetPBM extends Image_Transform
     /**
      * Class Constructor
      */
-    function Image_Transform_Driver_NetPBM()
+    function __construct()
     {
         $this->uid = md5($_SERVER['REMOTE_ADDR']);
             
@@ -215,7 +215,7 @@ Class Image_Transform_Driver_NetPBM extends Image_Transform
         $cmd = $this->_postProcess('', $quality, $type) . ">$filename";
             
 		//if we have windows server
-        if(isset($_ENV['OS']) && eregi('window',$_ENV['OS']))
+        if(isset($_ENV['OS']) && preg_match('~window~i',$_ENV['OS']))
 			$cmd = ereg_replace('/','\\',$cmd);
         //echo $cmd."##";
         $output = system($cmd);

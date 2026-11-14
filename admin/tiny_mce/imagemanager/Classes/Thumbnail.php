@@ -1,4 +1,4 @@
-<?
+<?php 
 /**
  * Create thumbnails.
  * @author $Author$
@@ -53,7 +53,7 @@ class Thumbnail
 	 * @param int $width thumbnail width
 	 * @param int $height thumbnail height
 	 */
-	function Thumbnail($width=96, $height=96) 
+	function __construct($width=96, $height=96) 
 	{
 		$this->driver = Image_Transform::factory(IMAGE_CLASS);
 		$this->width = $width;

@@ -23,7 +23,7 @@ class GetFoldersAndFiles {
 	var $cwd;
 	var $actual_cwd;
 	
-	function GetFoldersAndFiles($fckphp_config,$type,$cwd) {
+	function __construct($fckphp_config,$type,$cwd) {
 		$this->fckphp_config=$fckphp_config;
 		$this->type=$type;
 		$this->raw_cwd=$cwd;
@@ -78,7 +78,7 @@ class GetFoldersAndFiles {
 							//check if$fckphp_configured not to show this folder
 							$hide=false;
 							for($i=0;$i<sizeof($this->fckphp_config['ResourceAreas'][$this->type]['HideFolders']);$i++) 
-								$hide=(ereg($this->fckphp_config['ResourceAreas'][$this->type]['HideFolders'][$i],$filename)?true:$hide);
+								$hide=(preg_match('~' . str_replace('~', '\~', $this->fckphp_config['ResourceAreas'][$this->type]['HideFolders'][$i]) . '~', $filename)?true:$hide); // ereg() was removed in PHP 7
 							
 							if (!$hide) echo "\t\t<Folder name=\"$filename\" />\n";
 							
@@ -102,7 +102,7 @@ class GetFoldersAndFiles {
 					//check if$fckphp_configured not to show this file
 					$editable=$hide=false;
 					for($j=0;$j<sizeof($this->fckphp_config['ResourceAreas'][$this->type]['HideFiles']);$j++) 
-						$hide=(ereg($this->fckphp_config['ResourceAreas'][$this->type]['HideFiles'][$j],$files[$i])?true:$hide);
+						$hide=(preg_match('~' . str_replace('~', '\~', $this->fckphp_config['ResourceAreas'][$this->type]['HideFiles'][$j]) . '~', $files[$i])?true:$hide); // ereg() was removed in PHP 7
 					
 					if (!$hide) {
 						if ($this->fckphp_config['ResourceAreas'][$this->type]['AllowImageEditing']) 

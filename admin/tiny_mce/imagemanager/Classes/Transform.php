@@ -130,7 +130,7 @@ Class Image_Transform
         include_once "$driver.php";
 
         $classname = "Image_Transform_Driver_{$driver}";
-        $obj =& new $classname;
+        $obj = new $classname;
         return $obj;
     }
 
@@ -343,7 +343,7 @@ Class Image_Transform
         $id_length = strlen($id);
 
         while (false !== ($entry = $d->read())) {
-            if (is_file($dir.'/'.$entry) && substr($entry,0,1) == '.' && !ereg($entry, $this->image))
+            if (is_file($dir.'/'.$entry) && substr($entry,0,1) == '.' && !preg_match('~' . str_replace('~', '\~', $entry) . '~', $this->image))
             {
                 //echo filemtime($this->directory.'/'.$entry)."<br>"; 
                 //echo time();

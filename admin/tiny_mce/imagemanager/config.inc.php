@@ -1,4 +1,10 @@
 <?php
+// Admin-only: same session key admin/prepend.php sets on login (SESSION_LOGGED_USER_ATTR)
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (empty($_SESSION['CurrentAdminUser'])) {
+	header('HTTP/1.1 403 Forbidden');
+	exit('Forbidden');
+}
 /**
  * Image Manager configuration file.
  * @author $Author$

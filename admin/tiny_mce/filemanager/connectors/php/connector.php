@@ -21,7 +21,10 @@ global $fckphp_config;
 require_once "config.php";
 
 error_reporting(E_ALL);
-function errorHandler ($errno, $errstr, $errfile, $errline, $errcontext) {
+// $errcontext is optional: PHP 8 passes only 4 arguments (a required 5th made every notice a fatal ArgumentCountError)
+function errorHandler ($errno, $errstr, $errfile, $errline, $errcontext = null) {
+	// PHP 8 deprecations (e.g. dynamic properties in these PHP 4-style classes) would be echoed into the XML response
+	if ($errno & (E_DEPRECATED | E_USER_DEPRECATED)) return true;
 	$reported=false;
 	if (strpos($errstr,"var: Deprecated.")===false) {
 		global $fckphp_config;
