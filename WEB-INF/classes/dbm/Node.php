@@ -103,7 +103,7 @@ class Node {
 		ksort($this->tfields);
 	}
 
-	function _create($parent, $name, $shortname, $dynamic_template, $admin_url, $owner_id, $class_id, $preparedFields, $predefinedID = -1) {
+	static function _create($parent, $name, $shortname, $dynamic_template, $admin_url, $owner_id, $class_id, $preparedFields, $predefinedID = -1) {
 		$new_id = -1;
 		DBUtils::startTransaction();
 		$new_id = $predefinedID == -1 ? DBUtils::getNextSequnceID("nodes") : $predefinedID;
@@ -271,7 +271,7 @@ class Node {
 		DBUtils::commit();
 	}
 
-	function remove($id) {
+	static function remove($id) {
 		//delete recursively all subnodes
 		$node = Node::findById($id);
 		$children = $node->getChildren();
@@ -306,7 +306,7 @@ class Node {
 		Node::removeNodeFromCache($id);
 	}
 
-	function removeNodeFromCache($nc_ID_or_PATH) {
+	static function removeNodeFromCache($nc_ID_or_PATH) {
 		global $_NODES_CACHE_BY_ID, $_NODES_CACHE_BY_PATH;
 
 		if (is_string($nc_ID_or_PATH)) {
@@ -342,7 +342,7 @@ class Node {
 		return $node;
 	}
 
-	function createWithDefaultValues0($parent_path, $name, $shortname, $class_shortname) {
+	static function createWithDefaultValues0($parent_path, $name, $shortname, $class_shortname) {
 		global $NULL;
 		$parent = Node::findByPath($parent_path);
 		if (($parent == null) && Node::hasRoot()) {
@@ -366,7 +366,7 @@ class Node {
 		return $res;
 	}
 
-	function createWithPreparedValues($parent, $name, $shortname, $dynamic_template, $admin_url, $owner_id, $class_id, $fields) {
+	static function createWithPreparedValues($parent, $name, $shortname, $dynamic_template, $admin_url, $owner_id, $class_id, $fields) {
 		if (($parent == null) && Node::hasRoot()) {
 			return null;
 		}
@@ -376,7 +376,7 @@ class Node {
 		return $node;
 	}
 
-	function hasRoot() {
+	static function hasRoot() {
 		$count = DBUtils::execCountSelect("SELECT COUNT(id) FROM dbm_nodes WHERE parent_id IS NULL");
 
 		if ($count > 0) {
@@ -645,7 +645,7 @@ class Node {
 		return $coll;
 	}
 
-	function findById($id) {
+	static function findById($id) {
 		global $_NODES_CACHE_BY_ID, $_NODES_CACHE_BY_PATH, $_USE_NODES_CACHE_;
 
 		$id = (int)$id;
@@ -677,7 +677,7 @@ class Node {
 		}
 	}
 
-	function findAbsolutePathById($id) {
+	static function findAbsolutePathById($id) {
 		global $_NODES_CACHE_BY_ID, $_NODES_CACHE_BY_PATH, $_USE_NODES_CACHE_;
 
 		$id = (int)$id;
@@ -697,7 +697,7 @@ class Node {
 		}
 	}
 
-	function findRoot() {
+	static function findRoot() {
 		$nrs = DBUtils::execSelect("SELECT * FROM dbm_nodes WHERE parent_id IS NULL");
 
 		$node = null;
@@ -714,7 +714,7 @@ class Node {
 		return $node;
 	}
 
-	function findByPath($path) {
+	static function findByPath($path) {
 		global $_NODES_CACHE_BY_ID, $_NODES_CACHE_BY_PATH, $_USE_NODES_CACHE_;
 
 		if (!is_string($path)) {
@@ -786,14 +786,14 @@ class Node {
 		return $nodes;
 	}
 
-	function findByQuery($dbmQL, $params = array(), $offset=-1, $limit=-1, $groupId=-1) {
+	static function findByQuery($dbmQL, $params = array(), $offset=-1, $limit=-1, $groupId=-1) {
 		$query =  new NodeQuery($dbmQL, $groupId);
 		$query->execute($params, $offset, $limit);
 		$nodes = $query->getNodes("n");
 		return $nodes;
 	}
 
-	function findCountByQuery($dbmQL, $params = array(), $groupId=-1) {
+	static function findCountByQuery($dbmQL, $params = array(), $groupId=-1) {
 		$query =  new NodeQuery($dbmQL, $groupId);
 		$query->executeCount($params);
 		$count = $query->getCount();
@@ -1351,7 +1351,7 @@ class Node {
 		return $this->id==$node->id;
 	}
 
-	function readCache() {
+	static function readCache() {
 		global $_NODES_CACHE_BY_ID, $_NODES_CACHE_BY_PATH;
 
 		_read_cache("_NODES_CACHE_BY_ID");
@@ -1364,7 +1364,7 @@ class Node {
 		}
 	}
 
-	function cleanCache() {
+	static function cleanCache() {
 		global $_NODES_CACHE_BY_ID, $_NODES_CACHE_BY_PATH;
 
 		$keys = array_merge(array_keys($_NODES_CACHE_BY_PATH), array_keys($_NODES_CACHE_BY_ID));

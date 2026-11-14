@@ -28,7 +28,7 @@ class User {
 		DBUtils::execUpdate($sql, array($this->id));
 	}
 
-	function& _findAll() {
+	static function& _findAll() {
 		$sql = "SELECT * FROM dbm_users";
 		$rs = DBUtils::execSelect($sql);
 		$v = array();
@@ -45,11 +45,11 @@ class User {
 		return $v;
 	}
 
-	function& getUsersCache() {
+	static function& getUsersCache() {
 		return $GLOBALS["USERS_CACHE"];
 	}
 
-	function buildUsersCache() {
+	static function buildUsersCache() {
 		global $_CLEAR_USERS_CACHE, $USERS_CACHE;
 		if (!$_CLEAR_USERS_CACHE) {
 			_read_cache("USERS_CACHE");
@@ -84,13 +84,13 @@ class User {
 
 	}
 
-	function& findByLogin($login) {
+	static function& findByLogin($login) {
 		$usersCache = &User::getUsersCache();
-		$x = $usersCache[$login];
+		$x = $usersCache[$login] ?? null;
 		return $x;
 	}
 
-	function& findByEmail($email) {
+	static function& findByEmail($email) {
 		$fu = null;
 		$usersCache = &User::getUsersCache();
 		foreach ($usersCache as $u) {
@@ -101,7 +101,7 @@ class User {
 		return $fu;
 	}
 
-	function& findById($id) {
+	static function& findById($id) {
 		$usersCache = &User::getUsersCache();
 		return $usersCache[$id];
 	}

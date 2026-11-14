@@ -103,7 +103,7 @@ class ServerFileField extends Field {
 		return $this->getParamersForIncludeControlJSP();
 	}
 
-	function getDefaultValue($fd) {
+	static function getDefaultValue($fd) {
 		$value = "";
 		return $value;
 	}

@@ -31,7 +31,7 @@
 	  @chmod($dirname, $mod);
 	}	
 	///////////////////////////////////////////////////////////////////////////////////////////////////////
-	function rmdir_only_last_files($dirname,$time_limit)
+	static function rmdir_only_last_files($dirname,$time_limit)
 	{
 	  if (!file_exists($dirname)) return false;
 	  if (is_file($dirname))
@@ -71,7 +71,7 @@
 	  }
 	}
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	function rmdir($dirname)
+	static function rmdir($dirname)
 	{
 	  if (!file_exists($dirname)) return false;
 	  if (is_file($dirname))
@@ -99,7 +99,7 @@
 	  return @rmdir($dirname);
 	}
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
-		function createDirIfNotExists($dir,$file_roots=array()) {
+		static function createDirIfNotExists($dir,$file_roots=array()) {
 			if(!count($file_roots)){
 				$file_roots=array($_SERVER['DOCUMENT_ROOT']);
 			}

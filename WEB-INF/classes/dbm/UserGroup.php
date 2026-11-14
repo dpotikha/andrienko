@@ -56,7 +56,7 @@ class UserGroup {
 	/**
 	 * Finds all in database and returns Collection of group id (Integer objects)
 	 */
-	function _findAll() {
+	static function _findAll() {
 		$rs = DBUtils::execSelect("SELECT id FROM dbm_user_groups ORDER BY id");
 		$v = array();
 		while ($rs->next()) {
@@ -69,7 +69,7 @@ class UserGroup {
 	/**
 	 * Creates new in database and returns id of created row
 	 */
-	function _create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator) {
+	static function _create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator) {
 		$id = DBUtils::getNextSequnceID("user_groups");
 		$sql = "INSERT INTO dbm_user_groups (id, name, description,canmanageclasses,canmanageusers,canManageImgLib,restrictNodeEdit, isModerator) VALUES (?,?,?,?,?,?,?,?)";
 
@@ -103,7 +103,7 @@ class UserGroup {
 		return $v;
 	}
 
-	function getUserGroupsCache() {
+	static function getUserGroupsCache() {
 		return $GLOBALS["USER_GROUPS_CACHE"];
 	}
 
@@ -121,7 +121,7 @@ class UserGroup {
 		$this->usersInGroupsCache = $m;
 	}
 
-	function buildUserGroupCache() {
+	static function buildUserGroupCache() {
 		global $_CLEAR_USER_GROUPS_CACHE, $USER_GROUPS_CACHE;
 		if (!$_CLEAR_USER_GROUPS_CACHE) {
 			_read_cache("USER_GROUPS_CACHE");
@@ -148,7 +148,7 @@ class UserGroup {
 	/**
 	 * Get unsorted list of user group objects
 	 */
-	function findAll() {
+	static function findAll() {
 		$userGroupsCache = UserGroup::getUserGroupsCache();
 		//todo: sort
 		return $userGroupsCache;
@@ -157,12 +157,12 @@ class UserGroup {
 	/**
 	 * Find object in cache
 	 */
-	function findById($id) {
+	static function findById($id) {
 		$userGroupsCache = UserGroup::getUserGroupsCache();
 		return $userGroupsCache[$id];
 	}
 
-	function findByName($name) {
+	static function findByName($name) {
 		$c = UserGroup::findAll();
 		foreach ($c as $ug) {
 			if ($ug->name == $name) {
@@ -175,7 +175,7 @@ class UserGroup {
 	/**
 	 * Create new users group in database and put created to cache
 	 */
-	function create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator) {
+	static function create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator) {
 		$id = UserGroup::_create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator);
 
 		$g = new UserGroup($id);
@@ -233,7 +233,7 @@ class UserGroup {
 		$user->remove();
 	}
 
-	function getGroupSelector($selected_id,$user_group=0) {
+	static function getGroupSelector($selected_id,$user_group=0) {
 		$coll = UserGroup::findAll();
 		$typeselect = "";
 		$isselected = "";

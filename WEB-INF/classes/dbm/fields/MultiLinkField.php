@@ -66,7 +66,7 @@ class MultiLinkField extends StringField {
 		return $params;
 	}
 
-	function getDefaultValue($fd) {
+	static function getDefaultValue($fd) {
 		return "";
 	}
 

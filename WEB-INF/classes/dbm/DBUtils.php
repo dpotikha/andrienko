@@ -3,11 +3,11 @@
 $_TRANSACTION_STATUS = array();
 
 class DBUtils {
-	function getConnection() {
+	static function getConnection() {
 		global $connection;
 		return $connection;
 	}
-	function getNextSequnceID($seqName) {
+	static function getNextSequnceID($seqName) {
 		global $connection;
 	
 		$stmt = $connection->prepareStatement("SELECT value FROM __sequences WHERE name='$seqName'");
@@ -25,7 +25,7 @@ class DBUtils {
 	    return $value;
 	}
 	
-	function getCurrentSequnceID($seqName) {
+	static function getCurrentSequnceID($seqName) {
 		global $connection;
 	
 		$stmt = $connection->prepareStatement("SELECT value FROM __sequences WHERE name='$seqName'");
@@ -36,7 +36,7 @@ class DBUtils {
 	    return $value;
 	}
 	
-	function execSelect($sql, $params = array()) {
+	static function execSelect($sql, $params = array()) {
 		global $connection;
 	
 		$pstmt = $connection->prepareStatement($sql);
@@ -54,7 +54,7 @@ class DBUtils {
 		return $crs;
 	}
 	
-	function execCountSelect($sql, $params = array()) {
+	static function execCountSelect($sql, $params = array()) {
 		global $connection;
 	
 		$pstmt = $connection->prepareStatement($sql);
@@ -69,7 +69,7 @@ class DBUtils {
 		return $c;
 	}
 	
-	function execUpdate($sql, $params = array()) {
+	static function execUpdate($sql, $params = array()) {
 		global $connection;
 	
 		$pstmt = $connection->prepareStatement($sql);
@@ -82,7 +82,7 @@ class DBUtils {
 		return $updatedCount;
 	}
 	
-	function startTransaction() {
+	static function startTransaction() {
 		global $connection, $_TRANSACTION_STATUS;
 		if (sizeof($_TRANSACTION_STATUS) == 0) {
 			DBUtils::execUpdate("BEGIN");
@@ -92,7 +92,7 @@ class DBUtils {
 		}
 	}
 
-	function commit() {
+	static function commit() {
 		global $connection, $_TRANSACTION_STATUS;
 
 		if (sizeof($_TRANSACTION_STATUS) == 1) {
@@ -101,7 +101,7 @@ class DBUtils {
 		array_pop($_TRANSACTION_STATUS);
 	}
 
-	function rollback($force = false) {
+	static function rollback($force = false) {
 		global $connection, $_TRANSACTION_STATUS;
 
 		if ($force) {
@@ -119,7 +119,7 @@ class DBUtils {
 		}
 	}
 
-	function execBatch($sqls, $params = array()) {
+	static function execBatch($sqls, $params = array()) {
 		global $connection;
 	
 		foreach ($sqls as $i=>$sql) {
@@ -132,7 +132,7 @@ class DBUtils {
 		}
 	}
 	
-	function createRowSet($sqlCommand) {
+	static function createRowSet($sqlCommand) {
 		global $connection;
 		$pstmt = $connection->prepareStatement($sql);
 		$rset = $pstms->executeQuery();

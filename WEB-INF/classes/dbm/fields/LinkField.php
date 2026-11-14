@@ -128,7 +128,7 @@ class LinkField extends StringField {
 		return $v;
 	}
 
-	function getDefaultValue($fd) {
+	static function getDefaultValue($fd) {
         	$dv = $fd->getParameterValue("default_value");
 
 		if ($dv == null)

@@ -43,7 +43,7 @@ class FieldType {
 	var $dbType = null;
 	var $rsType = null;
 
-    function getAllTypes() {
+    static function getAllTypes() {
     	global $DBM_FIELD_TYPES;
 		$dbm_f_t=array();
 			foreach($DBM_FIELD_TYPES as $k=>$v)	

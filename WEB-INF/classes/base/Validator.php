@@ -11,7 +11,7 @@ class Validator {
      * @access public
      * @return bool
      */
-    function checkEmail ( $email ) {
+    static function checkEmail ( $email ) {
         if (!preg_match("/^(\".*\"|[A-Za-z0-9_\x2D]+(\.[A-Za-z0-9_\x2D]+)*)@(\[\d{1,3}(\.\d{1,3}){3}]|[A-Za-z0-9_\x2D]+(\.[A-Za-z0-9_\x2D]+)+)$/",
                 $email, $matches)) {
             return false;
@@ -82,7 +82,7 @@ class Validator {
         return  $ok;
     }
 
-    function validateShortname($shortName) {
+    static function validateShortname($shortName) {
     	if (strlen($shortName) == 0)
     		return true;
         if(preg_match("~^([A-Za-z0-9_\\-]{1,30})$~D", $shortName, $matches))

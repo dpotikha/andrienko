@@ -7,11 +7,11 @@ class FormFieldType {
 	var $shortname = "";
 	var $name = "";
 
-    function getAllTypes() {
+    static function getAllTypes() {
         return $GLOBALS["__shortname_form_type_hash"];
     }
 
-    function findById($id) {
+    static function findById($id) {
         return $GLOBALS["__shortname_form_type_hash"][$id];
     }
 
@@ -28,10 +28,10 @@ class FormFieldType {
 }
 
 global $AdminTrnsl;
-$FFT_STRING = new FormFieldType("string", $AdminTrnsl["FormFieldTypeString"]);
-$FFT_TEXTAREA = new FormFieldType("textarea", $AdminTrnsl["FormFieldTypeTextarea"]);
-$FFT_DATE = new FormFieldType("date", $AdminTrnsl["FormFieldTypeDate"]);
-$FFT_EMAIL = new FormFieldType("email", $AdminTrnsl["FormFieldTypeEmail"]);
+$FFT_STRING = new FormFieldType("string", $AdminTrnsl["FormFieldTypeString"] ?? null); // $AdminTrnsl is not loaded yet here
+$FFT_TEXTAREA = new FormFieldType("textarea", $AdminTrnsl["FormFieldTypeTextarea"] ?? null); // $AdminTrnsl is not loaded yet here
+$FFT_DATE = new FormFieldType("date", $AdminTrnsl["FormFieldTypeDate"] ?? null); // $AdminTrnsl is not loaded yet here
+$FFT_EMAIL = new FormFieldType("email", $AdminTrnsl["FormFieldTypeEmail"] ?? null); // $AdminTrnsl is not loaded yet here
 
 class FormFieldDef {
 	var $id = 0;
@@ -150,7 +150,7 @@ class FormDef {
 		$stmt->close();
 	}
 
-	function findById($id) {
+	static function findById($id) {
 		global $connection;
 
 		$stmt = $connection->prepareStatement("SELECT * FROM " . tn_form_defs . " WHERE id=" . $id . "");
@@ -167,7 +167,7 @@ class FormDef {
 		return $formDef;
 	}
 
-	function findAll() {
+	static function findAll() {
 		global $connection;
 
 		$stmt = $connection->prepareStatement("SELECT * FROM " . tn_form_defs . " ORDER BY id");
@@ -186,7 +186,7 @@ class FormDef {
 		return $formDefs;
 	}
 
-	function create($name, $description_text, $success_text, $inc_sub) {
+	static function create($name, $description_text, $success_text, $inc_sub) {
 		$sql = "INSERT INTO " . tn_form_defs . " (id, name, description_text, success_text, inc_sub) VALUES(?,?,?,?,?)";
 		$id = DBUtils::getNextSequnceID("form_defs");
 		DBUtils::execUpdate($sql, array($id, $name, $description_text, $success_text, $inc_sub));

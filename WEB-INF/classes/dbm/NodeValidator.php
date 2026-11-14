@@ -13,7 +13,7 @@ class NodeValidator {
 	}
 
 	function getValidationErrorsCount() {
-		return sizeof(validationErrors);
+		return sizeof($this->validationErrors);
 	}
 
 	function getValidationErrors() {

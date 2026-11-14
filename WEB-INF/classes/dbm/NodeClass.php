@@ -163,7 +163,7 @@ class NodeClass {
 	 * Some finder methods
 	 =============================================*/
 
-	function reBuildNodeClassCache() {
+	static function reBuildNodeClassCache() {
 		global $_NODE_CLASS_CACHE_BY_ID, $_NODE_CLASS_CACHE_BY_SHORTNAME;
 
 		$v =  NodeClass::_findAll();
@@ -179,7 +179,7 @@ class NodeClass {
 		$_NODE_CLASS_CACHE_BY_SHORTNAME = $nodeClassCacheByName;
 	}
 
-	function buildNodeClassCache() {
+	static function buildNodeClassCache() {
 		global $_NODE_CLASS_CACHE_BY_ID, $_NODE_CLASS_CACHE_BY_SHORTNAME;
 
 		_read_cache("_NODE_CLASS_CACHE_BY_ID");
@@ -191,7 +191,7 @@ class NodeClass {
 		}
 	}
 
-	function removeNodeClassFromCache($nc_ID_or_SHORTNAME) {
+	static function removeNodeClassFromCache($nc_ID_or_SHORTNAME) {
 		/*
 		global $_NODE_CLASS_CACHE_BY_ID, $_NODE_CLASS_CACHE_BY_SHORTNAME;
 		if (is_string($nc_ID_or_SHORTNAME)) {
@@ -326,7 +326,7 @@ class NodeClass {
 	/**
 	 * Find insance if NodeClass by id in cache
 	 */
-	function findById($id) {
+	static function findById($id) {
 		global $_NODE_CLASS_CACHE_BY_ID, $_NODE_CLASS_CACHE_BY_SHORTNAME;
 		if (array_key_exists($id, $_NODE_CLASS_CACHE_BY_ID)) {
 			return $_NODE_CLASS_CACHE_BY_ID[$id];
@@ -338,7 +338,7 @@ class NodeClass {
 	/**
 	 * Find insance if NodeClass by shortname in cache
 	 */
-	function findByShortname($shortname) {
+	static function findByShortname($shortname) {
 		global $_NODE_CLASS_CACHE_BY_ID, $_NODE_CLASS_CACHE_BY_SHORTNAME;
 		if (array_key_exists($shortname, $_NODE_CLASS_CACHE_BY_SHORTNAME)) {
 			return $_NODE_CLASS_CACHE_BY_SHORTNAME[$shortname];
@@ -347,11 +347,11 @@ class NodeClass {
 		}
 	}
 
-	function findAll($orderby="id") {
+	static function findAll($orderby="id") {
 		return NodeClass::findAll_ordered($orderby);
 	}
 
-	function findAll_ordered($sortBy) {
+	static function findAll_ordered($sortBy) {
 		global $_NODE_CLASS_CACHE_BY_ID, $_NODE_CLASS_CACHE_BY_SHORTNAME;
 
 		switch ($sortBy) {
@@ -401,7 +401,7 @@ class NodeClass {
 	/**
 	 * Find all in database and return as vector
 	 */
-	function _findAll() {
+	static function _findAll() {
 		global $connection;
 		$result = array();
 

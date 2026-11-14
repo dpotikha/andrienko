@@ -120,7 +120,7 @@ class HTMLWriter {
      * @access public
      * @return void
      */
-    function draw_paging_links(
+    static function draw_paging_links(
             $offset, //смещение от начала списка строк, передается get-/post-ом
             $rpp,//число строк на страницу
             $lpp,//число линков на странице
@@ -151,7 +151,7 @@ class HTMLWriter {
 		}
     }
 
-    function getPagingLinks(
+    static function getPagingLinks(
     		$baseURL,
             $currentPage,
             $rowsPerPage,

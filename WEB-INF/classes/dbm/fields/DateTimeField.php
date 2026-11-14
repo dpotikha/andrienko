@@ -8,7 +8,7 @@ class DateTimeField extends Field {
 	var $dbColumnName = "value_timestamp";
 	function __construct() {}
 
-	function getDefaultValue($fd) {
+	static function getDefaultValue($fd) {
 		$value = new Date();
 		return $value;
 	}

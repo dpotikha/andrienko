@@ -30,7 +30,7 @@ class ModeratedAction {
 		$this->time = $rs->getDate("time");
 	}
 
-	function& findAll() {
+	static function& findAll() {
 		global $connection;
 
 		$stmt = &$connection->prepareStatement("SELECT * FROM dbm_moderation ORDER BY time DESC");
@@ -49,7 +49,7 @@ class ModeratedAction {
         return $items;
 	}
 
-	function& findById($id) {
+	static function& findById($id) {
 		global $connection;
 
 		$stmt = &$connection->prepareStatement("SELECT * FROM dbm_moderation WHERE id=" . $id);
@@ -67,13 +67,13 @@ class ModeratedAction {
         return $item;
 	}
 
-	function remove($id) {
+	static function remove($id) {
 		global $connection;
 
 		DBUtils::execUpdate("DELETE FROM dbm_moderation WHERE id=" . $id);
 	}
 
-	function create($node_id, $user_id, $type, &$dataObject) {
+	static function create($node_id, $user_id, $type, &$dataObject) {
 		$id = DBUtils::getNextSequnceID("moderation");
 		$time = new Date();
 

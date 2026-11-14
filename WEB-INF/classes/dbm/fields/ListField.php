@@ -97,7 +97,7 @@ class ListField extends StringField {
 		}
 	}
 
-	function getDefaultValue($fd) {
+	static function getDefaultValue($fd) {
 		$dv = $fd->getParameterValue("default_value");
 
 		if ($dv == null) {
@@ -136,7 +136,7 @@ class ListField extends StringField {
 		return $valuesSB;
 	}
 
-	function explodeStringTrim($delim, $str) {
+	static function explodeStringTrim($delim, $str) {
 		$result = array();
 		if ($str == null)
 			return $result;

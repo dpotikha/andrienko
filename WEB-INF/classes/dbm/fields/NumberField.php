@@ -29,7 +29,7 @@ class NumberField extends Field {
 		return $params;
 	}
 
-	function getDefaultValue($fd) {
+	static function getDefaultValue($fd) {
 		$value = 0;
 		return $value;
 	}

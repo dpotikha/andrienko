@@ -92,7 +92,7 @@ class StringField extends Field {
 		return $cname;
 	}
 
-	function getDefaultValue($fd) {
+	static function getDefaultValue($fd) {
 		$value = "";
 		return $value;
 	}

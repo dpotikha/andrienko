@@ -134,7 +134,7 @@ class NewLinkField extends IntegerField {
 		return $this->linkedNode;
 	}
 
-	function getDefaultValue($fd) {
+	static function getDefaultValue($fd) {
 		return 0;
 	}
 

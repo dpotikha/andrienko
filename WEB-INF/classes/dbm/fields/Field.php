@@ -66,7 +66,7 @@ class Field {
 		$this->value = $fd->getDefaultValue();
 	}
 
-	function getDefaultValue($fd) {
+	static function getDefaultValue($fd) {
 		$ft = $fd->getFieldType();
 		die("Abstract method Field::getDefaultValue() not implemented in " . $ft->phpClass);
 	}

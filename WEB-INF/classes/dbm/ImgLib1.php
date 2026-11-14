@@ -216,7 +216,7 @@ class ImgLibFolder {
 		return $folder;
 	}
 
-	function& findByRelDir($relDir) {
+	static function& findByRelDir($relDir) {
 		$imglibDirPath = FIELD_IMGLIB_DIR;
 		$imglibThumbnalesDirPath = FIELD_IMGLIB_THUMBNAILS_DIR;
 
@@ -401,13 +401,13 @@ class ImgLibImage {
 		ImgLibImage::_resize($this->folder, $this->getName(), $newFilePath, $thumbnailSide, $maxSide, $resize_strategy);
 	}
 
-	function& create(&$folder, $tmpFilePath, $fileName, $thumbnailSide=IMAGE_THUMBNAIL_SIDE, $maxSide=MAX_IMAGE_SIDE, $resize_strategy=_IMG_RESIZE_STRATEGY_BYWIDTH) {
+	static function& create(&$folder, $tmpFilePath, $fileName, $thumbnailSide=IMAGE_THUMBNAIL_SIDE, $maxSide=MAX_IMAGE_SIDE, $resize_strategy=_IMG_RESIZE_STRATEGY_BYWIDTH) {
 		$url = $folder->getRelPath() . '/' . $fileName;
 
 		return ImgLibImage::_resize($folder, $fileName, $tmpFilePath, $thumbnailSide, $maxSide, $resize_strategy);
 	}
 
-	function& _resize(&$folder, $fileName, $tmpFilePath, $thumbnailSide=IMAGE_THUMBNAIL_SIDE, $maxSide=MAX_IMAGE_SIDE, $resize_strategy=_IMG_RESIZE_STRATEGY_BYWIDTH) {
+	static function& _resize(&$folder, $fileName, $tmpFilePath, $thumbnailSide=IMAGE_THUMBNAIL_SIDE, $maxSide=MAX_IMAGE_SIDE, $resize_strategy=_IMG_RESIZE_STRATEGY_BYWIDTH) {
 		$imglibDirPath = FIELD_IMGLIB_DIR;
 		$imglibThumbnalesDirPath = FIELD_IMGLIB_THUMBNAILS_DIR;
 
@@ -500,7 +500,7 @@ class ImgLibImage {
 //		$stmt->executeUpdate();
 	}
 
-	function& findByUrl($url) {
+	static function& findByUrl($url) {
 		if (strlen($url) == 0) return null;
 		$pos = strrpos($url, '/');
 		$folderRelPath = ($pos === false || $pos == 0) ? "" : substr($url, 1, $pos-1);

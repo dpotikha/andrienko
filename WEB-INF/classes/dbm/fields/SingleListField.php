@@ -77,7 +77,7 @@ class SingleListField extends IntegerField {
 		return $value;
 	}
 
-	function getDefaultValue($fd) {
+	static function getDefaultValue($fd) {
         $dv = $fd->getParameterValue("default_value");
 
 		if (!$dv) {
