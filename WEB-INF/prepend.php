@@ -1,4 +1,15 @@
 <?php
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+ini_set("display_errors", 'Off');
+ini_set("log_errors", 'On');
+// log to <account home>/tmp/php-errors.log (outside the web root): the server's php-fpm log is not readable from the site account
+$__errLogDir = dirname($_SERVER["DOCUMENT_ROOT"]) . "/tmp";
+if (is_dir($__errLogDir) && is_writable($__errLogDir)) {
+    $__errLog = $__errLogDir . "/php-errors.log";
+    if (@filesize($__errLog) > 10 * 1024 * 1024) @rename($__errLog, $__errLog . ".1"); // keep at most ~20 MB
+    ini_set("error_log", $__errLog);
+}
+unset($__errLogDir, $__errLog);
 		
 		setlocale(LC_ALL, 'ru_RU.UTF8');
         setlocale(LC_CTYPE, array('ru_RU.UTF8'));
@@ -16,7 +27,7 @@
 		
 		if(isset($_SESSION)&&count($_SESSION)){
 			$_SESSION['skip']=true;
-			$MDB->Query("UPDATE dbm_sessions set session_data='".mysql_escape_string(serialize($_SESSION))."',date='".date('Y-m-d h:i:s')."' WHERE session_id='".session_id()."'");
+			$MDB->Query("UPDATE dbm_sessions set session_data='".db_escape(serialize($_SESSION))."',date='".date('Y-m-d h:i:s')."' WHERE session_id='".session_id()."'");
 			@session_destroy();
 		}
 	}
@@ -295,7 +306,7 @@ return strtolower(get_class($class));
 
 //error_reporting(E_ERROR | E_WARNING | E_PARSE);
 
-error_reporting(E_ALL ^ E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED); // was E_ALL ^ E_NOTICE; deprecations from this 2008 code would flood the log
 
 //ini_set("magic_quotes_gpc", "0");
 
@@ -1075,6 +1086,11 @@ function _write_cache($varname) {
 
 		$cacheFile = fopen(_CACHE_DIR_ . "/" . $varname, "w+");
 
+		if ($cacheFile === false) {
+			error_log("_write_cache: cannot write " . _CACHE_DIR_ . "/" . $varname);
+			return;
+		}
+
 		fwrite($cacheFile,  serialize($GLOBALS[$varname]));
 
 		fclose($cacheFile);
@@ -1331,7 +1347,7 @@ class Date {
 
 				list($d,$m,$y) = explode(".", $o);
 
-				$this->time = mktime(0, 0, 0, $m, $d, $y);
+				$this->time = mktime(0, 0, 0, (int)$m, (int)$d, (int)$y); // (int): PHP 5 read "2026 12:00" as 2026, PHP 8 throws
 
 			} else {
 
