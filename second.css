@@ -1,0 +1,39 @@
+h2 {text-transform:uppercase;padding:0px;margin:0px}
+h6 {padding:0px 0px 5px 0px;margin:0px}
+h2,h3,h4,h5,h6 {padding-left:5px}
+
+.contentTextHead {padding:39px 40px 0px 45px;background:url(_img/bg_content_text_head.gif) no-repeat 0px 16px;}
+.prof {margin:10px 0px 0px 5px;}
+.prof td {padding:0px 5px 5px 0px;}
+.actor {margin:10px 0px 10px 5px;}
+.actor td {padding:0px 5px 0px 0px;}
+.contentText .contentDetailTab {margin:15px 0px;background-image:none;}
+.contentText .contentDetailTab #pad {padding:0px 0px 5px 0px;}
+.contentText .contentDetailTab .text {padding:8px 8px 0px 10px;font:10px tahoma;width:105px;}
+.contentText {margin-left:5px;}
+.mail {padding:7px 0px 0px 0px;}
+
+
+.contentText .newsName {color:#424242;}
+.contentText .newsMain {margin-left:-45px;padding-left:50px;}
+.contentText .newsMain h6 {padding-bottom:3px;}
+.contentText .newsLinkDetail a {color:#A60000;}
+
+.newsMain h3, .newsMain h6 {padding-left:0px}
+
+DIV.pager {text-align:center}
+TABLE.pager {margin:15px auto 0 auto}
+TABLE.pager TD {color:#BB0909; padding:0 3px}
+
+
+.contentLink {background:url(/_img/bg_content_text_head_sec.gif) no-repeat left bottom;padding-bottom:42px;margin-bottom:10px;width:400px;padding-left:5px;}
+.contentLink div {float:left;background:url(/_img/bg_content_text_head_link.gif) no-repeat top right;padding-right:20px;color:#3E3E3E;}
+.contentLink a {color:#3E3E3E;}
+
+/*10.09.2006*/
+.filmography {}
+.filmography td {border-bottom:1px solid #939393; padding:3px 0px 5px 0px;}
+.filmography .name {/*color:#005699;*/}
+.filmography .role {padding-left:10px;padding-right:20px;}
+/**/
+

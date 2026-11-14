@@ -1,0 +1,56 @@
+<?
+	
+	$cuGroupRights = &new NodeGroupRights($CurrentAdminUser->group, $node);
+	$userHasWriteRights = $cuGroupRights->hasWriteRight();
+	$request->setAttribute("userHasWriteRights", $userHasWriteRights);
+
+	if (!$userHasWriteRights) {
+		$disabledControlIfUserHasNoWriteRights = " disabled=true";
+	}
+
+	$restrict_edit = $CurrentAdminUser->group->restrictNodeEdit;
+	$request->setAttribute("restrict_edit", $restrict_edit);
+
+	$parents = $node->getParentList();
+	$request->setAttribute("parents", $parents);
+	$nodeClass = $node->getNodeClass();
+?>
+<html>
+<head>
+<meta HTTP-EQUIV="content-type" CONTENT="text/html; charset=<?=ADMIN_CHARSET?>">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Cache-Control" content="must-revalidate, post-check=0, pre-check=0">
+<meta http-equiv="pragma" content="no-cache">
+<title></title>
+<link rel=stylesheet href=/admin/css.css type="text/css">
+<script type="text/javascript" src="/admin/js/refresh_tree.js"></script>
+<script language="JavaScript">
+    function wop(url, w, h) {
+        w = window.open(url,'node_props','resizable=yes,toolbar=no,location=no,directories=no,status=no,menubar=no,width='+w+', height='+h+',scrollbars=yes,fullscreen=no,top=100, left=100');
+		w.focus();
+    }
+</script>
+</head>
+
+<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main<?if ($request->getParameter('reload') != null) {?> onLoad="refreshTree(<?=$node->id?>, <?=$node->parent_id+0?>,'<?=rawurlencode($node->name)?>')"<?}?>>
+
+<table width=100% border=0 cellpadding=4 cellspacing=0>
+<tr class=top4>
+<td height=40 id=pad18 colspan=2 class=head><? if (!$CurrentAdminUser->group->canManageUsers) { array_shift($parents); } $i=0;foreach ($parents as $parent) {$i++;?><?if ($i!=1) {?> : <?}?><a href="/admin/emails.php?do=main&id=<?=$parent->id?>" id=black><nobr><?=$parent->name?></nobr></a><?}?><?if (sizeof($parents) != 0) {?> : <?}?><b><nobr><?=$node->name?></nobr></b></td>
+</tr>
+</table>
+<table width=100% border=0 cellpadding=0 cellspacing=0 class=top42><td><img src=/admin/_img/s.gif width=1 height=5></td></table>
+
+
+<div id=pad5>
+<?$msg = $request->getParameter("msg"); if ($msg != null) {?><span id="red"><?=$AdminTrnsl[$msg]?></span><?}?>&nbsp;
+</div>
+
+<? if (!$restrict_edit
+	|| $nodeClass->checkFlag("USE_SHORTNAME")
+	|| ($CurrentAdminUser->group->canManageUsers && $node->getChildrenCountForGroup($CurrentAdminUser->group->id) > 0)
+	|| ($userHasWriteRights && $CurrentAdminUser->group->canManageUsers)
+	|| ($userHasWriteRights && !$restrict_edit)
+	) { ?>
+<? } ?>
+<!-- nodes header end -->

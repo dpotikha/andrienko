@@ -1,0 +1,137 @@
+<html>
+<head>
+<meta HTTP-EQUIV="content-type" CONTENT="text/html; charset=<?=ADMIN_CHARSET?>">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Cache-Control" content="must-revalidate, post-check=0, pre-check=0">
+<meta http-equiv="pragma" content="no-cache">
+<link rel=stylesheet href=/admin/css.css type="text/css">
+	<title>Премія PinchukArtCentre</title>
+<link rel=stylesheet href="/admin/js/calendar/calendar-win2k-cold-2.css" type="text/css">
+<script type="text/javascript" src="/admin/js/calendar/calendar.js"></script>
+<script type="text/javascript" src="/admin/js/calendar/ru.js"></script>
+<script type="text/javascript" src="/admin/js/calendar/calendar-setup.js"></script>
+<script type="text/javascript" src="/admin/js/tooltip.js"></script>
+
+<script type="text/javascript" src="/admin/js/jquery.js"></script>
+<script type="text/javascript" src="/admin/js/popup_window/iresizable.js"></script>
+<script type="text/javascript" src="/admin/js/popup_window/ifxtransfer.js"></script>
+<script type="text/javascript" src="/admin/js/popup_window/iutil.js"></script>
+<script type="text/javascript" src="/admin/js/popup_window.js"></script>
+<script type="text/javascript" src="/admin/js/window2.js"></script>
+<script>
+var nid=null;
+var ntype=null;
+function moveNode(node_id,type){
+	//alert(node_id);	
+	nid=node_id;
+	ntype=type;
+	QCode.windows.open('node_'+node_id,{size:CONFIG.windows.move,title:'Перемещение заявки № '+node_id,onload:onOpen,params:{node_id:node_id,type:type},level:1});
+}
+function onOpen(p){
+		QCode.windows.setContent(1,'<form onSubmit="return false" method="post" name="moveform_'+p.node_id+'">'+$('#move_node').html()+'</form>');
+	}
+var textArr=new Array();
+function checkMove(){
+	var form=document.forms['moveform_'+nid];
+	form['node_id'].value=nid;
+	form['ntype'].value=ntype;
+	var ch=-1;
+	for(var i=0;i<=2;i++){
+		if(form['move_folder'][i].checked)
+		ch=i;
+	}
+	if(ch==1&&form['message'].value==''){
+		alert('Введите причину отказа');	
+	}else{
+		form.submit();
+//		alert(ch);	
+	}
+}
+
+
+</script>
+
+
+<style type="text/css" media="all">
+	@import url('/admin/js/popup_window.css');
+</style>
+
+
+</head>
+
+<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main>
+<div style="display:none" id="move_node">
+		<input type="hidden" name="node_id" value="0">
+		<input type="hidden" name="type" value="<?=$type?>">
+		<input type="hidden" name="stype" value="<?=$stype?>">
+		<input type="hidden" name="ntype" value="0">
+		<input type="hidden" name="do" value="move">
+       <strong>Папка назначения:</strong><br>
+    	<ul style="list-style-image:url(/admin/_img/ico/folder.png);">
+            <li><input type="radio" name="move_folder" value="confirmed">Подтвержденные</li>
+    		<li><input type="radio" name="move_folder" value="canceled">Отклоненные</li>
+    		<li><input type="radio" name="move_folder" value="waiting">Ожидание</li>
+    		<li><input type="radio" name="move_folder" value="not_move" checked>Не переносить</li>
+        </ul>
+        отметить как просмотренную <input type="checkbox" name="is_mod" value="1" checked>
+        <br/><br/>
+        <strong>Комментарий администратора:</strong><br>
+        <textarea name="message" style="width:400px; height:100px"></textarea>
+        <input type="button" value="Переместить" onClick="javascript:checkMove()">
+    
+</div>
+<table width=100% border=0 cellpadding=0 cellspacing=0 class=top3><td><img src=/admin/_img/s.gif width=1 height=1></td></table>
+<table width=100% border=0 cellpadding=4 cellspacing=0>
+<tr class=top41>
+<td height=30 id=pad18 colspan=2 nowrap class=head><b>Управление заявками</b></td>
+</tr>
+</table>
+<table width=100% border=0 cellpadding=0 cellspacing=0 class=top2><td><img src=/admin/_img/s.gif width=1 height=1></td></table>
+
+
+<style>
+	ul{
+		padding-left:25px;
+		margin:0;
+	}
+	img{
+		border:0;	
+		}
+	ul li a{
+		color:#000;
+		text-decoration:none;
+	}
+	ul li a:hover{
+		color:#060;
+		text-decoration:underline;
+	}
+	ul li a.cur{
+		color:#ff0000;
+		font-weight:bold;
+		text-decoration:none;
+	}
+	ul li a.cur:hover{
+		text-decoration:underline;
+	}
+</style>
+<table cellpadding="10" cellspacing="0" border="0" id="stats">
+	<tr>
+        <td>
+        	<ul  style="list-style-image:url(/admin/_img/ico/folder.png);">
+            <li><a href="/admin/apps.php?do=view&type=all" <? if($type=='all'){?> class="cur"<? }?>>Все заявки <strong>[<?=($a_all_Count)?>]</strong></a> <a href="/admin/apps.php?do=download&type=all" title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a>
+        	<ul>
+            	<li><a href="/admin/apps.php?do=view&type=new" <? if($type=='new'){?> class="cur"<? }?>>Новые заявки <strong>[<?=$a_new_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=new" title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a></li>
+                <li><a href="/admin/apps.php?do=view&type=mod"  <? if($type=='mod'&&!strlen($stype)){?> class="cur"<? }?>>Просмотренные заявки <strong>[<?=$a_mod_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=mod" title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a>
+                	<ul>
+                    	<li><a href="/admin/apps.php?do=view&type=mod&stype=confirmed"  <? if($stype=='confirmed'){?> class="cur"<? }?>>Подтвержденные <strong>[<?=$a_mod_confirmed_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=confirmed"  title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a></li>
+                        <li><a href="/admin/apps.php?do=view&type=mod&stype=canceled"  <? if($stype=='canceled'){?> class="cur"<? }?>>Отклоненные <strong>[<?=$a_mod_canceled_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=canceled"  title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a></li>
+                        <li><a href="/admin/apps.php?do=view&type=mod&stype=waiting"  <? if($stype=='waiting'){?> class="cur"<? }?>>Ожидание <strong>[<?=$a_mod_waiting_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=waiting"><img src="/admin/_img/ico/page_white_excel.png"  title="Скачaть"></a></li>
+                    </ul>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </td>
+        
+    </tr>
+</table>

@@ -1,0 +1,217 @@
+
+
+#window,#window1
+
+{
+
+	position: absolute;
+
+	left: 200px;
+
+	top: 100px;
+
+	width: 400px;
+
+	height: 300px;
+
+	overflow: hidden;
+
+	display: none;
+
+	z-index:9000;
+
+}
+
+
+#modalOverlay {
+
+	height: 100%; 
+
+	width: 100%; 
+
+	position: fixed; 
+
+	left: 0pt; 
+
+	top: 0pt; 
+
+	z-index: 3000; 
+
+	display: none;
+
+	background-color:#000000;
+
+	filter:alpha(opacity=20); 
+
+	-moz-opacity: 0.2; 
+
+	opacity: 0.2;
+
+}
+
+#windowTop
+
+{
+
+	height: 30px;
+
+	overflow: 30px;
+
+	background-image: url(window_top_end.png);
+
+	
+
+	background-position: right top;
+
+	background-repeat: no-repeat;
+
+	position: relative;
+
+	overflow: hidden;
+
+	cursor: move;
+
+}
+
+#windowTopContent
+
+{
+
+	margin-right: 13px;
+
+	background-image:url(window_top_start.png);
+
+	background-position:left top;
+
+	background-repeat: no-repeat;
+
+	overflow: hidden;
+
+	height: 30px;
+
+	line-height: 30px;
+
+	text-indent: 10px;
+
+	font-family:Arial, Helvetica, sans-serif;
+
+	font-weight: bold;
+
+	font-size: 12px;
+
+	color: #fff;
+
+}
+
+#windowClose,#windowClose1
+
+{
+
+	position: absolute;
+
+	right: 10px;
+
+	top: 10px;
+
+	cursor: pointer;
+
+}
+
+#windowBottom
+
+{
+
+	position: relative;
+
+	height: 270px;
+
+	background-image: url(window_bottom_end.png);
+
+	background-position: right bottom;
+
+	background-repeat: no-repeat;
+
+}
+
+#windowBottomContent
+
+{
+
+	position: relative;
+
+	height: 270px;
+
+	background-image: url(window_bottom_start.png);
+
+	background-position: left bottom;
+
+	background-repeat: no-repeat;
+
+	margin-right: 13px;
+
+}
+
+#windowResize,#windowResize1
+
+{
+
+	position: absolute;
+
+	right: 3px;
+
+	bottom: 5px;
+
+	cursor: se-resize;
+
+}
+
+#windowContent
+
+{
+
+	position:absolute;
+
+	top: 30px;
+
+	left: 10px;
+
+	width: auto;
+
+	height: auto;
+
+	overflow: auto;
+
+	margin-right: 10px;
+
+	border: 1px solid #990000;
+
+	height: 255px;
+
+	width: 375px;
+
+	font-family:Arial, Helvetica, sans-serif;
+
+	font-size: 11px;
+
+	background-color: #fff;
+
+}
+
+
+
+.transferer2
+
+{
+
+	border: 1px solid #6BAF04;
+
+	background-color: #996600;
+
+	filter:alpha(opacity=30); 
+
+	-moz-opacity: 0.3; 
+
+	opacity: 0.3;
+
+}
+

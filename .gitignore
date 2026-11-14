@@ -1,0 +1,20 @@
+# secrets and DB dumps
+/_settings.php
+/backup/
+*.sql
+*.sql.gz
+
+# runtime
+/cache/
+error_log
+*.log
+
+# uploaded content (lives on the server, synced separately)
+/content/
+/files/
+/imglib/
+/imglib_thumbnails/
+/trash/
+
+Thumbs.db
+desktop.ini

@@ -1,0 +1,9 @@
+<?
+$rootNode = &Node::findByPath($CM_PARAMS["root_node_path"]);
+$availableValues = $rootNode->getRecursiveChildrenOfClasses(explode(",", $CM_PARAMS["allowed_classes"]));
+?>
+<select name="<?= $CM_CONTROL_NAME ?>">
+<option value="">- - -
+<? foreach ($availableValues as $avail_value) { ?>
+<option value="<?=$avail_value->id?>"<? if ($CM_PARAMS["linked_node_id"] == $avail_value->id) { ?> SELECTED<? } ?>><?=$avail_value->name?>
+<? } ?>

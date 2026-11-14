@@ -1,0 +1,16 @@
+RewriteEngine on
+
+RewriteBase /
+DirectoryIndex index.php
+
+RewriteCond     %{REQUEST_FILENAME}     !-f
+RewriteCond     %{REQUEST_FILENAME}     !-d
+RewriteCond     %{REQUEST_URI} !^(/admin.*|/forum.*|/index.php*)
+
+#RewriteRule 	^([a-zA-Z]{2})/pac.rss$ /$1/rss [L]
+#RewriteRule ^([a-zA-Z]{2})(.*)?$ index.php?lang=$1&&path=$2&%{QUERY_STRING}
+RewriteRule     ^(.*) index.php?%{QUERY_STRING} [L,E=REQUEST_URI:/index.php/$1]
+
+#ErrorDocument 404 /
+
+AddDefaultCharset utf-8

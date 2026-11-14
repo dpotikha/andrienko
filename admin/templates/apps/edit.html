@@ -1,0 +1,88 @@
+
+<table cellpadding="10" cellspacing="0" border="0" id="stats">
+	<tr>
+        <td>
+<?
+	if(count($childsI)){
+    ?>
+<table class="backtab2" width="100%" border="0" cellpadding="0" cellspacing="0">
+ <tr bgcolor="#ffffff">
+  <td class="td2" id="pad5">
+   <table class="nobacktab" width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+     <td><b>Тип: Индивидуальные заявки</b></td>
+     <td class="small" align="right">individual</td>
+    </tr>
+   </table>
+  </td>
+ </tr>
+</table>
+
+<table class="backtab2" width="100%" border="0" cellpadding="0" cellspacing="0">
+ <tr id="back2" class="header">
+  <td class="td2" width="1%">№</td>
+  <td width="20%">ФИО</td>
+  <td width="34%">Паспортные данные</td>
+  <td width="9%">Образование</td>
+  <td width="20%">Адрес</td>
+  <td width="5%">Контактный телефон</td>
+  <td width="5%">E-mail</td>
+  <td width="5%">Действия</td>
+ </tr>
+        <? foreach($childsI as $k=>$v){?>
+ <tr id="back3" class="zayava" <? if($v->tfields['is_change']){?>style="background-color:#ffc8c8"<? }?>>
+  <td class="td2"><?=$v->id?></td>
+  <td><nobr><b><?=$v->name?></b></nobr><br>(<?=$v->tfields['name_en']?>)</td>
+  <td><?=$v->tfields['birthdate']['formatted_date']?>, <?=$v->tfields['passport']?>, <?=$v->tfields['passport_info1']?>, <?=$v->tfields['passport_date']['formatted_date']?></td>
+  <td><?=$v->tfields['education']?></td>
+  <td><?=getCountryRegion($v->fields['country']->value,$v->fields['region']->value)?>, <?=$v->tfields['city']?>, <?=$v->tfields['address']?></td>
+  <td><?=$v->tfields['phone']?></td>
+  <td><?=$v->tfields['email']?></td>
+  <td class="redo"><a href="/admin/applications.php?do=main&id=<?=$v->id?>" target="_blank">Просмотреть</a><? if(($type=='mod'&&isset($stype))||($type!='all'&&$type!='mod')){?><br /><nobr><a id="node_<?=$v->id?>" href="javascript:;" onclick="javascript:moveNode(<?=$v->id?>,1)">Переместить в папку</a><? }?></nobr></td>
+ </tr>
+        <? }?>
+        </table>
+        <?
+   }
+    if(count($childsG)){
+    ?>
+<table class="backtab2" width="100%" border="0" cellpadding="0" cellspacing="0">
+ <tr bgcolor="#ffffff">
+  <td class="td2" id="pad5"><br>
+   <table class="nobacktab" width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+     <td><b>Тип: Коллективные заявки</b></td>
+     <td class="small" align="right">Collective</td>
+    </tr>
+   </table>
+  </td>
+ </tr>
+</table>
+
+<table class="backtab2" width="100%" border="0" cellpadding="0" cellspacing="0">
+ <tr id="back2" class="header">
+  <td width="1%" class="td2">№</td>
+  <td width="50%">Название</td>
+  <td width="25%">Адрес</td>
+  <td width="14%">Вебсайт</td>
+  <td width="5%">E-mail</td>
+  <td width="5%">Действия</td>
+ </tr>
+        <? foreach($childsG as $k=>$v){?>
+ <tr id="back3" class="zayava" <? if($v->tfields['is_change']){?>style="background-color:#ffc8c8"<? }?>>
+  <td class="td2"><?=$v->id?></td>
+  <td><b><?=$v->name?></b><br>(<?=$v->tfields['name_en']?>)</td>
+  <td><?=getCountryRegion($v->fields['country']->value,$v->fields['region']->value)?></td>
+  <td><?=$v->tfields['website']?>&nbsp;</td>
+  <td><?=$v->tfields['email']?></td>
+  <td class="redo"><a href="/admin/applications.php?do=main&id=<?=$v->id?>" target="_blank">Просмотреть</a><? if(($type=='mod'&&isset($stype))||($type!='all'&&$type!='mod')){?><br /><nobr><a id="node_<?=$v->id?>" href="javascript:;" onclick="javascript:moveNode(<?=$v->id?>,2)">Переместить в папку</a><? }?></nobr></td>
+ </tr>
+        <? }?>
+</table>
+        <?
+    }
+ ?>
+         </td>
+
+    </tr>
+</table>

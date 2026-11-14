@@ -1,0 +1,155 @@
+<html>
+<head>
+<meta HTTP-EQUIV="content-type" CONTENT="text/html; charset=<?=ADMIN_CHARSET?>">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Cache-Control" content="must-revalidate, post-check=0, pre-check=0">
+<meta http-equiv="pragma" content="no-cache">
+
+  <title>Deeptree</title>
+    <link rel=stylesheet href=/admin/css.css type="text/css">
+    <link rel="stylesheet" type="text/css" href="/admin/mstree/deeptree.css">
+</head>
+
+<script>
+function selectNode(np_id) {
+    window.document.location.href = '/admin/nodes.php?do=move_node&node_id=<?=$request->getParameter("node_id")?>&np_id='+np_id;
+}
+</script>
+
+
+
+<link rel="stylesheet" type="text/css" href="/admin/yui/build/fonts/fonts-min.css" />
+<link rel="stylesheet" type="text/css" href="/admin/yui/build/treeview/assets/skins/sam/treeview_moved.css" />
+<script type="text/javascript" src="/admin/yui/build/yahoo/yahoo.js"></script>
+<script type="text/javascript" src="/admin/yui/build/event/event.js"></script>
+<script type="text/javascript" src="/admin/yui/build/connection/connection.js"></script>
+<script type="text/javascript" src="/admin/yui/build/treeview/treeview.js"></script>
+
+
+
+
+<?$root = Node::findRoot();?>
+<?if (!$NoValidNodes) {?>
+<script type="text/javascript">
+
+var treeExample = function() {
+
+	var tree, currentIconMode;
+
+    function changeIconMode() {
+        var newVal = parseInt(this.value);
+        if (newVal != currentIconMode) {
+            currentIconMode = newVal;
+        }
+        buildTree();
+    };
+		function loadNodeData(node, fnLoadComplete)  {
+			var sUrl = "/admin/req1.php?from_node=" + node.id+"&page=1&target_node=<?=$request->getParameter("node_id")?>"
+			var callback = {
+				success: function(oResponse) {
+					var oResults = eval("(" + oResponse.responseText + ")");
+
+					if((oResults.ResultSet.Result) && (oResults.ResultSet.Result.length)) {
+						if(YAHOO.lang.isArray(oResults.ResultSet.Result)) {
+							for (var i=0, j=oResults.ResultSet.Result.length; i<j; i++) {
+								if(oResults.ResultSet.Result[i].ch==0){
+									var tempNode = new YAHOO.widget.TextNode(oResults.ResultSet.Result[i].title, node, false);
+									tempNode.href="javascript:selectNode("+oResults.ResultSet.Result[i].id+")";
+									tempNode.dynamicLoadComplete=true;
+								}else{
+									
+									var tempNode = new YAHOO.widget.TextNode(oResults.ResultSet.Result[i].title, node, false);
+									tempNode.href="javascript:selectNode("+oResults.ResultSet.Result[i].id+")";
+								}
+								tempNode.id=oResults.ResultSet.Result[i].id;
+								tempNode.nowrap=true;
+
+
+						}
+						} else {
+							var tempNode = new YAHOO.widget.TextNode(oResults.ResultSet.Result, node, false)
+						}
+					}else{
+					}
+					oResponse.argument.fnLoadComplete();
+					
+				},
+				
+				failure: function(oResponse) {
+					YAHOO.log("Failed to process XHR transaction.", "info", "example");
+					oResponse.argument.fnLoadComplete();
+				},
+				
+				argument: {
+					"node": node,
+					"fnLoadComplete": fnLoadComplete
+				},
+				
+				timeout: 15000
+			};
+			
+			YAHOO.util.Connect.asyncRequest('GET', sUrl, callback);
+		};
+
+        function buildTree() {
+		   tree = new YAHOO.widget.TreeView("treeDiv1");
+		   
+		   tree.setDynamicLoad(loadNodeData, currentIconMode);
+		   
+		   var root = tree.getRoot();
+		   
+	   		var tempNode = new YAHOO.widget.TextNode("<?=$root->name?>", root, false);
+
+			tempNode.id=<?=$root->id?>;
+			tempNode.href="javascript:selectNode("+tempNode.id+")";
+			tempNode.page=1;
+		   tree.draw();
+		   tempNode.expand();
+		};
+
+
+	return {
+		init: function() {
+			currentIconMode = 1;
+            buildTree();
+        },
+		getTree:function()
+		{
+			return tree;
+		}
+
+	};
+} ();
+
+//once the DOM has loaded, we can go ahead and set up our tree:
+YAHOO.util.Event.onDOMReady(treeExample.init, treeExample,true)
+
+</script>
+<? }?>
+<style>
+#treeDiv1 {background: #fff;}
+</style>
+
+
+<body  leftmargin=10 topmargin=10 marginwidth=10 marginheight=10 class=main>
+
+<?if (!$NoValidNodes) {?>
+<?=$AdminTrnsl["NodeMoveSelectTargetNode"]?>
+
+<br><br>
+<nobr>
+
+<div id="treeDiv1"></div>
+</nobr>
+
+<?}else{?>
+<table width=100% border=0 cellpadding=4 cellspacing=0>
+<tr>
+<td id=pad18 width=10%>
+<?=$AdminTrnsl["NodeMoveNoValidNodes"]?>
+</TD>
+</TR>
+</table>
+<?}?>
+</body>
+</html>

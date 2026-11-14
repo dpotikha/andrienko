@@ -1,0 +1,84 @@
+<?
+	function printDirRecursive($urlapp, $dirRelPath, $currentDir) {
+		global $CurrentAdminUser;
+		echo "<ul>";
+		$dir = ImgLibFolder::findByRelDir($dirRelPath);
+		$subdirs = $dir->getSubfolders();
+		foreach($subdirs as $subdir) {
+			if ($CurrentAdminUser->group->id != 1 && $subdir->getName() == '_newimage') continue;
+			$subdirRelPath = $subdir->getRelPath();
+			if ($subdirRelPath != $currentDir) {
+				$destDirRelPath = $subdir->getName();
+				if (strlen($dirRelPath) != 0) {
+					$destDirRelPath = $dirRelPath . '/' . $destDirRelPath;
+				}
+				echo "<a href='/admin/imglib.php?do=image_move".$urlapp."&cdir=" . $destDirRelPath .
+					"'><img src='/admin/_img/folder.gif' width=14 height=10 hspace=3 border=0>" .
+					$subdir->getName() . "</a><br>";
+			} else {
+				echo "<img src='/admin/_img/folder.gif' width=14 height=10 hspace=3 border=0>" .
+					$subdir->getName() . "<br>";
+			}
+			printDirRecursive($urlapp, $subdirRelPath, $currentDir);
+		}
+		echo "</ul>";
+	}
+
+	$urlapp = "&cname=".$cname."&oldcdir=".$cdir->getRelPath()."&fname=".$image->getName();
+?>
+
+<html>
+<head>
+<meta HTTP-EQUIV="content-type" CONTENT="text/html;charset=<?=ADMIN_CHARSET?>">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Cache-Control" content="must-revalidate, post-check=0, pre-check=0">
+<meta http-equiv="pragma" content="no-cache">
+<link rel=stylesheet href=/admin/css.css type="text/css">
+	<title><?=$AdminTrnsl["ImgLibMovingimage"]?></title>
+</head>
+
+<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main>
+
+<table width=100% border=0 cellpadding=4 cellspacing=0>
+<tr class=top4>
+<td height=40 id=pad18 colspan=2 class=head><b><?=$AdminTrnsl["ImgLib"]?> : </b><?=$AdminTrnsl["ImgLibMovingimage"]?></td>
+</tr>
+</table>
+<table width=100% border=0 cellpadding=0 cellspacing=0 class=top42><td><img src=/admin/_img/s.gif width=1 height=5></td></table>
+<table width=100% border=0 cellpadding=4 cellspacing=0>
+<td id=pad18 class=h4>
+<br>
+
+<table border=0 cellpadding=0 cellspacing=0><td><b><a href="/admin/imglib.php?cdir=&cname=<?=$cname?>"><?=$AdminTrnsl["ImgLibMainFolder"]?></a> :</b><? $cd=array();$ds=explode('/', $cdir->getRelPath());  foreach($ds as $d) { if(!$d) continue; $cd[]=$d;?><b> <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a> :</b><?}?> <?=$image->getName()?></td></table>
+<br>
+
+<table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab2>
+<tr id=back3>
+<td class=td2 style="padding:0 0 0 0" align=center valign=top><img src="/imglib_thumbnails<?=$image->getUrl()?>" border=0 class=bord1></td>
+</tr>
+
+<tr id=back3>
+<td class=td2>
+<br>
+<b><?=$AdminTrnsl["ImgLibChooseFolderToMove"]?>:</b><br>
+<ul>
+<a href="/admin/imglib.php?do=image_move<?=$urlapp?>&cdir="><img src="/admin/_img/folder.gif" width="14" height="10" hspace="3" border="0"><?=$AdminTrnsl["ImgLibMainFolder"]?></a><br>
+<?printDirRecursive($urlapp, "", $cdir->getRelPath());?>
+</ul>
+<br>
+<br>
+<br>
+
+<br>
+<br>
+<br>
+
+</td>
+</tr>
+</table>
+
+</td>
+</tr></table>
+
+</body>
+</html>

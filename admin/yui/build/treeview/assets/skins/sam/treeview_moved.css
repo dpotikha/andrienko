@@ -1,0 +1,44 @@
+/*
+Copyright (c) 2007, Yahoo! Inc. All rights reserved.
+Code licensed under the BSD License:
+http://developer.yahoo.net/yui/license.txt
+version: 2.3.0
+*/
+.ygtvtn{width:18px;height:18px;background:url(treeview-sprite.gif) 0 -5603px no-repeat;}
+.ygtvtm{width:18px;height:18px;cursor:pointer;background:url(treeview-sprite.gif) 0 -4003px no-repeat;}
+.ygtvtmh{width:18px;height:18px;cursor:pointer;background:url(treeview-sprite.gif) 0 -4803px no-repeat;}
+.ygtvtp{width:18px;height:18px;cursor:pointer;background:url(treeview-sprite.gif) 0 -6403px no-repeat;}
+.ygtvtph{width:18px;height:18px;cursor:pointer;background:url(treeview-sprite.gif) 0 -7203px no-repeat;}
+.ygtvln{width:18px;height:18px;background:url(treeview-sprite.gif) 0 -1603px no-repeat;}
+.ygtvlm{width:18px;height:18px;cursor:pointer;background:url(treeview-sprite.gif) 0 -3px no-repeat;}
+.ygtvlmh{width:18px;height:18px;cursor:pointer;background:url(treeview-sprite.gif) 0 -803px no-repeat;}
+.ygtvlp{width:18px;height:18px;cursor:pointer;background:url(treeview-sprite.gif) 0 -2403px no-repeat;}
+.ygtvlph{width:18px;height:18px;cursor:pointer;background:url(treeview-sprite.gif) 0 -3203px no-repeat;}
+.ygtvloading{width:18px;height:18px;background:url(treeview-loading.gif) 0 0 no-repeat;}
+.ygtvdepthcell{width:18px;height:18px;background:url(treeview-sprite.gif) 0 -8003px no-repeat;}
+.ygtvblankdepthcell{width:18px;height:18px;}
+.ygtvitem{}.ygtvchildren{*zoom:1;}
+.ygtvlabel,.ygtvlabel:link,.ygtvlabel:visited{margin-left:0px; margin-right:0px; background-color:#ffffff;
+  padding:2px;}
+.ygtvlabel:hover{margin-left:0px; margin-right:0px; background-color:#CBF3A8;padding:2px;
+ }
+.ygtvspacer{height:18px;width:18px;}
+a.tree{
+	background-color:#98B97B;
+	padding:2px;
+	
+}
+a.tree:hover{
+	background-color:#CBF3A8;
+	padding:2px;
+}
+
+a.clear_tree{
+	background-color:#ffffff;
+	padding:2px;
+}
+a.clear_tree:hover{
+	background-color:#CBF3A8;
+	padding:2px;
+}
+

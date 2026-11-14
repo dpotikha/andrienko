@@ -1,0 +1,68 @@
+ #popupElement{
+	display:block;
+	position:absolute;
+	top:0;
+	left:0; 
+	z-index:8000;
+ } 
+  #popup_layer{
+	position:absolute; 
+	width:600px; 
+	height:300px; 
+	top:0px;
+	left:0px;
+	
+}
+#popup_layer #popupLayerShadow{display:block;position:absolute;left:0px;top:3px;z-index: 99001;  width:100%; height: 300px; }
+#popup_layer #popupLayerShadowTR{background:transparent  url( "pW/shadow.png" ) no-repeat 100% -18px; height:6px; padding-right:6px;}
+#popup_layer #popupLayerShadowTL{background:transparent  url( "pW/shadow.png" ) no-repeat 0 0;height:6px; padding-left:6px}
+#popup_layer #popupLayerShadowTC{background:transparent  url( "pW/shadow.png" ) repeat-x 0 -30px;height:6px; overflow:hidden; }
+
+#popup_layer #popupLayerShadowMR{background:transparent url("pW/shadow-lr.png" ) repeat-y 100% 0; height:100%; padding-right:6px;}
+#popup_layer #popupLayerShadowML{background:transparent url("pW/shadow-lr.png" ) repeat-y 0 0;height:100%; padding-left:6px}
+#popup_layer #popupLayerShadowMC{background:#c7c7c7;height:100%; overflow:hidden; }
+
+
+#popup_layer #popupLayerShadowBR{background:transparent url( "pW/shadow.png" ) no-repeat 100% -6px; height:6px; padding-right:6px;}
+#popup_layer #popupLayerShadowBL{background:transparent url( "pW/shadow.png" ) no-repeat 0 -12px;height:6px; padding-left:6px}
+#popup_layer #popupLayerShadowBC{background:transparent url( "pW/shadow.png" ) repeat-x  0 -36px;height:6px;overflow:hidden}
+
+#popup_layer #popupElementTitleRight{background:url("pW/hd-sprite.gif") no-repeat right 0;height:24px; padding-right:3px}
+#popup_layer #popupElementTitleLeft{background:url("pW/hd-sprite.gif") no-repeat 0 -41px;height:24px; padding-left:3px; cursor:move}
+#popup_layer #popupElementTitleCenter{background:url("pW/hd-sprite.gif") repeat-x 0 -82px;color:#FFF;font:bold 12px "sans serif",tahoma,verdana,helvetica; padding:5px;}
+#popup_layer #popup_layer_content{
+	  display:block;
+	  z-index:100001;
+	  position:absolute;
+	  left:6px;top:0px;
+	  height:274px;
+	  width:588px;
+  }
+#popup_layer #popupWindowBody{
+	background:url("pW/gradient-bg.gif");border:1px solid #6593cf;  height:100%;
+	padding:5px;
+}
+#popup_layer #popupWindowBody #popupWindowBodyContent
+{
+	height: 100%; 
+	width: 100%;
+	background:#ffffff repeat-x top; 
+	border:1px solid blue;
+	overflow: auto; 
+}
+#popup_layer #popupWindowBody #popupWindowBodyContent #popupWindowBodyContent
+{
+	 padding:5px;
+}
+#popup_layer #popupElementClose{
+	float:right;
+}
+ #popupWindowTitle{
+ 	
+ } 
+#popup_l{
+ background-color:#999999; width:10px; height:30px; display:none; position:absolute; top:0px; left:0px; z-index:23000;
+}
+#lock_layer{
+ background-color:#0033FF; width:100%; height:30px; display:none; position:absolute; top:0px; left:0px; z-index:200;
+}

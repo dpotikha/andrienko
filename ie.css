@@ -1,0 +1,4 @@
+.contentCornerRight {background:url('/_img/content_corner_right_ie.png');background: expression('none'); filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/_img/content_corner_right_ie.png', sizingMethod='crop');}
+.contentCornerRightR {background:url('/_img/content_corner_right_r_ie.png');background: expression('none'); filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/_img/content_corner_right_r_ie.png', sizingMethod='crop');}
+.contentCornerBottom {background:url('/_img/content_corner_bottom_ie.png');background: expression('none'); filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/_img/content_corner_bottom_ie.png', sizingMethod='crop');}
+.contentText {background:url(/_img/bg_content_corner_01_ie.png) no-repeat bottom right;}
