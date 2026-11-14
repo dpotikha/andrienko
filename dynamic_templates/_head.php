@@ -1,4 +1,4 @@
-<?
+<?php 
 $root = Node::findRoot();
 $topSection = getTopSection($CurrentNode);
 //$topSections = $root->getChildrenOfClasses(array("section", "section_text"));
@@ -15,10 +15,10 @@ $lastNodeInPath = array_pop($parents);
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
 <head>
-<title><? if (!$CurrentNode->isRoot()) { ?><?= $CurrentNode->name?> - <? } ?>Персональный сайт Виктора Андриенко</title>
+<title><?php  if (!$CurrentNode->isRoot()) { ?><?= $CurrentNode->name?> - <?php  } ?>Персональный сайт Виктора Андриенко</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="/main.css" >
-<? if (!$CurrentNode->isRoot()) { ?><link rel="stylesheet" type="text/css" href="/second.css" ><? } ?>
+<?php  if (!$CurrentNode->isRoot()) { ?><link rel="stylesheet" type="text/css" href="/second.css" ><?php  } ?>
 <!--[if lte IE 6]>
 <style media="all" type="text/css">
 	@import "/ie.css";
@@ -86,16 +86,16 @@ $lastNodeInPath = array_pop($parents);
 <table cellpadding="0" cellspacing="0" border="0" width="100%" class="contentLeft" style="background-color:#bababa;">
 <tr>
 <td class="contentLeft"><a href="/"><img src="/_img/logo.gif" width="370" height="100" alt=""></a>
-<? if ($CurrentNode->isRoot()) { ?>
+<?php  if ($CurrentNode->isRoot()) { ?>
 	<br><img src="_img/img_welcom.gif" width="210" height="40" alt="">
-<? } else { ?>
+<?php  } else { ?>
 	<div class="menuSecond">
-	<? for ($i=0; $i<sizeof($parents); $i++) {
-		$p = &$parents[$i]; ?><a href="<?= $p->getHref() ?>"><?= $p->name ?></a>&nbsp;&nbsp;/&nbsp;&nbsp;<? } ?><a href="<?= $lastNodeInPath->getHref() ?>" style="text-decoration:none"><strong><?= $lastNodeInPath->name ?></strong></a>
+	<?php  for ($i=0; $i<sizeof($parents); $i++) {
+		$p = &$parents[$i]; ?><a href="<?= $p->getHref() ?>"><?= $p->name ?></a>&nbsp;&nbsp;/&nbsp;&nbsp;<?php  } ?><a href="<?= $lastNodeInPath->getHref() ?>" style="text-decoration:none"><strong><?= $lastNodeInPath->name ?></strong></a>
 	</div>
 	<div class="contentTextHead">
 	
-	<? if ($CurrentNodeNodeClass->shortname == "project") { 
+	<?php  if ($CurrentNodeNodeClass->shortname == "project") { 
 	   $_projectsSection = $parents[count($parents)-1];
 	   $_siblingProjects = $_projectsSection->getChildren();
 	   
@@ -103,26 +103,26 @@ $lastNodeInPath = array_pop($parents);
 	?>
 		
 		<div class="contentLink">
-			<? for ($i=0; $i < count($_siblingProjects) ; $i++ ){
+			<?php  for ($i=0; $i < count($_siblingProjects) ; $i++ ){
 				$_siblingProject = &$_siblingProjects[$i]; ?>
-				<div<? if ($i == count($_siblingProjects)-1) { ?> style="background:none"<? } ?>><?
+				<div<?php  if ($i == count($_siblingProjects)-1) { ?> style="background:none"<?php  } ?>><?php 
 				if ($_siblingProject->shortname == $CurrentNode->shortname) { ?>
 					<strong><nobr><?= $_siblingProject->name; ?></nobr></strong>
-				<? } else { ?>
+				<?php  } else { ?>
 					<a href="<?= $_siblingProject->getHref(); ?>"><nobr><?= $_siblingProject->name; ?></nobr></a>
-				<? } ?>
+				<?php  } ?>
 				</div>
-			<? } ?>
+			<?php  } ?>
 			<br style="clear:both;">
   		</div>
 		
-	<? }
+	<?php  }
 	} ?>
 	
 	<h2><?= $lastNodeInPath->name ?></h2>
 	
 	</div>
-<? } ?>
+<?php  } ?>
 </td></tr>
 <tr><td class="contentText">
 <img src="/_img/s.gif" width="43" height="98" align="right">

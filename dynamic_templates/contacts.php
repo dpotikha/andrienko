@@ -1,4 +1,4 @@
-<?
+<?php 
 $action = $request->getParameter("do");
 
 switch($action) {

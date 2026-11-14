@@ -20,7 +20,7 @@
 <td id=pad18 class=h4>
 <br>
 
-<table border=0 cellpadding=0 cellspacing=0><td><b><a href="/admin/imglib.php?cdir=&cname=<?=$cname?>"><?=$AdminTrnsl["ImgLibMainFolder"]?></a> :</b><? $cd=array();$ds=explode('/', $cdir->getRelPath()); foreach($ds as $d) { if(!$d) continue; $cd[]=$d;?><b> <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a> :</b><?}?> <?=$image->getName()?></td></table>
+<table border=0 cellpadding=0 cellspacing=0><td><b><a href="/admin/imglib.php?cdir=&cname=<?=$cname?>"><?=$AdminTrnsl["ImgLibMainFolder"]?></a> :</b><?php  $cd=array();$ds=explode('/', $cdir->getRelPath()); foreach($ds as $d) { if(!$d) continue; $cd[]=$d;?><b> <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a> :</b><?php }?> <?=$image->getName()?></td></table>
 <br>
 
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab2>
@@ -37,15 +37,15 @@
 <tr id=back2>
 <td><b><?=$AdminTrnsl["ImgLibReplaceFile"]?>:</b></td>
 <td class=td2 id=back3>
-<?if($file_error){?><div class=errmsg><?=$file_error?></div><?}?>
+<?php if($file_error){?><div class=errmsg><?=$file_error?></div><?php }?>
 <input type="file" size="45" name="file" style="width:200px"></td>
 </tr>
 <tr id=back2>
 <td><b><?=$AdminTrnsl["ImgLibResizeStrategy"]?>:</b></td>
 <td class=td2 id=back3>
 <select name="resize_strategy">
-	<option value="bywidth"<?if("bywidth" == $request->getParameter("resize_strategy")){?> SELECTED<?}?>><?=$AdminTrnsl["ImgLibResizeStrategy_BYWIDTH"]?></option>
-	<option value="bygreaterside"<?if("bygreaterside" == $request->getParameter("resize_strategy")){?> SELECTED<?}?>><?=$AdminTrnsl["ImgLibResizeStrategy_BYGREATERSIDE"]?></option>
+	<option value="bywidth"<?php if("bywidth" == $request->getParameter("resize_strategy")){?> SELECTED<?php }?>><?=$AdminTrnsl["ImgLibResizeStrategy_BYWIDTH"]?></option>
+	<option value="bygreaterside"<?php if("bygreaterside" == $request->getParameter("resize_strategy")){?> SELECTED<?php }?>><?=$AdminTrnsl["ImgLibResizeStrategy_BYGREATERSIDE"]?></option>
 </select></td>
 </tr>
 <tr id=back2>

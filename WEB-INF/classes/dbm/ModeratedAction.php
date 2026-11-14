@@ -1,4 +1,4 @@
-<?
+<?php 
 
 class ModeratedAction {
 	var $id = 0;

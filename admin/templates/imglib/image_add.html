@@ -1,4 +1,4 @@
-<?
+<?php 
 $cdirPath = $cdir->getRelPath();
 ?>
 <html>
@@ -23,7 +23,7 @@ $cdirPath = $cdir->getRelPath();
 <td id=pad18 class=h4>
 <br>
 
-<table border=0 cellpadding=0 cellspacing=0><td><b><a href="/admin/imglib.php?cname=<?=$cname?>&cdir="><?=$AdminTrnsl["ImgLibMainFolder"]?></a></b><? $cd=array();$ds=explode('/', $cdirPath);  $ld=array_pop ($ds);foreach($ds as $d) { $cd[]=$d;?><b> : <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a></b><?}?><?if ($ld!=null){?><b>: <?=$ld?></b><?}?></td></table>
+<table border=0 cellpadding=0 cellspacing=0><td><b><a href="/admin/imglib.php?cname=<?=$cname?>&cdir="><?=$AdminTrnsl["ImgLibMainFolder"]?></a></b><?php  $cd=array();$ds=explode('/', $cdirPath);  $ld=array_pop ($ds);foreach($ds as $d) { $cd[]=$d;?><b> : <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a></b><?php }?><?php if ($ld!=null){?><b>: <?=$ld?></b><?php }?></td></table>
 <br>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab3>
 <form action="/admin/imglib.php" method=POST enctype="multipart/form-data">
@@ -40,8 +40,8 @@ $cdirPath = $cdir->getRelPath();
 <td nowrap><b><?=$AdminTrnsl["ImgLibResizeStrategy"]?>:</b></td>
 <td class=td2 id=back3>
 <select name="resize_strategy">
-	<option value="bywidth"<?if("bywidth" == $request->getParameter("resize_strategy")){?> SELECTED<?}?>><?=$AdminTrnsl["ImgLibResizeStrategy_BYWIDTH"]?></option>
-	<option value="bygreaterside"<?if("bygreaterside" == $request->getParameter("resize_strategy")){?> SELECTED<?}?>><?=$AdminTrnsl["ImgLibResizeStrategy_BYGREATERSIDE"]?></option>
+	<option value="bywidth"<?php if("bywidth" == $request->getParameter("resize_strategy")){?> SELECTED<?php }?>><?=$AdminTrnsl["ImgLibResizeStrategy_BYWIDTH"]?></option>
+	<option value="bygreaterside"<?php if("bygreaterside" == $request->getParameter("resize_strategy")){?> SELECTED<?php }?>><?=$AdminTrnsl["ImgLibResizeStrategy_BYGREATERSIDE"]?></option>
 </select></td>
 </tr>
 <tr id=back2>

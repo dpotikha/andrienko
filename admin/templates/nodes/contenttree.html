@@ -1,4 +1,4 @@
-<?
+<?php 
 	$restrict_edit = $CurrentAdminUser->group->restrictNodeEdit;
 ?>
 <html>
@@ -18,7 +18,7 @@
 </script>
 </head>
 
-<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main <?if ($request->getParameter("reload")!=null) {?> onLoad="refreshTree()"<? } ?>>
+<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main <?php if ($request->getParameter("reload")!=null) {?> onLoad="refreshTree()"<?php  } ?>>
 
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <tr class=top4>
@@ -28,12 +28,12 @@
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=top42><td><img src=/admin/_img/s.gif width=1 height=5></td></table>
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <tr><td id=pad18 class=h4>
-<?if(!$restrict_edit){?><div id=pad5><b class=h3><?=$AdminTrnsl["Sub_Nodes_List"]?></b></div><?}?>
+<?php if(!$restrict_edit){?><div id=pad5><b class=h3><?=$AdminTrnsl["Sub_Nodes_List"]?></b></div><?php }?>
 
-<?$shownFieldDefs = $item->shownFields?>
+<?php $shownFieldDefs = $item->shownFields?>
 
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab2>
-<?if(!$restrict_edit){ $nodeClass = &$item->nodeClass; ?>
+<?php if(!$restrict_edit){ $nodeClass = &$item->nodeClass; ?>
 <tr bgcolor=#ffffff>
 <td class=td2 colspan=5 id=pad5>
 
@@ -43,25 +43,25 @@
 </table>
 </td>
 </tr>
-<?}?>
+<?php }?>
 <tr id=back2 class=header>
-<td class=td2<?if (sizeof($shownFieldDefs) !=0) {?> width=15%<?}?>><?=$AdminTrnsl["Name"]?></td>
-<?foreach ($shownFieldDefs as $fd) {?><td><?=$fd->name?></td>
-<?}?>
-<?if ($item->sort) {?><td width=1%><?=$AdminTrnsl["Sort"]?></td><?}?>
+<td class=td2<?php if (sizeof($shownFieldDefs) !=0) {?> width=15%<?php }?>><?=$AdminTrnsl["Name"]?></td>
+<?php foreach ($shownFieldDefs as $fd) {?><td><?=$fd->name?></td>
+<?php }?>
+<?php if ($item->sort) {?><td width=1%><?=$AdminTrnsl["Sort"]?></td><?php }?>
 <td width=5%><?=$AdminTrnsl["Action"]?></td>
 </tr>
 
-<?$count=0; foreach ($item->nodes as $child) {$count++; ?>
-<?if (!$child->hasWriteRight) { $child_disabledControlIfUserHasNoWriteRights = " disabled=true"; }?>
+<?php $count=0; foreach ($item->nodes as $child) {$count++; ?>
+<?php if (!$child->hasWriteRight) { $child_disabledControlIfUserHasNoWriteRights = " disabled=true"; }?>
 <tr id=back3>
 <td class=td2>&nbsp;<a href="/admin/nodes.php?do=main&id=<?=$child->node->id?>"><?=$child->node->name?></a></td>
-<?foreach ($shownFieldDefs as $fd) {?><td><?=$child->node->fields[$fd->shortname]->getHtmlVisualValue()?></td>
-<?}?>
-<?if ($item->sort) {?><td nowrap<?if ($count == sizeof($item->nodes)) {?> align=right<?}?>><?if ($count != sizeof($item->nodes)) {?><input type=button style="width:21px" class=button41><?}?><?if ($count != 1) {?><input type=button style="width:21px" class=button42><?}?></td><?}?>
+<?php foreach ($shownFieldDefs as $fd) {?><td><?=$child->node->fields[$fd->shortname]->getHtmlVisualValue()?></td>
+<?php }?>
+<?php if ($item->sort) {?><td nowrap<?php if ($count == sizeof($item->nodes)) {?> align=right<?php }?>><?php if ($count != sizeof($item->nodes)) {?><input type=button style="width:21px" class=button41><?php }?><?php if ($count != 1) {?><input type=button style="width:21px" class=button42><?php }?></td><?php }?>
 <td align=center nowrap>
-<?if(!$restrict_edit){?><input type=button value="<?=$AdminTrnsl["Del"]?>" class=button3 onClick="if(confirm('<?=$AdminTrnsl["This_will_delete_all_subnodes_Proceed"]?>')) location.href='/admin/nodes.php?do=deletenode&id=<?=$child->node->id?>'"><?}?></td>
-</tr><?}?>
+<?php if(!$restrict_edit){?><input type=button value="<?=$AdminTrnsl["Del"]?>" class=button3 onClick="if(confirm('<?=$AdminTrnsl["This_will_delete_all_subnodes_Proceed"]?>')) location.href='/admin/nodes.php?do=deletenode&id=<?=$child->node->id?>'"><?php }?></td>
+</tr><?php }?>
 </table>
 
 </td>

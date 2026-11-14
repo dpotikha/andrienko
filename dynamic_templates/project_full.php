@@ -1,44 +1,44 @@
-<? tinclude("_head") ?>
-<?
+<?php  tinclude("_head") ?>
+<?php 
 $videoFiles = $CurrentNode->getChildrenOfClass("video");
 $audioFiles = $CurrentNode->getChildrenOfClass("audio");
 ?>
 <?= $CurrentNode->tfields["text"]; ?>
 
-<? if ($videoFiles) {?>
+<?php  if ($videoFiles) {?>
 <div class="video">
 <h3>Смотреть</h3>
-	<? foreach($videoFiles as $k=>$v) {?>
+	<?php  foreach($videoFiles as $k=>$v) {?>
     <a href="<?=$v->tfields["file"]["url"]?>"><?=$v->name?></a>
-    <? }?>
+    <?php  }?>
 </div>
-<? }?>
+<?php  }?>
 
 
-<? if ($audioFiles) {?>
+<?php  if ($audioFiles) {?>
 <div class="video audio">
 <h3>Слушать</h3>
-	<? foreach($audioFiles as $k=>$v) {?>
+	<?php  foreach($audioFiles as $k=>$v) {?>
     <a href="<?=$v->tfields["file"]["url"]?>"><?=$v->name?></a>
-    <? }?>
+    <?php  }?>
 </div>
-<? }?>
+<?php  }?>
 
-<?
+<?php 
 $photoes = $CurrentNode->getChildrenOfClass("photo");
 if (count($photoes)) { ?>
 <p>&nbsp;</p>
 <table width="100%" celpadding="0" cellspacing="0" class="contentDetailTab">
-<? for ($i=1; $i<=count($photoes); $i++) {
+<?php  for ($i=1; $i<=count($photoes); $i++) {
 	$p =& $photoes[$i-1];
 	$img = $p->tfields["photo"];
 	if ($i%2 == 1) { ?>
 	<tr>
-	<? } ?>
+	<?php  } ?>
 		<td id="pad">
 			<table cellpadding="0" cellspacing="0" >
 				<tr>
-					<? if ($img["thumburl"]) { ?>
+					<?php  if ($img["thumburl"]) { ?>
 					<td>
 					 <table cellpadding="0" cellspacing="0">
 					  <tr>
@@ -47,7 +47,7 @@ if (count($photoes)) { ?>
 							<div class="shadowImgDetailBR_01"><a href="<?= $p->getHref() ?>" onclick="enlarge(this, '', <?= $img['width']+30 ?>, <?= $img['height']+90 ?>); return false;"><img src="<?= $img["thumburl"] ?>" width="<?= $img["thumbwidth"] ?>" height="<?= $img["thumbheight"] ?>" alt=""></a></div>
 						   </div></td>
 					   <td><img src="/_img/s.gif" width="5" height="<?= $img["thumbheight"]+28 ?>" alt="" class="shadowImgBR"></td>
-					   <? } ?>
+					   <?php  } ?>
 					  </tr>
 					  <tr>
 					   <td colspan="3" align="right" style="vertical-align:top;"><img src="/_img/s.gif" width="103" height="5" alt="" class="shadowImgRNews"></td>
@@ -55,14 +55,14 @@ if (count($photoes)) { ?>
 					 </table>
 					</td>
 					
-					<td class="text" rowspan="2"><? if ($p->tfields["name_"]) {?><?= $p->tfields["name_"] ?><? } ?></td>
+					<td class="text" rowspan="2"><?php  if ($p->tfields["name_"]) {?><?= $p->tfields["name_"] ?><?php  } ?></td>
 				</tr>
 			</table>
 		</td>
-	<? if ($i%2 == 0 || $i == count($photos)) { ?>
+	<?php  if ($i%2 == 0 || $i == count($photos)) { ?>
 	</tr>
-	<? } ?>	
-<? } ?>
+	<?php  } ?>	
+<?php  } ?>
 </table>
-<? } ?>	
-<? tinclude("_foot") ?>
+<?php  } ?>	
+<?php  tinclude("_foot") ?>

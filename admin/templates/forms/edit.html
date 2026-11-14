@@ -1,4 +1,4 @@
-<?usetemplate("forms/header")?>
+<?php usetemplate("forms/header")?>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=top3><td><img src=/admin/_img/s.gif width=1 height=1></td></table>
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <tr class=top41>
@@ -7,9 +7,9 @@
 </table>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=top2><td><img src=/admin/_img/s.gif width=1 height=1></td></table>
 <table width=100% border=0 cellpadding=4 cellspacing=0>
-<?if ($MSG != null) {?><tr>
+<?php if ($MSG != null) {?><tr>
 <td id=pad18><span id="red"><?=$MSG?></span></td>
-</tr><?}?>
+</tr><?php }?>
 <form action=/admin/forms.php method=post>
 <input type="hidden" name="do" value="update">
 <input type=hidden name=form_id value='<?=$formDef->id?>'>
@@ -20,7 +20,7 @@
 <tr id=back2>
 <td width=250><nobr><b><?=$AdminTrnsl["Name"]?></b> <span id=red>*</span></nobr></td>
 <td id=back3><input type=text name=name value="<?=prepareStringForXML($formDef->name)?>" size=45>
-<?if ($ERRORS['name'] != null) {?><div class=errmsg><?= $AdminTrnsl["FORM_EDIT_ERROR_".$ERRORS['name']]?></div><?}?></td>
+<?php if ($ERRORS['name'] != null) {?><div class=errmsg><?= $AdminTrnsl["FORM_EDIT_ERROR_".$ERRORS['name']]?></div><?php }?></td>
 </tr>
 
 
@@ -28,20 +28,20 @@
 <td id=pad5><nobr><b><?=$AdminTrnsl["FormDescrText"]?></b></nobr></td>
 <td id=back3 width=80%>
 <textarea name=description_text style="width:495px"><?=prepareStringForXML($formDef->description_text)?></textarea>
-<?if ($ERRORS['description_text'] != null) {?><div class=errmsg><?= $AdminTrnsl["FORM_EDIT_ERROR_".$ERRORS['description_text']]?></div><?}?></td>
+<?php if ($ERRORS['description_text'] != null) {?><div class=errmsg><?= $AdminTrnsl["FORM_EDIT_ERROR_".$ERRORS['description_text']]?></div><?php }?></td>
 </tr>
 
 <tr id=back2>
 <td id=pad5><nobr><b><?=$AdminTrnsl["FormSuccessText"]?></b></nobr></td>
 <td id=back3 width=80%>
 <textarea name=success_text style="width:495px"><?=prepareStringForXML($formDef->success_text)?></textarea>
-<?if ($ERRORS['success_text'] != null) {?><div class=errmsg><?= $AdminTrnsl["FORM_EDIT_ERROR_".$ERRORS['success_text']]?></div><?}?></td>
+<?php if ($ERRORS['success_text'] != null) {?><div class=errmsg><?= $AdminTrnsl["FORM_EDIT_ERROR_".$ERRORS['success_text']]?></div><?php }?></td>
 </tr>
 
 
 <tr id=back2>
 <td><?=$AdminTrnsl["Forms_inc_sub"]?>:&nbsp;</td>
-<td id=back3><input type=checkbox name=inc_sub value=1 <?if ($formDef->inc_sub) {?> CHECKED<?}?>></td>
+<td id=back3><input type=checkbox name=inc_sub value=1 <?php if ($formDef->inc_sub) {?> CHECKED<?php }?>></td>
 </tr>
 
 <tr id=back2>
@@ -56,7 +56,7 @@
 <tr>
 <td id=pad18>
 
-<?if($fieldDefs){?>
+<?php if($fieldDefs){?>
 <div id=pad5><b class=h3><?=$AdminTrnsl["Field_list"]?>:</b></div>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab2>
 <tr align=center class=header id=back2>
@@ -74,7 +74,7 @@ function doFieldForm(id, action) {
 	f.submit();
 }
 </script>
-<? foreach ($fieldDefs as $fd) {?>
+<?php  foreach ($fieldDefs as $fd) {?>
 <form action=/admin/forms.php method=post name="field_update_<?=$fd->id?>">
 <input type=hidden name=do value=''>
 <input type=hidden name=form_id value='<?=$formDef->id?>'>
@@ -82,18 +82,18 @@ function doFieldForm(id, action) {
 <tr id=back3>
 <td nowrap>&nbsp;<input type=button value="" style="width:21px" class=button41 onClick="doFieldForm('<?=$fd->id?>', 'movedown_field')"><input type=button value="" style="width:21px" class=button42 onClick="doFieldForm('<?=$fd->id?>', 'moveup_field')">&nbsp;</td>
 <td><input type=text name=name style="width:200" value="<?=prepareStringForXML($fd->name)?>">
-<?if ($FERRORS[$fd->id]['name'] != null) {?><div class=errmsg><?=$AdminTrnsl["FORM_EDIT_ERROR_".$FERRORS[$fd->id]['name']]?></div><?}?></td>
-<td><select name=type_shortname style="width:120"><?forEach ($fieldTypes as $ft) {?><option value="<?=$ft->shortname?>"<?if ($ft->shortname == $fd->type_shortname) {?> SELECTED<?}?>><?=$ft->name?><?}?></select></td>
-<td align=center><input type=checkbox name=required value=1<?if ($fd->required) {?> CHECKED<?}?>></td>
+<?php if ($FERRORS[$fd->id]['name'] != null) {?><div class=errmsg><?=$AdminTrnsl["FORM_EDIT_ERROR_".$FERRORS[$fd->id]['name']]?></div><?php }?></td>
+<td><select name=type_shortname style="width:120"><?php forEach ($fieldTypes as $ft) {?><option value="<?=$ft->shortname?>"<?php if ($ft->shortname == $fd->type_shortname) {?> SELECTED<?php }?>><?=$ft->name?><?php }?></select></td>
+<td align=center><input type=checkbox name=required value=1<?php if ($fd->required) {?> CHECKED<?php }?>></td>
 <td align=center nowrap>
 <input type=button value="<?=$AdminTrnsl["Update"]?>" class=button1 onClick="doFieldForm('<?=$fd->id?>', 'update_field')">
 <input type=button value="<?=$AdminTrnsl["Del"]?>" class=button4 onClick="doFieldForm('<?=$fd->id?>', 'remove_field')"></td>
 </tr>
-</form><?}?>
+</form><?php }?>
 
 </tr>
 </table>
-<?}?>
+<?php }?>
 </td>
 </tr>
 <tr>
@@ -112,11 +112,11 @@ function doFieldForm(id, action) {
 </tr>
 <tr id=back3>
 <td>
-<?if ($AFERRORS['name'] != null) {?><div class=errmsg><?=$AdminTrnsl["FORM_EDIT_ERROR_".$AFERRORS['name']]?></div><?}?>
+<?php if ($AFERRORS['name'] != null) {?><div class=errmsg><?=$AdminTrnsl["FORM_EDIT_ERROR_".$AFERRORS['name']]?></div><?php }?>
 <input type=text style="width:100%" name=name value="<?=$nfparams->name?>">
 </td>
-<td><select name=type_shortname style="width:100%"><?foreach ($fieldTypes as $ft) {?><option value="<?=$ft->shortname?>"<?if ($ft->shortname == $nfparams->type_shortname) {?> SELECTED<?}?>><?=$ft->name?><?}?></select></td>
-<td align=center><input type=checkbox name=required value=1 <?if ($nfparams->required == 1) {?> CHECKED<?}?>></td>
+<td><select name=type_shortname style="width:100%"><?php foreach ($fieldTypes as $ft) {?><option value="<?=$ft->shortname?>"<?php if ($ft->shortname == $nfparams->type_shortname) {?> SELECTED<?php }?>><?=$ft->name?><?php }?></select></td>
+<td align=center><input type=checkbox name=required value=1 <?php if ($nfparams->required == 1) {?> CHECKED<?php }?>></td>
 </tr>
 
 <tr id=back3>

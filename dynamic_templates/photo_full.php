@@ -1,7 +1,7 @@
-<? $img =& $CurrentNode->tfields["photo"] ?>
+<?php  $img =& $CurrentNode->tfields["photo"] ?>
 <html>
 	<head>
-		<title><? $CurrentNode->name ?></title>
+		<title><?php  $CurrentNode->name ?></title>
 		<script language="JavaScript" type="text/javascript">
 			var w = <?= $img['width'] ?>, h = <?= $img['height'] ?>;
 			window.resizeTo(w+30, h+100);

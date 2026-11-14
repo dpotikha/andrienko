@@ -1,4 +1,4 @@
-<?
+<?php 
 
 define("tn_form_field_defs", "dbm_form_field_defs");
 define("tn_form_defs", "dbm_form_defs");

@@ -1,9 +1,9 @@
 <table border=0 cellpadding=0 cellspacing=0 border=0 class=nobacktab>
 <tr><td>
-<? $i=0; foreach ($CM_PARAMS["available_values"] as $avail_value) {?>
-<?= $avail_value ?><input type="checkbox" name="<?=$CM_CONTROL_NAME?>[]" value="<?=$i?>"<?if($checked){?> checked<?}?>>
-<? }?>
-<? /*?><select name="<?= $CM_CONTROL_NAME ?>">
+<?php  $i=0; foreach ($CM_PARAMS["available_values"] as $avail_value) {?>
+<?= $avail_value ?><input type="checkbox" name="<?=$CM_CONTROL_NAME?>[]" value="<?=$i?>"<?php if($checked){?> checked<?php }?>>
+<?php  }?>
+<?php  /*?><select name="<?= $CM_CONTROL_NAME ?>">
 <option value="-1"><?= $CM_PARAMS["any_el_name"] ?></option>
 <? $i=0; foreach ($CM_PARAMS["available_values"] as $avail_value) { ?>
 <option value="<?= $i ?>"<? if($CM_PARAMS["value"] == $i) { ?> SELECTED<? } ?>><?= $avail_value ?></option>
@@ -13,7 +13,7 @@
 <? */?>
 </td>
 </tr></table>
-<? /*?>
+<?php  /*?>
 <table border="0" cellspacing="5" cellpadding="0">
 <? $i=0; foreach ($CM_PARAMS["available_values"] as $avail_value) {?>
 <tr><td><?=$avail_value?></td>

@@ -1,4 +1,4 @@
-<?
+<?php 
 $request->setAttribute("active_tab", "properties");
 $restrict_edit = $CurrentAdminUser->group->restrictNodeEdit;
 $cuGroupRights = &new NodeGroupRights($CurrentAdminUser->group, $node);
@@ -16,13 +16,13 @@ $userHasWriteRights = $cuGroupRights->hasWriteRight();
 <form action="/admin/emails.php" method="POST">
 <input type="hidden" name="do" value="properties_update">
 <input type="hidden" name="node_id" value="<?=$node->id?>">
-<?if (!$nodeIsRoot) {?>
+<?php if (!$nodeIsRoot) {?>
 <tr>
 <td><?=$AdminTrnsl["Shortname"]?><span id=red>*</span>:&nbsp;</td>
 <td><input type="text" size="45" name="NodeShortname" value="<?=$nodeMap->NodeShortname?>"><div class=errmsg><?=$validationErrors['NodeShortname']?></div></td>
 </tr>
-<?}?>
-<?if(!$restrict_edit && $userHasWriteRights){?>
+<?php }?>
+<?php if(!$restrict_edit && $userHasWriteRights){?>
 <tr>
 <td><?=$AdminTrnsl["Template"]?>:&nbsp;</td>
 <td><input type="text" size="45" name="NodeDynamicTemplate" value="<?=$nodeMap->NodeDynamicTemplate?>"><div class=errmsg><?=$validationErrors['NodeDynamicTemplate']?></div></td>
@@ -31,10 +31,10 @@ $userHasWriteRights = $cuGroupRights->hasWriteRight();
 <td><?=$AdminTrnsl["Admin_URL"]?>:&nbsp;</td>
 <td><input type="text" size="45" name="NodeAdminURL" value="<?=$nodeMap->NodeAdminURL?>"><div class=errmsg><?=$validationErrors['NodeAdminURL']?></div></td>
 </tr>
-<?} else {?>
+<?php } else {?>
 <input type="hidden" name="NodeDynamicTemplate" value="<?=$nodeMap->NodeDynamicTemplate?>">
 <input type="hidden" name="NodeAdminURL" value="<?=$nodeMap->NodeAdminURL?>">
-<?}?>
+<?php }?>
 
 <tr>
 <td>&nbsp;</td>

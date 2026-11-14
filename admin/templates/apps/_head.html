@@ -118,14 +118,14 @@ function checkMove(){
 	<tr>
         <td>
         	<ul  style="list-style-image:url(/admin/_img/ico/folder.png);">
-            <li><a href="/admin/apps.php?do=view&type=all" <? if($type=='all'){?> class="cur"<? }?>>Все заявки <strong>[<?=($a_all_Count)?>]</strong></a> <a href="/admin/apps.php?do=download&type=all" title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a>
+            <li><a href="/admin/apps.php?do=view&type=all" <?php  if($type=='all'){?> class="cur"<?php  }?>>Все заявки <strong>[<?=($a_all_Count)?>]</strong></a> <a href="/admin/apps.php?do=download&type=all" title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a>
         	<ul>
-            	<li><a href="/admin/apps.php?do=view&type=new" <? if($type=='new'){?> class="cur"<? }?>>Новые заявки <strong>[<?=$a_new_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=new" title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a></li>
-                <li><a href="/admin/apps.php?do=view&type=mod"  <? if($type=='mod'&&!strlen($stype)){?> class="cur"<? }?>>Просмотренные заявки <strong>[<?=$a_mod_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=mod" title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a>
+            	<li><a href="/admin/apps.php?do=view&type=new" <?php  if($type=='new'){?> class="cur"<?php  }?>>Новые заявки <strong>[<?=$a_new_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=new" title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a></li>
+                <li><a href="/admin/apps.php?do=view&type=mod"  <?php  if($type=='mod'&&!strlen($stype)){?> class="cur"<?php  }?>>Просмотренные заявки <strong>[<?=$a_mod_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=mod" title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a>
                 	<ul>
-                    	<li><a href="/admin/apps.php?do=view&type=mod&stype=confirmed"  <? if($stype=='confirmed'){?> class="cur"<? }?>>Подтвержденные <strong>[<?=$a_mod_confirmed_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=confirmed"  title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a></li>
-                        <li><a href="/admin/apps.php?do=view&type=mod&stype=canceled"  <? if($stype=='canceled'){?> class="cur"<? }?>>Отклоненные <strong>[<?=$a_mod_canceled_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=canceled"  title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a></li>
-                        <li><a href="/admin/apps.php?do=view&type=mod&stype=waiting"  <? if($stype=='waiting'){?> class="cur"<? }?>>Ожидание <strong>[<?=$a_mod_waiting_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=waiting"><img src="/admin/_img/ico/page_white_excel.png"  title="Скачaть"></a></li>
+                    	<li><a href="/admin/apps.php?do=view&type=mod&stype=confirmed"  <?php  if($stype=='confirmed'){?> class="cur"<?php  }?>>Подтвержденные <strong>[<?=$a_mod_confirmed_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=confirmed"  title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a></li>
+                        <li><a href="/admin/apps.php?do=view&type=mod&stype=canceled"  <?php  if($stype=='canceled'){?> class="cur"<?php  }?>>Отклоненные <strong>[<?=$a_mod_canceled_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=canceled"  title="Скачaть"><img src="/admin/_img/ico/page_white_excel.png"></a></li>
+                        <li><a href="/admin/apps.php?do=view&type=mod&stype=waiting"  <?php  if($stype=='waiting'){?> class="cur"<?php  }?>>Ожидание <strong>[<?=$a_mod_waiting_Count?>]</strong></a> <a href="/admin/apps.php?do=download&type=waiting"><img src="/admin/_img/ico/page_white_excel.png"  title="Скачaть"></a></li>
                     </ul>
                 </li>
             </ul>

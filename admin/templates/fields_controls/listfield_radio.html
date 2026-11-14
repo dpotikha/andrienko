@@ -1,12 +1,12 @@
 <table border=0 cellpadding=0 cellspacing=0 border=0 class=nobacktab>
 <tr align="center">
-<? foreach ($CM_PARAMS["available_values"] as $avail_value) {?>
+<?php  foreach ($CM_PARAMS["available_values"] as $avail_value) {?>
 	<td style="padding:0 5px 0 5px"><?=$avail_value?></td>
-<?}?>
-</tr><?if ($CM_PARAMS["haveOther"]){?><td align=center><?=$CM_PARAMS["other_name"]?></td><?}?>
+<?php }?>
+</tr><?php if ($CM_PARAMS["haveOther"]){?><td align=center><?=$CM_PARAMS["other_name"]?></td><?php }?>
 <tr align="center">
-<? $i=0;foreach ($CM_PARAMS["available_values"] as $avail_value) {?>
-	<td><input type="radio" name="<?=$CM_CONTROL_NAME?>" value="<?=$i?>"<?if(sizeof($CM_PARAMS["values"])!=0 && $CM_PARAMS["values"][0] == $i){?> checked<?}?>></td>
-<?$i++;}?>
-<?if ($CM_PARAMS["haveOther"]){?><td><input type=text name=<?=$CM_CONTROL_NAME?> value="<?=$CM_PARAMS["other"]?>"></td><?}?>
+<?php  $i=0;foreach ($CM_PARAMS["available_values"] as $avail_value) {?>
+	<td><input type="radio" name="<?=$CM_CONTROL_NAME?>" value="<?=$i?>"<?php if(sizeof($CM_PARAMS["values"])!=0 && $CM_PARAMS["values"][0] == $i){?> checked<?php }?>></td>
+<?php $i++;}?>
+<?php if ($CM_PARAMS["haveOther"]){?><td><input type=text name=<?=$CM_CONTROL_NAME?> value="<?=$CM_PARAMS["other"]?>"></td><?php }?>
 </tr></table>

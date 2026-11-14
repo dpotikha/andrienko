@@ -49,7 +49,7 @@
 <input type=hidden name=confirmation value='Yes' >
 </form>
 
-<?
+<?php 
 	$groups = &UserGroup::findAll();
 
 	foreach ($groups as $ug) {
@@ -58,12 +58,12 @@
 ?>
 <tr id=back2 class=header>
 <td class=td2 align=right>&nbsp;&nbsp;<?=$AdminTrnsl["Group"]?>:</td>
-<td class=td2 width=90%><?if($ug->id != $CurrentAdminUser->group->id){?><a href=/admin/users.php?do=edit_group&group_id=<?= $ug->id?>><?= $ug->name?></a><?}else{?><?= $ug->name?><?}?></td>
+<td class=td2 width=90%><?php if($ug->id != $CurrentAdminUser->group->id){?><a href=/admin/users.php?do=edit_group&group_id=<?= $ug->id?>><?= $ug->name?></a><?php }else{?><?= $ug->name?><?php }?></td>
 <td nowrap>
-<?if($ug->id != $CurrentAdminUser->group->id){?><input type=button value="<?=$AdminTrnsl["Edit"]?>" style="width:80px" onclick="document.location.href='/admin/users.php?do=edit_group&group_id=<?= $ug->id?>'" class=button1><?}?>
-<? if (sizeof($ug->getUsers()) == 0 && $CurrentAdminUser->group->id != $ug->id) { ?> <input type=button value="<?=$AdminTrnsl["Del"]?>" style="width:80px" class=button4 onclick="document.location.href='/admin/users.php?do=delete_group&group_id=<?=$ug->id?>';"><? } ?>&nbsp;</td>
+<?php if($ug->id != $CurrentAdminUser->group->id){?><input type=button value="<?=$AdminTrnsl["Edit"]?>" style="width:80px" onclick="document.location.href='/admin/users.php?do=edit_group&group_id=<?= $ug->id?>'" class=button1><?php }?>
+<?php  if (sizeof($ug->getUsers()) == 0 && $CurrentAdminUser->group->id != $ug->id) { ?> <input type=button value="<?=$AdminTrnsl["Del"]?>" style="width:80px" class=button4 onclick="document.location.href='/admin/users.php?do=delete_group&group_id=<?=$ug->id?>';"><?php  } ?>&nbsp;</td>
 </tr>
-<?
+<?php 
 	if (sizeof($ug->getUsers()) != 0) { 
 		$users = $ug->getUsers();
 		foreach ($users as $u) {
@@ -72,9 +72,9 @@
 <td class=td2 width=15%>&nbsp;</td>
 <td><a href=/admin/users.php?do=edit&user_id=<?=$u->id?>><?=$u->login?></a></td>
 <td nowrap width=10%>
-<input type=button value="<?=$AdminTrnsl["Edit"]?>" style="width:80px" onclick="document.location.href='/admin/users.php?do=edit&user_id=<?=$u->id?>'" class=button1><? if ($CurrentAdminUser->id != $u->id) { ?>&nbsp;<input type=button value="<?=$AdminTrnsl["Del"]?>" style="width:80px" onclick="do_confirm(<?=$ug->id?>, <?=$u->id?>)" class=button4><?}?></td>
+<input type=button value="<?=$AdminTrnsl["Edit"]?>" style="width:80px" onclick="document.location.href='/admin/users.php?do=edit&user_id=<?=$u->id?>'" class=button1><?php  if ($CurrentAdminUser->id != $u->id) { ?>&nbsp;<input type=button value="<?=$AdminTrnsl["Del"]?>" style="width:80px" onclick="do_confirm(<?=$ug->id?>, <?=$u->id?>)" class=button4><?php }?></td>
 </tr>
-<?
+<?php 
 		}
 	}
 }
@@ -83,12 +83,12 @@
 
 <div id=pad5><b class=h3><?=$AdminTrnsl["Add_New_User"]?>:</b></div>
 
-<?if ($ERROR) {?><p><span id=red><b><?=$AdminTrnsl["ERROR"]?>: </b><? $AdminTrnsl["USER_CREATE_ERROR_".$ERROR]?></span></p><?}?>
+<?php if ($ERROR) {?><p><span id=red><b><?=$AdminTrnsl["ERROR"]?>: </b><?php  $AdminTrnsl["USER_CREATE_ERROR_".$ERROR]?></span></p><?php }?>
 
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab2>
 <form action=/admin/users.php method=post>
 <input type=hidden name=do value='create_user'>
-<?
+<?php 
     $desc = $request->getParameter("desc");
 ?>
 <tr id=back3>
@@ -110,9 +110,9 @@
 <tr id=back3>
 <td class=td2 align=right nowrap><?=$AdminTrnsl["Choose_group"]?>:</td>
 <td width=100%><select name=user_group style="width:150px">
-<?foreach ($groups as $ug) { if ($ug->id == 1 && $CurrentAdminUser->group->id != 1) continue; ?>
+<?php foreach ($groups as $ug) { if ($ug->id == 1 && $CurrentAdminUser->group->id != 1) continue; ?>
 <option value="<?=$ug->id?>"><?=$ug->name?>
-<?}?>
+<?php }?>
 </select></td>
 </tr>
 <!-- change button -->

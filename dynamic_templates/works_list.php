@@ -1,11 +1,11 @@
-<? tinclude("_head");
+<?php  tinclude("_head");
 
 $worksLinks = $CurrentNode->getChildren();
 
 if (sizeof($worksLinks)) { ?>
 
 <table width="100%" cellpadding="0" cellspacing="0" class="contentDetailTab">
-	<? for ($i=0; $i<sizeof($worksLinks); $i++) { 
+	<?php  for ($i=0; $i<sizeof($worksLinks); $i++) { 
 	$wl =& $worksLinks[$i];
 	$img = $wl->tfields["main_img"];
 ?>
@@ -32,9 +32,9 @@ if (sizeof($worksLinks)) { ?>
 			</table>
 		</td>
 	</tr>
-	<? } ?>
+	<?php  } ?>
 </table>
-<? } else { ?>
+<?php  } else { ?>
 <?= $CurrentNode->tfields["text"]?> 
-<? } ?>
-<? tinclude("_foot") ?>
+<?php  } ?>
+<?php  tinclude("_foot") ?>

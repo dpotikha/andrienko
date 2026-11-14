@@ -1,18 +1,18 @@
-<?
+<?php 
 $rootNode = Node::findByPath($CM_PARAMS["root_node_path"]);
 $availableValues = $rootNode->getRecursiveChildrenOfClasses(explode(",", $CM_PARAMS["allowed_classes"]));
 ?>
 
 <table border=0 cellpadding=0 cellspacing=0 class=nobacktab>
-<? for ($i = 0; $i < sizeof($availableValues); $i++) { 
+<?php  for ($i = 0; $i < sizeof($availableValues); $i++) { 
 
 	$node = &$availableValues[$i]; 
 	if($node->tfields["active"]["value"]==0)continue;
 ?>
 <tr>
-<? $checked = in_array($node->id, $CM_PARAMS["linked_node_ids"]); ?>
-<td><input type="checkbox" name="<?=$CM_CONTROL_NAME?>[]" value="<?= $node->id ?>" <? if($checked) { ?> checked <? } ?>></td>
+<?php  $checked = in_array($node->id, $CM_PARAMS["linked_node_ids"]); ?>
+<td><input type="checkbox" name="<?=$CM_CONTROL_NAME?>[]" value="<?= $node->id ?>" <?php  if($checked) { ?> checked <?php  } ?>></td>
 <td><?= $node->name ?><?= $node->tfields["email"] ? " (" . $node->tfields["email"] . ")" : "" ?></td>
 </tr>
-<? } ?>
+<?php  } ?>
 </table>

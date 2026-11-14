@@ -1,3 +1,3 @@
-<? tinclude("_head") ?>
+<?php  tinclude("_head") ?>
 <?= $CurrentNode->tfields["text"]?>
-<? tinclude("_foot") ?>
+<?php  tinclude("_foot") ?>

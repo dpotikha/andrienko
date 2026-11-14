@@ -12,7 +12,7 @@
 </script>
 </head>
 
-<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main<?if ($request->getParameter('reload') != null) {?> onLoad="refreshTree(<?=$node->id?>, <?=$node->parent_id+0?>,'<?=rawurlencode($node->name)?>')"<?}?>>
+<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main<?php if ($request->getParameter('reload') != null) {?> onLoad="refreshTree(<?=$node->id?>, <?=$node->parent_id+0?>,'<?=rawurlencode($node->name)?>')"<?php }?>>
 
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=top3><td><img src=/admin/_img/s.gif width=1 height=1></td></table>
 
@@ -32,16 +32,16 @@
 <td width=80% id=back3><input type="text" size="45" name="NodeName" value="<?=$nodeProps->NodeName?>"> <span class=errmsg><?=$validationErrors['NodeName']?></span></td>
 </tr>
 <input type="hidden" name="NodeDynamicTemplate" value="<?=$nodeProps->NodeDynamicTemplate?>">
-<? foreach ($fieldDefs as $item) {?>
-<?$request->setAttribute("CM_PARAMS", $item->params);?>
-<?$request->setAttribute("CM_CONTROL_NAME", $item->fieldDef->shortname);?>
+<?php  foreach ($fieldDefs as $item) {?>
+<?php $request->setAttribute("CM_PARAMS", $item->params);?>
+<?php $request->setAttribute("CM_CONTROL_NAME", $item->fieldDef->shortname);?>
 <tr valign=top id=back2>
-<td id=pad5><nobr><b><?=$item->fieldDef->name?></b> <?if ($item->fieldDef->required) {?><sup><font color=red>*</font></sup><?}?>&nbsp;</nobr><nobr><span class=small><?if(!$restrict_edit){?>[<?=$item->fieldDef->shortname?>]<?}?></td>
+<td id=pad5><nobr><b><?=$item->fieldDef->name?></b> <?php if ($item->fieldDef->required) {?><sup><font color=red>*</font></sup><?php }?>&nbsp;</nobr><nobr><span class=small><?php if(!$restrict_edit){?>[<?=$item->fieldDef->shortname?>]<?php }?></td>
 <td id=back3 width=80%>
 <div class="errmsg"><?=$validationErrors[$item->fieldDef->shortname]?></div>
-<?usetemplate("fields_controls/".$item->jspname);?>
+<?php usetemplate("fields_controls/".$item->jspname);?>
 </td></tr>
-<?}?>
+<?php }?>
 <tr valign=top id=back2>
 <td>&nbsp;</td>
 <td id=pad10>

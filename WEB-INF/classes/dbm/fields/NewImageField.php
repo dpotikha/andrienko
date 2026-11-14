@@ -1,4 +1,4 @@
-<?
+<?php 
 
 require_once ("dbm/fields/StringField.php");
 //require_once ("dbm/ImgLib.php");

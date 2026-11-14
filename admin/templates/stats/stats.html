@@ -132,14 +132,14 @@
     	<td><b><nobr>Количество индивидуальных</nobr> заявок</b></td>
     	<td><b><nobr>Количество коллективных</nobr> заявок</b></td>
     </tr>
-    <? foreach($days as $k=>$v){?>
+    <?php  foreach($days as $k=>$v){?>
     	<tr id="back3">
         <td class="td2" nowrap="nowrap"><?=$k?></td>
     	<td><?=($v['i']['scount']+$v['g']['scount'])?></td>
     	<td><?=isset($v['i'])?($v['i']['scount']):0?></td>
     	<td><?=isset($v['g'])?($v['g']['scount']):0?></td>
     </tr>
-    <? }?>
+    <?php  }?>
 </table>
 <table class="nobacktab" width="50%" border="0" cellpadding="0" cellspacing="0">
  <tr bgcolor="#ffffff">

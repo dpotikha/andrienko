@@ -1,4 +1,4 @@
-<?$request->setAttribute("active_tab", "permissions");?>
+<?php $request->setAttribute("active_tab", "permissions");?>
 <?=usetemplate("emails/_edit_header")?>
 
 <table width=100% border=0 cellpadding=0 cellspacing=0>
@@ -13,7 +13,7 @@
 <input type="hidden" name="action" value="update">
 
 <!-- begin -->
-<?if ($CurrentAdminUser->group->canManageUsers) {?>
+<?php if ($CurrentAdminUser->group->canManageUsers) {?>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab>
 <tr align=center id=back2>
     <td height=22 width=75%><?=$AdminTrnsl["Group"]?></td>
@@ -21,14 +21,14 @@
     <td><?=$AdminTrnsl["Write"]?></td>
     <td>Удаление</td>
 </tr>
-<?$i=0;foreach ($groups as $g) { $gr = $rights[$i]; ?>
-<?if ($CurrentAdminUser->group->id != $g->id && $g->id != 1) {?>
+<?php $i=0;foreach ($groups as $g) { $gr = $rights[$i]; ?>
+<?php if ($CurrentAdminUser->group->id != $g->id && $g->id != 1) {?>
 <tr id=back3>
 	<td><?=$g->name?></td>
-	<td align=center><input type=checkbox name='<?=$g->id?>_r' value=1 <?if ($gr->hasViewRight()) {?>CHECKED<?}?>></td>
-    <td align=center><input type=checkbox name='<?=$g->id?>_w' value=1 <?if ($gr->hasWriteRight()) {?>CHECKED<?}?>></td>
-    <td align=center><input type=checkbox name='<?=$g->id?>_d' value=1 <?if ($gr->hasDeleteRight()) {?>CHECKED<?}?>></td>
-</tr><?}$i++;}?>
+	<td align=center><input type=checkbox name='<?=$g->id?>_r' value=1 <?php if ($gr->hasViewRight()) {?>CHECKED<?php }?>></td>
+    <td align=center><input type=checkbox name='<?=$g->id?>_w' value=1 <?php if ($gr->hasWriteRight()) {?>CHECKED<?php }?>></td>
+    <td align=center><input type=checkbox name='<?=$g->id?>_d' value=1 <?php if ($gr->hasDeleteRight()) {?>CHECKED<?php }?>></td>
+</tr><?php }$i++;}?>
 
 <tr height=20 id=back2>
 <td colspan=3>
@@ -42,8 +42,8 @@
 </tr>
 </form>
 </table>
-<?}?>
-<?if (!$CurrentAdminUser->group->canManageUsers) {?><?=$AdminTrnsl["This_option_is_disabled_for_your_login"]?><?}?>
+<?php }?>
+<?php if (!$CurrentAdminUser->group->canManageUsers) {?><?=$AdminTrnsl["This_option_is_disabled_for_your_login"]?><?php }?>
 
 </td>
 </tr></table>

@@ -111,7 +111,7 @@ function afu($request){
 		width:<?=$new_width?>,
 		height:<?=$new_height?>
 	}
-]<?
+]<?php 
 		exit();
 	}
 }

@@ -1,5 +1,5 @@
-<?include("prepend.php")?>
-<?
+<?php include("prepend.php")?>
+<?php 
 $rn = $request->getParameter("rn");
 $cs = $request->getParameter("cs");
 $d = $request->getParameter("d");
@@ -20,7 +20,7 @@ $cname = $request->getParameter("cname");
     <script type="text/javascript" src="/admin/yui/build/connection/connection.js"></script>
     <script type="text/javascript" src="/admin/yui/build/treeview/treeview.js"></script>
 
-  <?$root = Node::findByPath($request->getParameter("rn"));?>
+  <?php $root = Node::findByPath($request->getParameter("rn"));?>
 <script type="text/javascript">
 
 var treeExample = function() {

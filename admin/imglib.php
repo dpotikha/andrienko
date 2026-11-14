@@ -1,4 +1,4 @@
-<?
+<?php 
 
 require_once("prepend.php");
 require_once ($_SERVER['DOCUMENT_ROOT'].'/WEB-INF/classes/dbm/ImgLib1.php');

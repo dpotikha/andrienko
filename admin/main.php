@@ -1,4 +1,4 @@
-<?include("prepend.php")?>
+<?php include("prepend.php")?>
 <html>
 <head><meta HTTP-EQUIV="content-type" CONTENT="text/html;charset=<?=ADMIN_CHARSET?>">
 <title></title>

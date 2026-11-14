@@ -1,4 +1,4 @@
-<?
+<?php 
 
 $_settingsNode = &Node::findByPath("/_site_settings");
 $request->setAttribute("SettingsNode", $_settingsNode);

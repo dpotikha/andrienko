@@ -1,4 +1,4 @@
-<?
+<?php 
 ini_set ("memory_limit", "40M");
 set_time_limit (10*60*3600);
 

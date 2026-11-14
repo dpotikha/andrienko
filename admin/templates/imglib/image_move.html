@@ -1,4 +1,4 @@
-<?
+<?php 
 	function printDirRecursive($urlapp, $dirRelPath, $currentDir) {
 		global $CurrentAdminUser;
 		echo "<ul>";
@@ -49,7 +49,7 @@
 <td id=pad18 class=h4>
 <br>
 
-<table border=0 cellpadding=0 cellspacing=0><td><b><a href="/admin/imglib.php?cdir=&cname=<?=$cname?>"><?=$AdminTrnsl["ImgLibMainFolder"]?></a> :</b><? $cd=array();$ds=explode('/', $cdir->getRelPath());  foreach($ds as $d) { if(!$d) continue; $cd[]=$d;?><b> <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a> :</b><?}?> <?=$image->getName()?></td></table>
+<table border=0 cellpadding=0 cellspacing=0><td><b><a href="/admin/imglib.php?cdir=&cname=<?=$cname?>"><?=$AdminTrnsl["ImgLibMainFolder"]?></a> :</b><?php  $cd=array();$ds=explode('/', $cdir->getRelPath());  foreach($ds as $d) { if(!$d) continue; $cd[]=$d;?><b> <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a> :</b><?php }?> <?=$image->getName()?></td></table>
 <br>
 
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab2>
@@ -63,7 +63,7 @@
 <b><?=$AdminTrnsl["ImgLibChooseFolderToMove"]?>:</b><br>
 <ul>
 <a href="/admin/imglib.php?do=image_move<?=$urlapp?>&cdir="><img src="/admin/_img/folder.gif" width="14" height="10" hspace="3" border="0"><?=$AdminTrnsl["ImgLibMainFolder"]?></a><br>
-<?printDirRecursive($urlapp, "", $cdir->getRelPath());?>
+<?php printDirRecursive($urlapp, "", $cdir->getRelPath());?>
 </ul>
 <br>
 <br>

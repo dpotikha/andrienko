@@ -1,4 +1,4 @@
-<?
+<?php 
 $request->setAttribute("active_tab", "editing");
 $restrict_edit = $CurrentAdminUser->group->restrictNodeEdit;
 $visibleDepends = array();
@@ -17,14 +17,14 @@ foreach($depends as $dep) {
 			$request->setAttribute("ndMap",$ndMap);
 ?>
 
-<? usetemplate("emails/_edit_header") ?>
+<?php  usetemplate("emails/_edit_header") ?>
 <link rel=stylesheet href="/admin/js/calendar/calendar-win2k-cold-2.css" type="text/css">
 <script type="text/javascript" src="/admin/js/calendar/calendar.js"></script>
 <script type="text/javascript" src="/admin/js/calendar/ru.js"></script>
 <script type="text/javascript" src="/admin/js/calendar/calendar-setup.js"></script>
 <script type="text/javascript" src="/admin/js/tooltip.js"></script>
 
-<? if (!$restrict_edit || $ndMap->hasWriteRight ) { ?>
+<?php  if (!$restrict_edit || $ndMap->hasWriteRight ) { ?>
 <table width=100% border=0 cellpadding=0 cellspacing=0>
 <tr><td id=pad18>
 
@@ -34,27 +34,27 @@ foreach($depends as $dep) {
 <input type="hidden" name="do" value="addnode_form">
 <tr class=top4>
 <td height=36 id=pad5 nowrap width=50%>
-<? if($request->getParameter("id")!=DELIVERY_NODE_ID){?>
-<? if (!$restrict_edit || $ndMap->hasDeleteRight) { ?>
+<?php  if($request->getParameter("id")!=DELIVERY_NODE_ID){?>
+<?php  if (!$restrict_edit || $ndMap->hasDeleteRight) { ?>
 <input type=button class=button3 value="<?=$AdminTrnsl["Del"]?>" onClick="if(confirm('<?=$AdminTrnsl["This_will_delete_all_subnodes_Proceed"]?>')) location.href='/admin/emails.php?do=deletenode&id=<?=$node->id?>'">
-<? } ?>
-<? }?>
+<?php  } ?>
+<?php  }?>
 </td>
 
-<? if (sizeof($visibleDepends) != 0) { ?>
+<?php  if (sizeof($visibleDepends) != 0) { ?>
 <td id=pad5 nowrap>
-<? if (!$restrict_edit || $ndMap->hasWriteRight) {?>
+<?php  if (!$restrict_edit || $ndMap->hasWriteRight) {?>
 <table border=0 cellpadding=0 cellspacing=0 width=1%>
 <tr>
-<td nowrap width=1%><b><?/*<?=$AdminTrnsl["New_SubNode"]?>:*/?>&nbsp;</b></td>
+<td nowrap width=1%><b><?php /*<?=$AdminTrnsl["New_SubNode"]?>:*/?>&nbsp;</b></td>
 <td>
-	<? foreach($visibleDepends as $dep) { ?>
+	<?php  foreach($visibleDepends as $dep) { ?>
 	<input type=button class=button1 onClick="location.href='/admin/emails.php?parent_id=<?= $node->id ?>&do=addnode_form&class_id=<?= $dep->id ?>'" value="<?=$AdminTrnsl["CreateSubnode"]?> <?= $dep->name ?>"><br>
-	<? } ?>
+	<?php  } ?>
 </table>
-<? }?>
+<?php  }?>
 </td>
-<?}?>
+<?php }?>
 </tr>
 </form>
 </table>
@@ -62,20 +62,20 @@ foreach($depends as $dep) {
 </td>
 </tr>
 </table>
-<? } ?>
+<?php  } ?>
 
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <tr>
 <td id=pad18 class=back2>
-<? usetemplate("emails/editnode_in") ?>
+<?php  usetemplate("emails/editnode_in") ?>
 </td>
 </tr>
 
-<? if ($childrenCount > 0) { ?>
+<?php  if ($childrenCount > 0) { ?>
 
 <tr><td id=pad18>
 
-<?
+<?php 
 $pageNumMap = $request->getParameter("pagenum");
 if ($pageNumMap == null) {
 	$pageNumMap = array();
@@ -99,9 +99,9 @@ foreach($childrenByClasses as $item) {
 
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=nobacktab>
 <td><b><?=$AdminTrnsl["CClass"]?>: <?=$item->nodeClass->name?></b></td>
-<? if (!$restrict_edit) { ?>
+<?php  if (!$restrict_edit) { ?>
 <td align=right class=small><?=$item->nodeClass->shortname?></td>
-<? } ?>
+<?php  } ?>
 </table>
 
 </td>
@@ -110,25 +110,25 @@ foreach($childrenByClasses as $item) {
 <form action="/admin/emails.php?do=deleteselectednode" onsubmit="return CheckForm(this)" method="post">
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab2>
 <tr id=back2 class=header>
-<? //if (!$restrict_edit || $nodeClass->checkFlag("RU_CAN_DELETE")) 
+<?php  //if (!$restrict_edit || $nodeClass->checkFlag("RU_CAN_DELETE")) 
 { ?>
 <td width=1%  class=td2><input type="checkbox" name="delete_all" value="1" onclick="SelectAllCheckBox(this)"></td>
-<? }?>
+<?php  }?>
 
-<? if ($showShortname) { ?>
+<?php  if ($showShortname) { ?>
 <td width=1% class=td2><?=$AdminTrnsl["Shortname"]?></td>
-<? } ?>
-<? if ($showNodeName) { ?>
-<td<?if (sizeof($shownFieldDefs) !=0 ) {?> width=40%<?}?>><?=($item->nodeClass->nodeNameLabel ? $item->nodeClass->nodeNameLabel : $AdminTrnsl["Node_name"])?></td>
-<? } ?>
-<? foreach($shownFieldDefs as $fd) { ?>
+<?php  } ?>
+<?php  if ($showNodeName) { ?>
+<td<?php if (sizeof($shownFieldDefs) !=0 ) {?> width=40%<?php }?>><?=($item->nodeClass->nodeNameLabel ? $item->nodeClass->nodeNameLabel : $AdminTrnsl["Node_name"])?></td>
+<?php  } ?>
+<?php  foreach($shownFieldDefs as $fd) { ?>
 <td><?=$fd->name?></td>
-<? } ?>
-<?/* <?if ($item->sort){?><td width=1%><?=$AdminTrnsl["Sort"]?></td><?}?> */?>
+<?php  } ?>
+<?php /* <?if ($item->sort){?><td width=1%><?=$AdminTrnsl["Sort"]?></td><?}?> */?>
 <td width=1%><?=$AdminTrnsl["Action"]?></td>
 </tr>
 
-<?
+<?php 
 $c=0;
 $tot=sizeof($item->nodes);
   
@@ -142,49 +142,49 @@ foreach($item->nodes as $child){
 ?>
 <tr id=back3>
 
-<td><? if (!$restrict_edit || $child->hasDeleteRight) { ?><input type="checkbox" name="delete_node[]" value="<?=$child->node->id?>" onclick="checkNode(this)"><? }else{?><input type="checkbox" disabled="disabled"><? }?></td>
+<td><?php  if (!$restrict_edit || $child->hasDeleteRight) { ?><input type="checkbox" name="delete_node[]" value="<?=$child->node->id?>" onclick="checkNode(this)"><?php  }else{?><input type="checkbox" disabled="disabled"><?php  }?></td>
 
-<? if ($showShortname) { ?>
+<?php  if ($showShortname) { ?>
 <td class=td2><?=$child->node->shortname?></td>
-<? } ?>
-<? if ($showNodeName) { ?>
+<?php  } ?>
+<?php  if ($showNodeName) { ?>
 <td>
-<?/* <a href="/admin/emails.php?do=main&id=<?=$child->node->id?>"> */?>
+<?php /* <a href="/admin/emails.php?do=main&id=<?=$child->node->id?>"> */?>
 <?=$child->node->name?>
-<?/* </a> */?>
+<?php /* </a> */?>
 </td>
-<? } ?>
-<? foreach($shownFieldDefs as $fd) { ?>
+<?php  } ?>
+<?php  foreach($shownFieldDefs as $fd) { ?>
 <td><?=$child->node->fields[$fd->shortname]->getHtmlVisualValue()?></td>
-<? } ?>
-<?/* <?if ($item->sort) {?><td nowrap<? if ($c == $tot) { ?> align=right<? } else { ?><input type=button style="width:21px" class=button41><?}?><?if ($c!=1) {?><input type=button style="width:21px" class=button42><?}?></td><?}?> */?>
+<?php  } ?>
+<?php /* <?if ($item->sort) {?><td nowrap<? if ($c == $tot) { ?> align=right<? } else { ?><input type=button style="width:21px" class=button41><?}?><?if ($c!=1) {?><input type=button style="width:21px" class=button42><?}?></td><?}?> */?>
 <td nowrap width=1%>
 <!--<input type=button value="<?= $AdminTrnsl["Edit"] ?>" onClick="location.href='/admin/emails.php?do=editnode&id=<?=$child->node->id?>'" class=button1>
-<? if (!$restrict_edit || $item->nodeClass->checkFlag("RU_CAN_DELETE")) { ?>
+<?php  if (!$restrict_edit || $item->nodeClass->checkFlag("RU_CAN_DELETE")) { ?>
 <input type=button value="<?=$AdminTrnsl["Del"]?>" class=button4 onClick="if(confirm('<?=$AdminTrnsl["This_will_delete_all_subnodes_Proceed"]?>')) location.href='/admin/emails.php?do=deletenode&id=<?=$child->node->id?>'"<?=$child_disabledControlIfUserHasNoWriteRights?>>
-<? } ?>-->
+<?php  } ?>-->
 <a href="javascript:void(0)" onclick="location.href='/admin/emails.php?do=editnode&id=<?=$child->node->id?>'"><img src="/admin/_img/ico/view.jpg" border="0" title='Просмотреть' id='hint'></a>
-<? if (!$restrict_edit || $child->hasWriteRight) { ?>
+<?php  if (!$restrict_edit || $child->hasWriteRight) { ?>
 <a href="javascript:void(0)" onclick="location.href='/admin/emails.php?do=editnode&id=<?=$child->node->id?>'"><img src="/admin/_img/ico/edit.jpg" border="0" title='Редактировать' id='hint' ></a>
-<? }else{?>
+<?php  }else{?>
 <img src="/admin/_img/ico/edit_d.jpg" border="0">
-<? }?>
-<? if (!$restrict_edit || $child->hasDeleteRight) { ?>
+<?php  }?>
+<?php  if (!$restrict_edit || $child->hasDeleteRight) { ?>
 <a href="javascript:void(0)" onClick="if(confirm('<?=$AdminTrnsl["This_will_delete_all_subnodes_Proceed"]?>')) location.href='/admin/emails.php?do=deletenode&id=<?=$child->node->id?>'"><img src="/admin/_img/ico/delete.jpg" border="0" title='Удалить' id='hint'></a>
-<? }else{ ?>
+<?php  }else{ ?>
 	<img src="/admin/_img/ico/delete_d.jpg" border="0">
-<? }?>
+<?php  }?>
 </td>
 </tr>
-<? } ?>
+<?php  } ?>
 </table>
 	<div><input type="submit" name="deleted_btn" value="<?=$AdminTrnsl["Del"]?>" style="visibility:hidden" class=button4></div>
 </form>
-<? if($item->nodespagesCount > 1) { ?>
+<?php  if($item->nodespagesCount > 1) { ?>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=nobacktab>
 <tr id=back3>
 <td class=td2 colspan=10 id=pad5>
-<?
+<?php 
 $hiddenNames = array();
 $hiddenValues = array();
 foreach($pageNumMap as $_k=>$_v) {
@@ -207,13 +207,13 @@ HTMLWriter::draw_paging_links($item->nodesOffset, NODES_PER_PAGE, NODELINKS_PER_
 </td>
 </tr>
 </table>
-<? } ?>
+<?php  } ?>
 
-<? } ?>
+<?php  } ?>
 
 </td>
 </tr>
-<? } ?>
+<?php  } ?>
 </table>
 
 <p>

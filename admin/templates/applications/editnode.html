@@ -1,4 +1,4 @@
-<?
+<?php 
 $request->setAttribute("active_tab", "editing");
 $restrict_edit = $CurrentAdminUser->group->restrictNodeEdit;
 
@@ -16,14 +16,14 @@ foreach($depends as $dep) {
 			$request->setAttribute("ndMap",$ndMap);
 ?>
 
-<? usetemplate("applications/_edit_header") ?>
+<?php  usetemplate("applications/_edit_header") ?>
 <link rel=stylesheet href="/admin/js/calendar/calendar-win2k-cold-2.css" type="text/css">
 <script type="text/javascript" src="/admin/js/calendar/calendar.js"></script>
 <script type="text/javascript" src="/admin/js/calendar/ru.js"></script>
 <script type="text/javascript" src="/admin/js/calendar/calendar-setup.js"></script>
 <script type="text/javascript" src="/admin/js/tooltip.js"></script>
 
-<? if (!$restrict_edit || $ndMap->hasWriteRight ) { ?>
+<?php  if (!$restrict_edit || $ndMap->hasWriteRight ) { ?>
 <table width=100% border=0 cellpadding=0 cellspacing=0>
 <tr><td id=pad18>
 
@@ -35,20 +35,20 @@ foreach($depends as $dep) {
 <td height=36 id=pad5 nowrap width=50%>
 </td>
 
-<? if (sizeof($visibleDepends) != 0) { ?>
+<?php  if (sizeof($visibleDepends) != 0) { ?>
 <td id=pad5 nowrap>
-<? if (!$restrict_edit || $ndMap->hasWriteRight) {?>
+<?php  if (!$restrict_edit || $ndMap->hasWriteRight) {?>
 <table border=0 cellpadding=0 cellspacing=0 width=1%>
 <tr>
-<td nowrap width=1%><b><?/*<?=$AdminTrnsl["New_SubNode"]?>:*/?>&nbsp;</b></td>
+<td nowrap width=1%><b><?php /*<?=$AdminTrnsl["New_SubNode"]?>:*/?>&nbsp;</b></td>
 <td>
-	<? foreach($visibleDepends as $dep) { ?>
+	<?php  foreach($visibleDepends as $dep) { ?>
 	<input type=button class=button1 onClick="location.href='/admin/applications.php?parent_id=<?= $node->id ?>&do=addnode_form&class_id=<?= $dep->id ?>'" value="<?=$AdminTrnsl["CreateSubnode"]?> <?= $dep->name ?>"><br>
-	<? } ?>
+	<?php  } ?>
 </table>
-<? }?>
+<?php  }?>
 </td>
-<?}?>
+<?php }?>
 </tr>
 </form>
 </table>
@@ -56,20 +56,20 @@ foreach($depends as $dep) {
 </td>
 </tr>
 </table>
-<? } ?>
+<?php  } ?>
 
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <tr>
 <td id=pad18 class=back2>
-<? usetemplate("applications/editnode_in") ?>
+<?php  usetemplate("applications/editnode_in") ?>
 </td>
 </tr>
 
-<? if ($childrenCount > 0) { ?>
+<?php  if ($childrenCount > 0) { ?>
 
 <tr><td id=pad18>
 
-<?
+<?php 
 $pageNumMap = $request->getParameter("pagenum");
 if ($pageNumMap == null) {
 	$pageNumMap = array();
@@ -93,9 +93,9 @@ foreach($childrenByClasses as $item) {
 
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=nobacktab>
 <td><b><?=$AdminTrnsl["CClass"]?>: <?=$item->nodeClass->name?></b></td>
-<? if (!$restrict_edit) { ?>
+<?php  if (!$restrict_edit) { ?>
 <td align=right class=small><?=$item->nodeClass->shortname?></td>
-<? } ?>
+<?php  } ?>
 </table>
 
 </td>
@@ -104,19 +104,19 @@ foreach($childrenByClasses as $item) {
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab2>
 <tr id=back2 class=header>
 
-<? if ($showShortname) { ?>
+<?php  if ($showShortname) { ?>
 <td width=1% class=td2><?=$AdminTrnsl["Shortname"]?></td>
-<? } ?>
-<? if ($showNodeName) { ?>
-<td<?if (sizeof($shownFieldDefs) !=0 ) {?> width=40%<?}?>><?=($item->nodeClass->nodeNameLabel ? $item->nodeClass->nodeNameLabel : $AdminTrnsl["Node_name"])?></td>
-<? } ?>
-<? foreach($shownFieldDefs as $fd) { ?>
+<?php  } ?>
+<?php  if ($showNodeName) { ?>
+<td<?php if (sizeof($shownFieldDefs) !=0 ) {?> width=40%<?php }?>><?=($item->nodeClass->nodeNameLabel ? $item->nodeClass->nodeNameLabel : $AdminTrnsl["Node_name"])?></td>
+<?php  } ?>
+<?php  foreach($shownFieldDefs as $fd) { ?>
 <td><?=$fd->name?></td>
-<? } ?>
+<?php  } ?>
 <td width=1%><?=$AdminTrnsl["Action"]?></td>
 </tr>
 
-<?
+<?php 
 $c=0;
 $tot=sizeof($item->nodes);
   
@@ -131,28 +131,28 @@ foreach($item->nodes as $child){
 <tr id=back3>
 
 
-<? if ($showShortname) { ?>
+<?php  if ($showShortname) { ?>
 <td class=td2><?=$child->node->shortname?></td>
-<? } ?>
-<? if ($showNodeName) { ?>
+<?php  } ?>
+<?php  if ($showNodeName) { ?>
 <td>
 <?=$child->node->name?>
 </td>
-<? } ?>
-<? foreach($shownFieldDefs as $fd) { ?>
+<?php  } ?>
+<?php  foreach($shownFieldDefs as $fd) { ?>
 <td><?=$child->node->fields[$fd->shortname]->getHtmlVisualValue()?></td>
-<? } ?>
+<?php  } ?>
 <td nowrap width=1%>
 <a href="/admin/applications.php?do=editnode&id=<?=$child->node->id?>"><img src="/admin/_img/ico/edit.jpg" border="0" title='Редактировать' id='hint' ></a>
 </td>
 </tr>
-<? } ?>
+<?php  } ?>
 </table>
-<? if($item->nodespagesCount > 1) { ?>
+<?php  if($item->nodespagesCount > 1) { ?>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=nobacktab>
 <tr id=back3>
 <td class=td2 colspan=10 id=pad5>
-<?
+<?php 
 $hiddenNames = array();
 $hiddenValues = array();
 foreach($pageNumMap as $_k=>$_v) {
@@ -175,13 +175,13 @@ HTMLWriter::draw_paging_links($item->nodesOffset, NODES_PER_PAGE, NODELINKS_PER_
 </td>
 </tr>
 </table>
-<? } ?>
+<?php  } ?>
 
-<? } ?>
+<?php  } ?>
 
 </td>
 </tr>
-<? } ?>
+<?php  } ?>
 </table>
 
 <p>

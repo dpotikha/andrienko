@@ -18,7 +18,7 @@
 		} else {
 			treeFrame = top.frames["treeFrame"];
 		}
-		<?
+		<?php 
 			$node=Node::findById($request->getParameter("node_id"));
 			$parentNode=$node->getParent();
 			$oldParent=$request->getAttribute("oldParent");

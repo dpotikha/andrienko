@@ -1,4 +1,4 @@
-<?
+<?php 
 	$cname = $CM_CONTROL_NAME;
 //	print_r($CM_PARAMS);
 ?>
@@ -32,10 +32,10 @@
 </table>
 </td>
 <td id=back2><img src=/admin/_img/s.gif width=1 height=1></td>
-<?if ($CM_PARAMS["url"]){?>
+<?php if ($CM_PARAMS["url"]){?>
 <td id=pad10r><a href="<?=$CM_PARAMS["url"]?>" target=_blank><img src="<?=$CM_PARAMS["thumburl"]?>" border=0 alt="<?=$AdminTrnsl["View_Image"]?>"></a></td>
 <td id=pad10r><input type="checkbox" name="<?=$cname?>_del" value="1"><span class=errmsg><?=$AdminTrnsl["Delete_file"]?></span></td>
-<?}?>
+<?php }?>
 </tr>
 </table>
 	<script language="javascript">

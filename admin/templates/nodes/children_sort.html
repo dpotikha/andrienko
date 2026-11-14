@@ -1,4 +1,4 @@
-<?$request->setAttribute("active_tab", "sorting");?>
+<?php $request->setAttribute("active_tab", "sorting");?>
 <?=usetemplate("nodes/_edit_header")?>
  <style type="text/css" media="screen">
   ul.sortabledemo {
@@ -65,7 +65,7 @@ function move_kid(kid,to){
 </table>
 </div>
 <ul class="sortabledemo" id="secondlist">
-<?forEach ($children as $k=> $child) {?>
+<?php forEach ($children as $k=> $child) {?>
 <li id="secondlist_secondlist_<?=$child->id?>">
 <!--&nbsp;<input type=button style="width:21px" value="" title="<?=$AdminTrnsl["bottom"]?>" class=button43 onClick="move_kid(<?=$child->id?>,'bottom');"><input type=button style="width:21px" value="" title="<?=$AdminTrnsl["top"]?>" class=button44 onClick="move_kid(<?=$child->id?>,'top');">
 <input type=button style="width:21px" value="" title="<?=$AdminTrnsl["down"]?>" class=button41 onClick="move_kid(<?=$child->id?>,'down');"><input type=button style="width:21px" value="" title="<?=$AdminTrnsl["up"]?>" class=button42 onClick="move_kid(<?=$child->id?>,'up');">--><span class="handle">DRAG HERE</span><span style="padding-left:10px"><?=$child->name?></span>
@@ -78,7 +78,7 @@ function move_kid(kid,to){
 </tr>
 </table>-->
 </li>
-<?}?>
+<?php }?>
 </ul>
 <div style="padding-left:20px;">
 <input id="save_btn" style="visibility:hidden" type="button" class=button2  onclick="document.forms['multi_sort_form'].submit()" value="Сохранить">

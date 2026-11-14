@@ -1,4 +1,4 @@
-<?
+<?php 
 $cdirPath = $cdir->getRelPath();
 $cdirPathEncoded = encodeURL($cdirPath);
 if (!$CurrentAdminUser->group->canManageImgLib) {
@@ -61,11 +61,11 @@ function editImage(imgName) {
 <td id=pad18 class=h4>
 <br>
 
-<? if (strlen($cdirPath) != 0) { ?>
-<b class=h3><a href="/admin/imglib.php?cdir=&cname=<?=$cname?>"><?=$AdminTrnsl["ImgLibMainFolder"]?></a></b><? $cd=array();$ds=explode('/', $cdirPath); $ld=array_pop ($ds);foreach($ds as $d) { $cd[]=$d;?><b> : <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a></b><?}?><b> : <?=$ld?></b><br>
-<? } else { ?>
+<?php  if (strlen($cdirPath) != 0) { ?>
+<b class=h3><a href="/admin/imglib.php?cdir=&cname=<?=$cname?>"><?=$AdminTrnsl["ImgLibMainFolder"]?></a></b><?php  $cd=array();$ds=explode('/', $cdirPath); $ld=array_pop ($ds);foreach($ds as $d) { $cd[]=$d;?><b> : <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a></b><?php }?><b> : <?=$ld?></b><br>
+<?php  } else { ?>
 <b><?=$AdminTrnsl["ImgLibMainFolder"]?></b><br>
-<? } ?>
+<?php  } ?>
 <br>
 
 <table border=0 cellspacing=0 cellpadding=0>
@@ -73,9 +73,9 @@ function editImage(imgName) {
 <td nowrap>
 <input type="button" value="<?=$AdminTrnsl["ImgLibNewImage"]?>" class=button1 onClick="location.href='/admin/imglib.php?do=image_addform&cdir=<?=$cdirPath?>&cname=<?=$cname?>'"<?=$disabledControlIfUserHasNoWriteRights?>>
 <input type="button" value="<?=$AdminTrnsl["ImgLibNewFolder"]?>" class=button1 onClick="location.href='/admin/imglib.php?do=folder_createform&cdir=<?=$cdirPath?>&cname=<?=$cname?>'"<?=$disabledControlIfUserHasNoWriteRights?>>
-<? if(strlen($cdirPath)!=0) { ?><input type="button" value="<?=$AdminTrnsl["ImgLibMenuRename"]?>" class=button1 onClick="location.href='/admin/imglib.php?do=folder_renameform&cdir=<?=$cdir->getParentRelPath()?>&olddname=<?=$cdir->getName()?>&cname=<?=$cname?>'"<?=$disabledControlIfUserHasNoWriteRights?>>
+<?php  if(strlen($cdirPath)!=0) { ?><input type="button" value="<?=$AdminTrnsl["ImgLibMenuRename"]?>" class=button1 onClick="location.href='/admin/imglib.php?do=folder_renameform&cdir=<?=$cdir->getParentRelPath()?>&olddname=<?=$cdir->getName()?>&cname=<?=$cname?>'"<?=$disabledControlIfUserHasNoWriteRights?>>
 <input type="button" value="<?=$AdminTrnsl["ImgLibMenuMove"]?>" class=button1 onClick="location.href='/admin/imglib.php?do=folder_moveform&oldcdir=<?=$cdirPath?>&cname=<?=$cname?>'"<?=$disabledControlIfUserHasNoWriteRights?>>
-<input type="button" value="<?=$AdminTrnsl["ImgLibMenuDelete"]?>" class=button3 onClick="<?if (!$cdir->isEmpty()) { ?>alert('<?=$AdminTrnsl["ImgLibCantDelNEFolder"]?>')<? } else {?>if(confirm('<?=$AdminTrnsl["ImgLibRUSDelFolder"]?>')) location.href='/admin/imglib.php?do=folder_delete&cdir=<?=$cdir->getParentRelPath()?>&dirName=<?=$cdir->getName()?>&cname=<?=$cname?>'<? } ?>"<?=$disabledControlIfUserHasNoWriteRights?>><? } ?></td>
+<input type="button" value="<?=$AdminTrnsl["ImgLibMenuDelete"]?>" class=button3 onClick="<?php if (!$cdir->isEmpty()) { ?>alert('<?=$AdminTrnsl["ImgLibCantDelNEFolder"]?>')<?php  } else {?>if(confirm('<?=$AdminTrnsl["ImgLibRUSDelFolder"]?>')) location.href='/admin/imglib.php?do=folder_delete&cdir=<?=$cdir->getParentRelPath()?>&dirName=<?=$cdir->getName()?>&cname=<?=$cname?>'<?php  } ?>"<?=$disabledControlIfUserHasNoWriteRights?>><?php  } ?></td>
 </tr>
 </table>
 <br>
@@ -85,25 +85,25 @@ function editImage(imgName) {
 <td><b><?=$AdminTrnsl["Folder"]?></b></td>
 <td width=5%>&nbsp;</td>
 </tr>
-<? if (!$cdir->isRoot()) { ?>
+<?php  if (!$cdir->isRoot()) { ?>
 <tr id=back3>
 <td><a href="/admin/imglib.php?cdir=<?=$cdir->getParentRelPath()?>&cname=<?=$cname?>"><img src=/admin/_img/folder.gif width=15 height=15 border=0 hspace=3><b>..</b></a></td>
 <td>&nbsp;</td>
 </tr>
-<? } ?>
+<?php  } ?>
 
-<? for ($i=0; $i<sizeof($dirs); $i++) { $dir = $dirs[$i]; if ($CurrentAdminUser->group->id != 1 && $dir->getName() == '_newimage') continue;?>
+<?php  for ($i=0; $i<sizeof($dirs); $i++) { $dir = $dirs[$i]; if ($CurrentAdminUser->group->id != 1 && $dir->getName() == '_newimage') continue;?>
 <tr id=back3>
 <td><a href="/admin/imglib.php?cdir=<?=$dir->getRelPath()?>&cname=<?=$cname?>"><img src=/admin/_img/folder.gif width=15 height=15 border=0 hspace=3><b><?=$dir->getName()?></b></a></td>
 <td nowrap>
 <input class=button1 onClick="location.href='/admin/imglib.php?do=folder_renameform&cdir=<?=$cdirPath?>&olddname=<?=$dir->getName()?>&cname=<?=$cname?>'" type=button value=<?=$AdminTrnsl["ImgLibRenameFolder"]?> name="button"<?=$disabledControlIfUserHasNoWriteRights?>>
 <input class=button1 onClick="location.href='/admin/imglib.php?do=folder_moveform&oldcdir=<?=$dir->getRelPath()?>&cname=<?=$cname?>'" type=button value=<?=$AdminTrnsl["ImgLibMoveFolder"]?> name="button"<?=$disabledControlIfUserHasNoWriteRights?>>
-<input class=button3 onClick="<?if(!$dir->isEmpty()) { ?>alert('<?=$AdminTrnsl["ImgLibCantDelNEFolder"]?>')<? } else {?>if(confirm('<?=$AdminTrnsl["ImgLibRUSDelFolder"]?>')) location.href='/admin/imglib.php?do=folder_delete&cdir=<?=$cdirPath?>&dirName=<?=$dir->getName()?>&cname=<?=$cname?>'<? } ?>" type=button value="<?=$AdminTrnsl["ImgLibDelFolder"]?>" name="button"<?=$disabledControlIfUserHasNoWriteRights?>>
+<input class=button3 onClick="<?php if(!$dir->isEmpty()) { ?>alert('<?=$AdminTrnsl["ImgLibCantDelNEFolder"]?>')<?php  } else {?>if(confirm('<?=$AdminTrnsl["ImgLibRUSDelFolder"]?>')) location.href='/admin/imglib.php?do=folder_delete&cdir=<?=$cdirPath?>&dirName=<?=$dir->getName()?>&cname=<?=$cname?>'<?php  } ?>" type=button value="<?=$AdminTrnsl["ImgLibDelFolder"]?>" name="button"<?=$disabledControlIfUserHasNoWriteRights?>>
 </td>
 </tr>
-<?}?>
+<?php }?>
 </table>
-<? if(sizeof($images) > 0) { ?>
+<?php  if(sizeof($images) > 0) { ?>
 
 <div id=pad5><?=$AdminTrnsl["ImgLibImageslist"]?>:</div>
 
@@ -114,7 +114,7 @@ function editImage(imgName) {
 <td width=40%><b class=h3><?=$AdminTrnsl["DownloadLibAction"]?></b></td>
 </tr>
 
-<? for ($i=0; $i<sizeof($images); $i++) { $image = $images[$i]; ?><script>imgSizesW["<?=$image->getName()?>"]=<?=$image->getWidth()?>;imgSizesH["<?=$image->getName()?>"]=<?=$image->getHeight()?>;</script>
+<?php  for ($i=0; $i<sizeof($images); $i++) { $image = $images[$i]; ?><script>imgSizesW["<?=$image->getName()?>"]=<?=$image->getWidth()?>;imgSizesH["<?=$image->getName()?>"]=<?=$image->getHeight()?>;</script>
 <tr id=back3>
 <td width=90>
 <a href="javascript://" onClick="selectImage('<?=$image->getName()?>'); return false;">
@@ -132,11 +132,11 @@ function editImage(imgName) {
 <input class=button4 onClick="if(confirm('<?=$AdminTrnsl["ImgLibRUSDelImage"]?>')) location.href='/admin/imglib.php?do=image_delete&cdir=<?=$cdirPath?>&cname=<?=$cname?>&fname=<?=$image->getName()?>'" type=button value=<?=$AdminTrnsl["ImgLibMenuDelete"]?> name="button22"<?=$disabledControlIfUserHasNoWriteRights?>>
 </td>
 </tr>
-<? } ?>
+<?php  } ?>
 </table>
 
 <br>
-<? } ?>
+<?php  } ?>
 </tr></table>
 
 </td>

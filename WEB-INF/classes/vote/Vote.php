@@ -1,4 +1,4 @@
-<?
+<?php 
 
 /**
 CREATE TABLE dbm_voting_questions (

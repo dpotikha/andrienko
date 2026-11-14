@@ -1,4 +1,4 @@
-<?include("prepend.php")?>
+<?php include("prepend.php")?>
 <html>
 <meta HTTP-EQUIV="content-type" CONTENT="text/html; charset=<?=ADMIN_CHARSET?>">
 <meta http-equiv="Expires" content="0">
@@ -21,7 +21,7 @@
 </head>
 
 
-<?$root = Node::findRoot();?>
+<?php $root = Node::findRoot();?>
 <script type="text/javascript">
 
 var treeExample = function() {
@@ -142,15 +142,15 @@ div.SeparatorLine{
 <body  leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=tree>
 <div id="topMenu">
 
-<?
+<?php 
 	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 	$showSiteSettings = false;
 		?>
-        <?
+        <?php 
 	if ($currentLoggedUser->group->canManageUsers) {
 		?>
 			<div><a href="/admin/users.php" target="main" class="clear_tree" onClick="ChangeStyle(this)"><?=$AdminTrnsl["Users_Management"]?></a></div>
-        <?
+        <?php 
 			
 	} else {
 		$showSiteSettings = false;
@@ -158,25 +158,25 @@ div.SeparatorLine{
 	if ($currentLoggedUser->group->canManageClasses) {
 		?>
 			<div><a href="/admin/classes.php" target="main" class="clear_tree" onClick="ChangeStyle(this)"><?=$AdminTrnsl["Classes_Management"]?></a></div>
-        <?
+        <?php 
 	} else {
 		$showSiteSettings = false;
 	}
 	if (_MODERATION_FEATURE_ === true && $CurrentAdminUser->group->isModerator) {
 		?>
 			<div><a href="admin/moderation.php" target="main" class="clear_tree" onClick="ChangeStyle(this)"><?=$AdminTrnsl["Nodes_Moderation"]?></a></div> 
-        <?
+        <?php 
 	}
 	if ($showSiteSettings) {
 		?>
 			<div><a href="/admin/settings.php" target="main" class="clear_tree" onClick="ChangeStyle(this)">Site Settings</a></div> 
-        <?
+        <?php 
 	}
 	if ($currentLoggedUser->group->canManageImgLib) {
 		?>
 			<div><a href="/admin/filelib.php" target="main" class="clear_tree" onClick="ChangeStyle(this)"><?=$AdminTrnsl["DownloadLib"]?></a></div>
 			<div><a href="/admin/imglib.php" target="main" class="clear_tree" onClick="ChangeStyle(this)"><?=$AdminTrnsl["Image_Library"]?></a></div> 
-        <?
+        <?php 
 	}
 ?>
 </div>

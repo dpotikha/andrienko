@@ -1,12 +1,12 @@
-<?usetemplate("moderation/header")?>
+<?php usetemplate("moderation/header")?>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=top3><td><img src=/admin/_img/s.gif width=1 height=1></td></table>
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <tr class=top41>
 <td height=30 id=pad18 colspan=2 nowrap class=head><b><?=$AdminTrnsl["Nodes_Moderation"]?></b></td>
 </tr>
-<?if ($MSG != null) {?><tr>
+<?php if ($MSG != null) {?><tr>
 <td id=pad18><span id="red"><?=$MSG?></span></td>
-</tr><?}?>
+</tr><?php }?>
 </table>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=top2><td><img src=/admin/_img/s.gif width=1 height=1></td></table>
 <table width=100% border=0 cellpadding=4 cellspacing=0>
@@ -23,7 +23,7 @@
 <td width=10%><?=$AdminTrnsl["Nodes_Moderation_Time"]?></a></td>
 <td><?=$AdminTrnsl["Actions"]?></td>
 </tr>
-<? foreach ($actions as $a) {$user = &User::findById($a->user_id);?>
+<?php  foreach ($actions as $a) {$user = &User::findById($a->user_id);?>
 <tr id=back3>
 <td nowrap><?=$AdminTrnsl["Nodes_Moderation_Type_".$a->type]?></td>
 <td nowrap><a href=/admin/moderation.php?do=process&id=<?=$a->id?>><?=$a->data->NodeName?></a></td>
@@ -31,7 +31,7 @@
 <td><?=($a->type != "create") ? $a->data->NodePath : $a->data->ParentPath?></td>
 <td nowrap><?=$a->time->format(DATETIME_FORMAT)?></td>
 <td nowrap align=center><input type=button value="<?=$AdminTrnsl["Nodes_Moderation_Process"]?>" onclick="document.location.href='/admin/moderation.php?do=process&id=<?=$a->id?>'" class=button1><input type=button value="<?=$AdminTrnsl["Nodes_Moderation_Delete"]?>" onclick='document.location.href="/admin/moderation.php?do=delete&id=<?=$a->id?>"' class=button3></td>
-</tr><?}?>
+</tr><?php }?>
 </table>
 <br>
 </td>

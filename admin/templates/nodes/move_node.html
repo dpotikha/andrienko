@@ -28,8 +28,8 @@ function selectNode(np_id) {
 
 
 
-<?$root = Node::findRoot();?>
-<?if (!$NoValidNodes) {?>
+<?php $root = Node::findRoot();?>
+<?php if (!$NoValidNodes) {?>
 <script type="text/javascript">
 
 var treeExample = function() {
@@ -125,7 +125,7 @@ var treeExample = function() {
 YAHOO.util.Event.onDOMReady(treeExample.init, treeExample,true)
 
 </script>
-<? }?>
+<?php  }?>
 <style>
 #treeDiv1 {background: #fff;}
 </style>
@@ -133,7 +133,7 @@ YAHOO.util.Event.onDOMReady(treeExample.init, treeExample,true)
 
 <body  leftmargin=10 topmargin=10 marginwidth=10 marginheight=10 class=main>
 
-<?if (!$NoValidNodes) {?>
+<?php if (!$NoValidNodes) {?>
 <?=$AdminTrnsl["NodeMoveSelectTargetNode"]?>
 
 <br><br>
@@ -142,7 +142,7 @@ YAHOO.util.Event.onDOMReady(treeExample.init, treeExample,true)
 <div id="treeDiv1"></div>
 </nobr>
 
-<?}else{?>
+<?php }else{?>
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <tr>
 <td id=pad18 width=10%>
@@ -150,6 +150,6 @@ YAHOO.util.Event.onDOMReady(treeExample.init, treeExample,true)
 </TD>
 </TR>
 </table>
-<?}?>
+<?php }?>
 </body>
 </html>

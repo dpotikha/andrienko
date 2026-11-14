@@ -1,4 +1,4 @@
-<? tinclude("_head") ?>
+<?php  tinclude("_head") ?>
 <?= $CurrentNode->tfields["text"]?>
 <style>
 .cform .name {padding-top:9px}
@@ -18,37 +18,37 @@ INPUT, TEXTAREA {background:D9D9D9; font:normal 11px Tahoma; padding:0px 3px; li
 <td></td>
 <td>
 <span id="red">* Обязательные поля</span></td></tr>
-<? if($errors["name"]){ ?>
+<?php  if($errors["name"]){ ?>
 <tr>
 <td class="name">Имя <span id="red">*</span></td>
 <td>
 <input name="name" type="text" class="oligat error" style="width:100%" value="<?=$errors["name"]?>" onfocus="if(this.value=='<?=prepareStringForHTML($errors["name"])?>'){this.value='';this.style.color='#000'}" onblur="if(this.value==''){this.value='<?=prepareStringForHTML($errors["name"])?>';this.style.color='#990000'}">
 </td>
 </tr>
-<? } else { ?>
+<?php  } else { ?>
 <tr>
 <td class="name">Имя <span id="red">*</span></td>
 <td>
 <input name="name" type="text" class="oligat" style="width:100%" value="<?=prepareStringForHTML($form->name)?>">
 </td>
 </tr>
-<? } ?>
+<?php  } ?>
 
-<? if($errors["email"]){ ?>
+<?php  if($errors["email"]){ ?>
 <tr>
 <td class="name">E-Mail <span id="red">*</span></td>
 <td>
 <input name="email" type="text" class="oligat error" style="width:100%" value="<?=$errors["email"]?>" onfocus="if(this.value=='<?=prepareStringForHTML($errors["email"])?>'){this.value='';this.style.color='#000'}" onblur="if(this.value==''){this.value='<?=prepareStringForHTML($errors["email"])?>';this.style.color='#990000'}">
 </td>
 </tr>
-<? } else { ?>
+<?php  } else { ?>
 <tr>
 <td class="name">E-Mail <span id="red">*</span></td>
 <td>
 <input name="email" type="text" class="oligat" style="width:100%" value="<?=prepareStringForHTML($form->email)?>">
 </td>
 </tr>
-<? } ?>
+<?php  } ?>
 
 <tr>
 <td class="name" nowrap="nowrap">Контактный телефон</td>
@@ -57,21 +57,21 @@ INPUT, TEXTAREA {background:D9D9D9; font:normal 11px Tahoma; padding:0px 3px; li
 </td>
 </tr>
 
-<? if($errors["text"]){ ?>
+<?php  if($errors["text"]){ ?>
 <tr>
 <td class="name">Текст сообщения <span id="red">*</span></td>
 <td>
 <textarea name="text" class="oligat error" rows="5" style="width:100%" onfocus="if(this.value=='<?=prepareStringForHTML($errors["text"])?>'){this.value='';this.style.color='#000'}" onblur="if(this.value==''){this.value='<?=prepareStringForHTML($errors["text"])?>';this.style.color='#990000'}"><?=$errors["text"]?></textarea>
 </td>
 </tr>
-<? } else { ?>
+<?php  } else { ?>
 <tr>
 <td class="name">Текст сообщения <span id="red">*</span></td>
 <td>
 <textarea name="text" class="oligat" rows=5 style="width:100%"><?=prepareStringForHTML($form->text)?></textarea>
 </td>
 </tr>
-<? } ?>
+<?php  } ?>
 <tr>
 <td></td><td><div class="g-recaptcha" data-sitekey="6LcnXmQUAAAAAH5m6ITv_L-4dl1IgYZA_-RRICC8"></div>
 <span id="red"><?=$errors["captcha"]?></span>
@@ -85,4 +85,4 @@ INPUT, TEXTAREA {background:D9D9D9; font:normal 11px Tahoma; padding:0px 3px; li
 </td></tr>
 </table>
 </form>
-<? tinclude("_foot") ?>
+<?php  tinclude("_foot") ?>

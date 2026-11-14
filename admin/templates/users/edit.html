@@ -25,7 +25,7 @@
 <input type=hidden name=do value='update_user'>
 <input type=hidden name=user_id value='<?= $u->id?>'>
 
-<?if ($ERROR) {?><p><font color=red><b><?=$AdminTrnsl["ERROR"]?>: </b><?=$AdminTrnsl["USER_CREATE_ERROR_".$ERROR]?></font></p><?}?>
+<?php if ($ERROR) {?><p><font color=red><b><?=$AdminTrnsl["ERROR"]?>: </b><?=$AdminTrnsl["USER_CREATE_ERROR_".$ERROR]?></font></p><?php }?>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=backtab3 id=back3>
 <tr>
 <td id=back2 class=td2><b><?=$AdminTrnsl["Login"]?>:</b></td>
@@ -46,10 +46,10 @@
 <tr>
 <td id=back2 class=td2 nowrap><b><?=$AdminTrnsl["Choose_group"]?>:</b></td>
 <td width=100%><select name=user_group style="width:150px">
-<? $groups = UserGroup::findAll(); ?>
-<?foreach ($groups as $ug) { if ($ug->id == 1 && $CurrentAdminUser->group->id != 1) continue; ?>
+<?php  $groups = UserGroup::findAll(); ?>
+<?php foreach ($groups as $ug) { if ($ug->id == 1 && $CurrentAdminUser->group->id != 1) continue; ?>
 <option value="<?=$ug->id?>"<?=($ug->id == $u->group->id) ? " SELECTED" : ""?>><?=$ug->name?>
-<?}?>
+<?php }?>
 </select></td>
 </tr>
 <tr id=back2>

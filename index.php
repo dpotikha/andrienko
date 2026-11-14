@@ -1,4 +1,4 @@
-<?
+<?php 
 //die("<p align=center>We are now upgrading software.<br>Sorry for inconvenience.<br>Visit us tomorrow with new great features and refreshed design!<br><br>Sorry - Wartungsarbeiten!<br>In etwa einer halben Stunde sind wir wieder online...");
 function getmicrotime1() 
 { 

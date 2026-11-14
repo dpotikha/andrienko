@@ -1,4 +1,4 @@
-<?
+<?php 
 	$cuGroupRights = &new NodeGroupRights($CurrentAdminUser->group, $node);
 	$userHasWriteRights = $cuGroupRights->hasWriteRight();
 	$request->setAttribute("userHasWriteRights", $userHasWriteRights);
@@ -31,21 +31,21 @@
 </script>
 </head>
 
-<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main<?if ($request->getParameter('reload') != null) {?> onLoad="refreshTree(<?=$node->id?>, <?=$node->parent_id+0?>,'<?=rawurlencode($node->name)?>')"<?}?>>
+<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main<?php if ($request->getParameter('reload') != null) {?> onLoad="refreshTree(<?=$node->id?>, <?=$node->parent_id+0?>,'<?=rawurlencode($node->name)?>')"<?php }?>>
 
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <tr class=top4>
-<td height=40 id=pad18 colspan=2 class=head><? if (!$CurrentAdminUser->group->canManageUsers) { array_shift($parents); } $i=0;foreach ($parents as $parent) {$i++;?><?if ($i!=1) {?> : <?}?><a href="/admin/nodes.php?do=main&id=<?=$parent->id?>" id=black><nobr><?=$parent->name?></nobr></a><?}?><?if (sizeof($parents) != 0) {?> : <?}?><b><nobr><?=$node->name?></nobr></b></td>
+<td height=40 id=pad18 colspan=2 class=head><?php  if (!$CurrentAdminUser->group->canManageUsers) { array_shift($parents); } $i=0;foreach ($parents as $parent) {$i++;?><?php if ($i!=1) {?> : <?php }?><a href="/admin/nodes.php?do=main&id=<?=$parent->id?>" id=black><nobr><?=$parent->name?></nobr></a><?php }?><?php if (sizeof($parents) != 0) {?> : <?php }?><b><nobr><?=$node->name?></nobr></b></td>
 </tr>
 </table>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=top42><td><img src=/admin/_img/s.gif width=1 height=5></td></table>
 
 
 <div id=pad5>
-<?$msg = $request->getParameter("msg"); if ($msg != null) {?><span id="red"><?=$AdminTrnsl[$msg]?></span><?}?>&nbsp;
+<?php $msg = $request->getParameter("msg"); if ($msg != null) {?><span id="red"><?=$AdminTrnsl[$msg]?></span><?php }?>&nbsp;
 </div>
 
-<? if (!$restrict_edit
+<?php  if (!$restrict_edit
 	|| $nodeClass->checkFlag("USE_SHORTNAME")
 	|| ($CurrentAdminUser->group->canManageUsers && $node->getChildrenCountForGroup($CurrentAdminUser->group->id) > 0)
 	|| ($userHasWriteRights && $CurrentAdminUser->group->canManageUsers)
@@ -56,38 +56,38 @@
 
 <table width=100% cellpadding=0 cellspacing=0 border=0 id=PropBg1>
 <tr>
-<?$n = ($active_tab == "editing") ? "3" : "2"; ?>
+<?php $n = ($active_tab == "editing") ? "3" : "2"; ?>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_3.gif" width="11" height="22" alt="" border="0"></td>
 <td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=main&id=<?=$node->id?>"><?=$AdminTrnsl["Editing"]?></a>&nbsp;</td>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
 
-<? if (!$restrict_edit || $ndMap->hasWriteRight) { ?>
-<?$n = ($active_tab == "properties") ? "3" : "2"; ?>
+<?php  if (!$restrict_edit || $ndMap->hasWriteRight) { ?>
+<?php $n = ($active_tab == "properties") ? "3" : "2"; ?>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
 <td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=properties&node_id=<?=$node->id?>"><?=$AdminTrnsl["Properties"]?></a>&nbsp;</td>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
-<? } ?>
+<?php  } ?>
 
-<? if($node->getChildrenCountForGroup($CurrentAdminUser->group->id) > 0&&(!$restrict_edit || $ndMap->hasWriteRight)) { ?>
-<?$n = ($active_tab == "sorting") ? "3" : "2"; ?>
+<?php  if($node->getChildrenCountForGroup($CurrentAdminUser->group->id) > 0&&(!$restrict_edit || $ndMap->hasWriteRight)) { ?>
+<?php $n = ($active_tab == "sorting") ? "3" : "2"; ?>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
 <td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=children_sort&node_id=<?=$node->id?>"><?=$AdminTrnsl["Sort"]?></a>&nbsp;</td>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
-<?}?>
+<?php }?>
 
-<? if($userHasWriteRights && $CurrentAdminUser->group->canManageUsers) { ?>
-<?$n = ($active_tab == "permissions") ? "3" : "2"; ?>
+<?php  if($userHasWriteRights && $CurrentAdminUser->group->canManageUsers) { ?>
+<?php $n = ($active_tab == "permissions") ? "3" : "2"; ?>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
 <td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=permissions&node_id=<?=$node->id?>"><?=$AdminTrnsl["Permissions"]?></a>&nbsp;</td>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
-<?}?>
+<?php }?>
 
-<? if($userHasWriteRights && !$restrict_edit) { s?>
-<?$n = ($active_tab == "dependencies") ? "3" : "2"; ?>
+<?php  if($userHasWriteRights && !$restrict_edit) { s?>
+<?php $n = ($active_tab == "dependencies") ? "3" : "2"; ?>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
 <td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=dependencies&node_id=<?=$node->id?>"><?=$AdminTrnsl["Dependent_Classes"]?></a>&nbsp;</td>
 <td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
-<?}?>
+<?php }?>
 
 <td width=100%>&nbsp;</td>
 </tr>
@@ -96,5 +96,5 @@
 </td>
 </tr>
 </table>
-<? } ?>
+<?php  } ?>
 <!-- nodes header end -->

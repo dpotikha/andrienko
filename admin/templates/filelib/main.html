@@ -39,11 +39,11 @@
 
 <br>
 
-<? if(strlen($cdirPath)!=0) { ?>
-<b class=h3><a href="/admin/filelib.php?cname=<?=$cname?>"><?=$AdminTrnsl["DownloadLibMainFolder"]?></a></b><?foreach(explode("/", $cdirPath) as $d){if (!$d){continue;}?><?$cd=$cd."/".$d?><b> : <a href="/admin/filelib.php?cdir=<?=$cd?>&cname=<?=$cname?>"><?=$d?></a></b><?}?><br>
-<? } else {?>
+<?php  if(strlen($cdirPath)!=0) { ?>
+<b class=h3><a href="/admin/filelib.php?cname=<?=$cname?>"><?=$AdminTrnsl["DownloadLibMainFolder"]?></a></b><?php foreach(explode("/", $cdirPath) as $d){if (!$d){continue;}?><?php $cd=$cd."/".$d?><b> : <a href="/admin/filelib.php?cdir=<?=$cd?>&cname=<?=$cname?>"><?=$d?></a></b><?php }?><br>
+<?php  } else {?>
 <b><?=$AdminTrnsl["DownloadLibMainFolder"]?></b><br>
-<? } ?>
+<?php  } ?>
 <br>
 
 <table border=0 cellspacing=0 cellpadding=0>
@@ -51,11 +51,11 @@
 <td nowrap>
 <input type="button" value="<?=$AdminTrnsl["DownloadLibUploadfile"]?>" class=button1 onClick="location.href='/admin/filelib.php?do=file_uploadform&cdir=<?=$cdirPath?>&cname=<?=$cname?>'">
 <input type="button" value="<?=$AdminTrnsl["DownloadLibCreatefolder"]?>" class=button1 onClick="location.href='/admin/filelib.php?do=dir_createform&cdir=<?=$cdirPath?>&cname=<?=$cname?>'">
-<?/* cm:if test="${CurrentAdminUser.group.canManageDownloadLib}" */?>
-<? if(strlen($cdirPath)!=0) { ?><input type="button" value="<?=$AdminTrnsl["DownloadLibRename"]?>" class=button1 onClick="location.href='/admin/filelib.php?do=rename_form&cdir=<?=$cdir1?>&fname=<?=$cdirname?>&cname=<?=$cname?>'" >
+<?php /* cm:if test="${CurrentAdminUser.group.canManageDownloadLib}" */?>
+<?php  if(strlen($cdirPath)!=0) { ?><input type="button" value="<?=$AdminTrnsl["DownloadLibRename"]?>" class=button1 onClick="location.href='/admin/filelib.php?do=rename_form&cdir=<?=$cdir1?>&fname=<?=$cdirname?>&cname=<?=$cname?>'" >
 <!-- <input type="button" value="<?=$AdminTrnsl["DownloadLibMove"]?>" class=button2 onClick="location.href='/admin/filelib.php?do=move_form&oldcdir=<?=$cdir1?>&fname=<?=$cdirname?>&cname=<?=$cname?>'" > -->
-<!-- <input type="button" value="<?=$AdminTrnsl["DownloadLibDel"]?>" class=button3 onClick="<?if(sizeof($files)!=0) { ?>alert('<?=$AdminTrnsl["DownloadLibCantDelNEFolder"]?>.')<? } else {?>if(confirm('<?=$AdminTrnsl["DownloadLib rus del folder"]?>')) location.href='/admin/filelib.php?do=delete&cdir=<?=$cdir1?>&fname=<?=$cdirname?>&cname=<?=$cname?>'<? } ?>"> -->
-<? } ?>
+<!-- <input type="button" value="<?=$AdminTrnsl["DownloadLibDel"]?>" class=button3 onClick="<?php if(sizeof($files)!=0) { ?>alert('<?=$AdminTrnsl["DownloadLibCantDelNEFolder"]?>.')<?php  } else {?>if(confirm('<?=$AdminTrnsl["DownloadLib rus del folder"]?>')) location.href='/admin/filelib.php?do=delete&cdir=<?=$cdir1?>&fname=<?=$cdirname?>&cname=<?=$cname?>'<?php  } ?>"> -->
+<?php  } ?>
 </* } */>
 </td>
 </tr>
@@ -67,20 +67,20 @@
 <td><b><?=$AdminTrnsl["DownloadLibName"]?></b></td>
 <td><b><?=$AdminTrnsl["DownloadLibLastModified"]?></b></td>
 <td width="5%"><b><?=$AdminTrnsl["DownloadLibSize"]?></b></td>
-<?/* cm:if test="${CurrentAdminUser.group.canManageDownloadLib}" */?>
-<td width="5%"><b><?=$AdminTrnsl["DownloadLibAction"]?></b></td><?/* } */?>
+<?php /* cm:if test="${CurrentAdminUser.group.canManageDownloadLib}" */?>
+<td width="5%"><b><?=$AdminTrnsl["DownloadLibAction"]?></b></td><?php /* } */?>
 </tr>
 
-<? if(strlen($cdirPath)!=0) { ?>
+<?php  if(strlen($cdirPath)!=0) { ?>
 <tr id=back3>
 <td align=left><a href="/admin/filelib.php?cdir=<?=$cdir1?>&cname=<?=$cname?>"><img src="/admin/_img/folder.gif" width="14" height="10" border="0" hspace="3"><b>..</b></a></td>
 <td>&nbsp;</td>
 <td noWrap align=middle>&nbsp;</td>
 <td noWrap align=middle>&nbsp;</td>
 </tr>
-<? } ?>
+<?php  } ?>
 
-<?
+<?php 
 for ($i=0; $i<sizeof($dirs); $i++) {
 	$filePath = $dirs[$i];
 	$file = substr($filePath, strrpos($filePath, "/")+1);
@@ -89,17 +89,17 @@ for ($i=0; $i<sizeof($dirs); $i++) {
 <td align=left><a href="/admin/filelib.php?cdir=<?=($cdirPath . "/" . $file)?>&cname=<?=$cname?>"><img src="/admin/_img/folder.gif" width="14" height="10" hspace="3" border="0"><b><?=$file?></b></a></td>
 <td><?=date("d.m.Y H:m:s", filemtime($filePath))?></td>
 <td noWrap align=middle>&nbsp;</td>
-<?/* if test="${CurrentAdminUser.group.canManageDownloadLib} */?>
+<?php /* if test="${CurrentAdminUser.group.canManageDownloadLib} */?>
 <td noWrap align=middle>
 <!-- <input class=button1 onClick="location.href='/admin/filelib.php?do=file_replaceform&cdir=<?=$cdirPath?>&fname=<?=$file?>&cname=<?=$cname?>'" type=button value=<?=$AdminTrnsl["DownloadLibReplace"]?> name="button"> -->
 <input class=button1 onClick="location.href='/admin/filelib.php?do=rename_form&cdir=<?=$cdirPath?>&fname=<?=$file?>&cname=<?=$cname?>'" type=button value=<?=$AdminTrnsl["DownloadLibRename"]?> name="button">
 <!-- <input class=button1 onClick="location.href='/admin/filelib.php?do=move_form&oldcdir=<?=$cdirPath?>&fname=<?=$file?>&cname=<?=$cname?>'" type=button value=<?=$AdminTrnsl["DownloadLibMove"]?> name="button"> -->
-<input class=button4 onClick="<?if(sizeof(list_dir_contents($filePath)) !=0) { ?>alert('<?=$AdminTrnsl["DownloadLibCantDelNEFolder"]?>')<? } else {?>if(confirm('<?=$AdminTrnsl["DownloadLib rus del folder"]?>')) location.href='/admin/filelib.php?do=delete&cdir=<?=$cdirPath?>&fname=<?=$file?>&cname=<?=$cname?>'<? } ?>" type=button value=<?=$AdminTrnsl["DownloadLibDel"]?> name="button">
-</td><?/* } */?>
+<input class=button4 onClick="<?php if(sizeof(list_dir_contents($filePath)) !=0) { ?>alert('<?=$AdminTrnsl["DownloadLibCantDelNEFolder"]?>')<?php  } else {?>if(confirm('<?=$AdminTrnsl["DownloadLib rus del folder"]?>')) location.href='/admin/filelib.php?do=delete&cdir=<?=$cdirPath?>&fname=<?=$file?>&cname=<?=$cname?>'<?php  } ?>" type=button value=<?=$AdminTrnsl["DownloadLibDel"]?> name="button">
+</td><?php /* } */?>
 </tr>
-<?}?>
+<?php }?>
 
-<?
+<?php 
 for ($i=0; $i<sizeof($files); $i++) {
 	$filePath = $files[$i];
 	$file = substr($filePath, strrpos($filePath, "/")+1);
@@ -118,15 +118,15 @@ for ($i=0; $i<sizeof($files); $i++) {
 <td align=left><a href="Select file" onClick="selectFile('<?=($cdirPath."/".$file)?>');return false;"><img src="/admin/_img/f/<?=getIconForFile($file)?>" border=0 hspace=3><?=$file?></a></td>
 <td><?=date("d.m.Y H:m:s", filemtime($filePath))?></td>
 <td noWrap align=middle><?=$fSizeStr?></td>
-<?/* if test="${CurrentAdminUser.group.canManageDownloadLib} */?>
+<?php /* if test="${CurrentAdminUser.group.canManageDownloadLib} */?>
 <td noWrap align=middle>
 <!-- <input class=button1 onClick="location.href='/admin/filelib.php?do=file_replaceform&cdir=<?=$cdirPath?>&fname=<?=$file?>&cname=<?=$cname?>'" type=button value=<?=$AdminTrnsl["DownloadLibReplace"]?> name="button"> -->
 <input class=button1 onClick="location.href='/admin/filelib.php?do=rename_form&cdir=<?=$cdirPath?>&fname=<?=$file?>&cname=<?=$cname?>'" type=button value=<?=$AdminTrnsl["DownloadLibRename"]?> name="button">
 <!-- <input class=button1 onClick="location.href='/admin/filelib.php?do=move_form&oldcdir=<?=$cdirPath?>&fname=<?=$file?>&cname=<?=$cname?>'" type=button value=<?=$AdminTrnsl["DownloadLibMove"]?> name="button"> -->
 <input class=button4 onClick="if(confirm('<?=$AdminTrnsl["DownloadLib rus del file"]?>')) location.href='/admin/filelib.php?do=delete&cdir=<?=$cdirPath?>&fname=<?=$file?>&cname=<?=$cname?>'" type=button value=<?=$AdminTrnsl["DownloadLibDel"]?> name="button">
-</td><?/* } */?>
+</td><?php /* } */?>
 </tr>
-<?}?>
+<?php }?>
 
 </table>
 <br>

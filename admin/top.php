@@ -1,4 +1,4 @@
-<?include("prepend.php")?>
+<?php include("prepend.php")?>
 <html>
 <head>
 <title></title>

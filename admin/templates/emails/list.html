@@ -36,14 +36,14 @@
 <td width=10%><?=$AdminTrnsl["Date"]?></td>
 <td width=10%><?=$AdminTrnsl["Action"]?></td>
 </tr>
-<? foreach($saved_emails as $email) {
+<?php  foreach($saved_emails as $email) {
 ?>
 <tr id=back3>
 <td><a href="?do=edit&id=<?=$email->id?>"><?=$email->name?></a></td>
 <td><?=$email->tfields["date"]["formatted_date"]?></td>
 <td><input type=button value="<?=$AdminTrnsl["Delete"]?>" onClick="location.href='?do=delete&id=<?=$email->id?>'" class=button4></td>
 </tr>
-<? } ?>
+<?php  } ?>
 </table>
 </td>
 </tr>

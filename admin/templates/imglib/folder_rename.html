@@ -19,7 +19,7 @@
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <td id=pad18 class=h4>
 <br>
-<b><a href="/admin/imglib.php?cname=<?=$cname?>&cdir="><?=$AdminTrnsl["ImgLibMainFolder"]?></a></b><? $cd=array();$ds=explode('/', $dir->getRelPath());  foreach($ds as $d) { $cd[]=$d;?><b> : <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a></b><?}?><br>
+<b><a href="/admin/imglib.php?cname=<?=$cname?>&cdir="><?=$AdminTrnsl["ImgLibMainFolder"]?></a></b><?php  $cd=array();$ds=explode('/', $dir->getRelPath());  foreach($ds as $d) { $cd[]=$d;?><b> : <a href="/admin/imglib.php?cdir=<?=implode('/', $cd)?>&cname=<?=$cname?>"><?=$d?></a></b><?php }?><br>
 <br>
 <script>function checkFName(fname) {
 	if (fname == '') {

@@ -1,4 +1,4 @@
-<?usetemplate("classes/header")?>
+<?php usetemplate("classes/header")?>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=top3><td><img src=/admin/_img/s.gif width=1 height=1></td></table>
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <tr class=top41>
@@ -20,19 +20,19 @@
     <td width=30% height=22><?=$AdminTrnsl["Name"]?></td>
     <td><?=$AdminTrnsl["Value"]?></td>
 </tr>
-    <?
+    <?php 
     	$fdFieldType = $fieldDef->getFieldType();
     	foreach ($fdFieldType->parameterList as $fp) {?><tr class=back3>
     <td align=left><?=$fp->name?></td>
     <td align=left>
-    <?if($fp->values_list){?>
+    <?php if($fp->values_list){?>
     	<select name="p_<?=$fp->shortname?>_value[]">
-    		<?foreach($fp->values_list as $fpv=>$fpn){?><option value="<?=$fpv?>"<?if($fpv == $parameterValues[$fp->shortname]){?> SELECTED<?}?>><?=$fpn?></option><?}?>
+    		<?php foreach($fp->values_list as $fpv=>$fpn){?><option value="<?=$fpv?>"<?php if($fpv == $parameterValues[$fp->shortname]){?> SELECTED<?php }?>><?=$fpn?></option><?php }?>
     	</select>
-    <?}else{?>
+    <?php }else{?>
     	<input type=text name='p_<?=$fp->shortname?>_value[]' value='<?=$parameterValues[$fp->shortname]?>' style="width:100%"></td>
-    <?}?>
- </tr><?}?>
+    <?php }?>
+ </tr><?php }?>
 <tr class=back2>
 <td colspan=2>
 <img src=/admin/_img/s.gif width=1 height=8><br>

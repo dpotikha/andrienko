@@ -22,11 +22,11 @@
 <td colspan=2 class=head id=pad18>
 <br>
 <table border=0 cellpadding=0 cellspacing=0><td>
-<? if(strlen($cdirPath)!=0) { ?>
-<b class=h3><a href="/admin/filelib.php?cname=<?=$cname?>"><?=$AdminTrnsl["DownloadLibMainFolder"]?></a></b><?foreach(explode("/", $cdirPath) as $d){if (!$d){continue;}?><?$cd=$cd."/".$d?><b> : <a href="/admin/filelib.php?cdir=<?=$cd?>&cname=<?=$cname?>"><?=$d?></a></b><?}?>
-<? } else {?>
+<?php  if(strlen($cdirPath)!=0) { ?>
+<b class=h3><a href="/admin/filelib.php?cname=<?=$cname?>"><?=$AdminTrnsl["DownloadLibMainFolder"]?></a></b><?php foreach(explode("/", $cdirPath) as $d){if (!$d){continue;}?><?php $cd=$cd."/".$d?><b> : <a href="/admin/filelib.php?cdir=<?=$cd?>&cname=<?=$cname?>"><?=$d?></a></b><?php }?>
+<?php  } else {?>
 <b><a href="/admin/filelib.php?cname=<?=cname?>"><?=$AdminTrnsl["DownloadLibMainFolder"]?></a></b>
-<? } ?>
+<?php  } ?>
 </td></table>
 <br>
 <script>function checkFName(fname) {

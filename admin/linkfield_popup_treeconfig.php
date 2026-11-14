@@ -1,4 +1,4 @@
-<?
+<?php 
 include("prepend.php");
 echo "<?xml version=\"1.0\" encoding=\"".ADMIN_CHARSET."\"?>";
 $rn = $request->getParameter("rn");

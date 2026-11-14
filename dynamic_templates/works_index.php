@@ -1,13 +1,13 @@
-<? tinclude("_head") ?>
+<?php  tinclude("_head") ?>
 <?= $CurrentNode->tfields["text"]?>
-<?
+<?php 
 $works = $CurrentNode->getChildren();
 ?>
 <div class="newsMain" id="bgNo">
-<? for ($i=0; $i<sizeof($works); $i++) { 
+<?php  for ($i=0; $i<sizeof($works); $i++) { 
 	$w =& $works[$i];
 ?>
 	 <h3 class="work"><a href="<?= $w->getHref() ?>"><?= $w->name ?></a></h3>
-<? } ?>
+<?php  } ?>
 </div>
-<? tinclude("_foot") ?>
+<?php  tinclude("_foot") ?>

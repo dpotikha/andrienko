@@ -1,4 +1,4 @@
-<?
+<?php 
 	
 	$cuGroupRights = &new NodeGroupRights($CurrentAdminUser->group, $node);
 	$userHasWriteRights = $cuGroupRights->hasWriteRight();
@@ -32,25 +32,25 @@
 </script>
 </head>
 
-<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main<?if ($request->getParameter('reload') != null) {?> onLoad="refreshTree(<?=$node->id?>, <?=$node->parent_id+0?>,'<?=rawurlencode($node->name)?>')"<?}?>>
+<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main<?php if ($request->getParameter('reload') != null) {?> onLoad="refreshTree(<?=$node->id?>, <?=$node->parent_id+0?>,'<?=rawurlencode($node->name)?>')"<?php }?>>
 
 <table width=100% border=0 cellpadding=4 cellspacing=0>
 <tr class=top4>
-<td height=40 id=pad18 colspan=2 class=head><? if (!$CurrentAdminUser->group->canManageUsers) { array_shift($parents); } $i=0;foreach ($parents as $parent) {$i++;?><?if ($i!=1) {?> : <?}?><a href="/admin/emails.php?do=main&id=<?=$parent->id?>" id=black><nobr><?=$parent->name?></nobr></a><?}?><?if (sizeof($parents) != 0) {?> : <?}?><b><nobr><?=$node->name?></nobr></b></td>
+<td height=40 id=pad18 colspan=2 class=head><?php  if (!$CurrentAdminUser->group->canManageUsers) { array_shift($parents); } $i=0;foreach ($parents as $parent) {$i++;?><?php if ($i!=1) {?> : <?php }?><a href="/admin/emails.php?do=main&id=<?=$parent->id?>" id=black><nobr><?=$parent->name?></nobr></a><?php }?><?php if (sizeof($parents) != 0) {?> : <?php }?><b><nobr><?=$node->name?></nobr></b></td>
 </tr>
 </table>
 <table width=100% border=0 cellpadding=0 cellspacing=0 class=top42><td><img src=/admin/_img/s.gif width=1 height=5></td></table>
 
 
 <div id=pad5>
-<?$msg = $request->getParameter("msg"); if ($msg != null) {?><span id="red"><?=$AdminTrnsl[$msg]?></span><?}?>&nbsp;
+<?php $msg = $request->getParameter("msg"); if ($msg != null) {?><span id="red"><?=$AdminTrnsl[$msg]?></span><?php }?>&nbsp;
 </div>
 
-<? if (!$restrict_edit
+<?php  if (!$restrict_edit
 	|| $nodeClass->checkFlag("USE_SHORTNAME")
 	|| ($CurrentAdminUser->group->canManageUsers && $node->getChildrenCountForGroup($CurrentAdminUser->group->id) > 0)
 	|| ($userHasWriteRights && $CurrentAdminUser->group->canManageUsers)
 	|| ($userHasWriteRights && !$restrict_edit)
 	) { ?>
-<? } ?>
+<?php  } ?>
 <!-- nodes header end -->

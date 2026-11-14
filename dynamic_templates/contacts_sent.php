@@ -1,3 +1,3 @@
-<? tinclude("_head") ?>
+<?php  tinclude("_head") ?>
 <p><b>Спасибо любезный друг.<br/>Я постараюсь ответить на твое сообщение в ближайшее время.</b></p>
-<? tinclude("_foot") ?>
+<?php  tinclude("_foot") ?>
