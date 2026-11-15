@@ -6,7 +6,7 @@
   - repo `D:\__Dima\html\Gady\site 3.0\site`, branch `php8`, `CLAUDE.md` there (server rules, cutover approach)
   - migration scripts in `tools/php8-migration/` (copied here)
 - **Plan:** PHP 5.6 → 8.4 (branch `php8`), then a redesign, then a Telegram bot (prompts in `docs/session-prompts.md`).
-- **Live:** PHP **5.6** (mod_php). It was down with HTTP 500 until 2026-11-14 because `session_is_registered` was removed in 5.4 (fixed in `7983258`, `WEB-INF/classes/base/HTTP.php`). Nothing goes to live without the owner's go.
+- **Live:** `php8` on PHP **8.4** (php-fpm) since 2026-11-15; see "Live cutover". Before that PHP 5.6 (mod_php). It was down with HTTP 500 until 2026-11-14 because `session_is_registered` was removed in 5.4 (fixed in `7983258`, `WEB-INF/classes/base/HTTP.php`). Nothing goes to live without the owner's go.
 - **Live snapshot and DB dump of 2026-11-14:** `D:\__Dima\html\andrienko\__site\live-2026-11-14\`. `main` = that live code, minus uploads and secrets.
 
 ## Working rules (mandatory)
@@ -24,7 +24,7 @@
   - **One SSH connection at a time, with pauses.** Rapid or parallel connections get the IP blocked for a while.
   - CLI `php` is 5.6; use `php8.4`. DB dumps: `mariadb-dump` (no `mysqldump`).
 - **PHP version is set per site** in the Mirohost panel ("Сервер → Налаштування веб-сервера сайтів"). **Never use the global switch**: other sites on this server still run 5.6. Subdomains inherit the parent site's PHP.
-- The php-fpm error log can't be read from the site account. `WEB-INF/prepend.php` logs PHP errors to `<home>/tmp/php-errors.log` when that folder exists and is writable. Create it on staging.
+- PHP error log on live: `/var/log/apache/viktor-andrienko.com/viktor-andrienko.com-error_log` (readable). The `~/tmp/php-errors.log` set in `WEB-INF/prepend.php` only works where the panel doesn't force `error_log`.
 - **DB `viktorandrie`:** MariaDB 12.3.3, 27 tables, all MyISAM, all `utf8mb3_unicode_ci` (no cp1251 tables, unlike gady). The connection uses `SET NAMES utf8`, so emoji become `?`.
   - MyISAM means `DBUtils::rollback()` does nothing: a failed save leaves orphan rows.
 - **HTTPS:** Let's Encrypt wildcard, works.
@@ -128,24 +128,56 @@ Found by the local test run (2026-11-15), each a fatal on PHP 8:
 - Contact form: validation and the reCAPTCHA call run. Sending mail was not tested (needs a valid captcha); `CI_Email` builds the message without errors on 8.4.
 - Not ported: `admin/forms.php` needs `dbm/forms/FormDef.php`, which this site never had (500 on live too, not in the menu). Moderation is off (`_MODERATION_FEATURE_` false, no `dbm_moderation` table).
 
-## Security issues on LIVE (owner to act; nothing changed there)
-- `https://viktor-andrienko.com/cache/USERS_CACHE` is downloadable: admin logins with **plaintext** passwords. Deny `cache/` and change all admin passwords.
-- `backup/*.sql.gz`: 7 Dumper DB dumps (2008–2009) are downloadable by guessable name.
-- `/phpmyadmin/` answers 200; `dumper.php` exists.
-- The TinyMCE file manager and image manager accept anonymous upload, rename and delete.
+## Live cutover (2026-11-15, no staging, owner's decision)
+- `php8` deployed to `viktor-andrienko.com` at 07:57; the owner switched the site to PHP 8.4 in the panel right after.
+- Backups in `~/deploy-backups/2026-11-15/`:
+  - `viktorandrie.sql.gz` (DB before cutover)
+  - `_settings.php.orig`
+  - `viktor-andrienko.com-php56/`: the old site, incl. `backup/`, `phpmyadmin/`, `error_log`
+- Upload folders (`files`, `imglib`, `imglib_thumbnails`) were *moved* into the new site: hard links to apache-owned files are not allowed.
+- Rollback:
+  1. the owner sets PHP 5.6 in the panel;
+  2. move the upload folders back into `viktor-andrienko.com-php56`;
+  3. swap the folders back.
+- Checks after cutover:
+  - all 2,110 crawled pages have the same status codes as old live
+  - 2,074 identical; 35 differ by the `</tr>` fix; the home page differs by its random projects
+  - 403s and 404s as intended; TinyMCE endpoints return 403 without an admin session
+  - error log: no fatals
+- Footer photo fix (deployed right after cutover): `_foot.php` looked for `/_img/photo/photo_<shortname>jpg` (filesystem root, missing dot), so the 80 per-section photos never showed. Now:
+  1. the section's own photo
+  2. else `OVERRIDE_NODE_PHOTO_ID` (news, friends, publications)
+  3. else `photo_.jpg`
+
+## Live server facts (learned at cutover)
+- **nginx in front of Apache serves static files itself**: `.htaccess` only covers requests that reach Apache (PHP, missing files, directories). Never keep anything secret as a static file in the web root.
+  - This is why `_CACHE_DIR_` is now `<home>/cache` when that folder exists.
+  - The admin `.html` templates and `WEB-INF/*.properties` are downloadable as source. There are no secrets in them.
+- **PHP 8.4 runs as php-fpm, user `viktorandrie`**; 5.6 ran as `apache`. Old uploads are owned by `apache` with mode 644: new files work, but overwriting an old one in place fails.
+- **PHP error log:** the panel forces `error_log`, so `prepend.php`'s `ini_set` is ignored. Read `/var/log/apache/viktor-andrienko.com/viktor-andrienko.com-error_log`; the site account can read it.
+- **Warnings on 8.4** (no fatals; pages identical to 5.6): former notices now raised as warnings:
+  - `_site_settings.php`: undefined `$str`
+  - `contacts_form.php`: `$form` and `$errors` unset on GET
+  - `publications_index.php` and `_404.php`: missing array keys
+  - `project_full.php`: missing `thumburl`
+
+## Security issues on LIVE
+- Closed by the cutover:
+  - `/cache/USERS_CACHE` (admin logins with plaintext passwords)
+  - `backup/*.sql.gz` (7 Dumper dumps from 2008–2009)
+  - `/phpmyadmin/` and `dumper.php`
+  - anonymous upload, rename and delete in the TinyMCE file manager and image manager
+- `USERS_CACHE` was public for years: **change all admin passwords.**
 - Admin passwords are stored and compared in plaintext (`dbm_users.password`, `admin/prepend.php`); `admin/main.php` even puts the logged-in admin's password in a hidden form field. Not changed on `php8`.
 - `admin/nodes.php` and the other admin controllers run any PHP function named in `?do=` with the request object as argument (admin session required). Not changed.
 
 ## Deploy notes
-- The server-only `_settings.php` starts with a short tag `<?`. **Change it to `<?php` on staging and on live before switching to PHP 8.4**, or it prints as text and no constants get defined.
+- The live `_settings.php` now starts with `<?php` (it was `<?`). Deploy code with `git archive` of a commit, excluding `CLAUDE.md`, `docs/`, `tools/` and `.gitignore`; never upload CRLF working-copy files.
 
 ## Next
-1. Staging: subdomain to be named by the owner.
-   - PHP 8.4 for that site in the panel
-   - copy files server-side (without `backup/`, `phpmyadmin/`, `dumper.php`, `error_log`, `cache/*`)
-   - `mariadb-dump viktorandrie` → a separate staging DB; staging `_settings.php` (with `<?php`); create `~/tmp`
-2. On staging, repeat the local tests on the real Apache + php-fpm:
-   - `.htaccess` rules (403s)
-   - contact form mail through `mail()` / sendmail
-   - TinyMCE file browser in a real browser
-3. Check `~/tmp/php-errors.log` after each round.
+1. Owner tests on live:
+   - admin login, editing a node, image upload
+   - the TinyMCE file browser
+   - the contact form with a real captcha (mail via `mail()` → exim)
+2. Clean up the 8.4 warnings listed above (log noise only).
+3. Delete `~/deploy-backups/2026-11-15/viktor-andrienko.com-php56` after ~2 weeks without problems.
