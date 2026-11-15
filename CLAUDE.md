@@ -5,7 +5,12 @@
 - Same CMS and same server as gady.com.ua, which is already on PHP 8.4. **Reuse the gady work first**:
   - repo `D:\__Dima\html\Gady\site 3.0\site`, branch `php8`, `CLAUDE.md` there (server rules, cutover approach)
   - migration scripts in `tools/php8-migration/` (copied here)
-- **Plan:** PHP 5.6 → 8.4 (branch `php8`), then a redesign, then a Telegram bot (prompts in `docs/session-prompts.md`).
+- **Plan:**
+  1. PHP 5.6 → 8.4 (branch `php8`, live)
+  2. move to the gady.com.ua CMS build (branch `cms-upgrade`, see "CMS upgrade")
+  3. redesign
+  4. Telegram bot (prompts in `docs/session-prompts.md`)
+- **Why gady's build:** comparison in the shared session notes, `cms-version-comparison.md`. c-n-l (`D:\__Dima\html\Cai & Lenard\site\c-n-l`) has a slightly newer build that is not PHP 8-ready; gady `php8` is the only one already running on 8.4.
 - **Live:** `php8` on PHP **8.4** (php-fpm) since 2026-11-15; see "Live cutover". Before that PHP 5.6 (mod_php). It was down with HTTP 500 until 2026-11-14 because `session_is_registered` was removed in 5.4 (fixed in `7983258`, `WEB-INF/classes/base/HTTP.php`). Nothing goes to live without the owner's go.
 - **Live snapshot and DB dump of 2026-11-14:** `D:\__Dima\html\andrienko\__site\live-2026-11-14\`. `main` = that live code, minus uploads and secrets.
 
@@ -173,6 +178,49 @@ Found by the local test run (2026-11-15), each a fatal on PHP 8:
 
 ## Deploy notes
 - The live `_settings.php` now starts with `<?php` (it was `<?`). Deploy code with `git archive` of a commit, excluding `CLAUDE.md`, `docs/`, `tools/` and `.gitignore`; never upload CRLF working-copy files.
+
+## CMS upgrade (branch `cms-upgrade`, local only, not deployed)
+- `WEB-INF/` and `admin/` are gady `php8` as they are, except:
+  - `WEB-INF/lang_en.php`, `WEB-INF/lang_ua.php`: this site's, needed by `index.php`
+  - `admin/tiny_mce/imagemanager/`: this site's `php8` version. Gady's copy is unported and has no admin-session guard.
+  - `WEB-INF/classes/dbm/Node.php` `findByPath()`: the URL path is now escaped. Gady concatenates it raw into SQL (an injection on every page; gady live still has it).
+  - `WEB-INF/prepend.php`: caches in `<home>/cache` when it exists (gady's `s/cache/` is inside the web root, and nginx serves it)
+  - short tags in 11 gady TinyMCE templates (`admin/templates/tiny_mce/`), converted with `fix1`
+- Upload folders now use gady's layout. URLs and folders:
+  - `/s/i` (was `imglib`)
+  - `/s/ithumb` (was `imglib_thumbnails`)
+  - `/s/files` (was `files`)
+  - plus `/s/ithumb2`, `/s/ithumb3`, `/s/o`, `/s/tmp`
+  - `.htaccess` 301-redirects the old URLs; `s/` is gitignored and must not run scripts.
+- Site code adapted to the new core:
+  - `dynamic_templates/_functions.php`: `getTopSection`, `externalURL`, `humanLikeUrl`, which lived in the old `prepend.php`
+  - `_site_settings.php`: `getFormattedDate` renamed `siteFormattedDate` (clashed with the core's `my_func.php`); month names read directly (the old `Date::getMonthName` is gone)
+  - `filmography.php`: `nl2br` on roles (the new `TextAreaField` no longer adds it)
+  - contact form: PHPMailer from the core instead of `CI_Email`; visitor input HTML-escaped; Reply-To set to the visitor
+- `_settings.php` needs the new constants; the template is `_settings.example.php`.
+- DB (additive), `tools/cms-upgrade/`:
+  - `001_core_schema.sql`:
+    - `dbm_nodes.md5_path` (filled), `shortname` widened to 255
+    - `dbm_class_fields.hide`, `dbm_user_groups.canManageSettings`
+    - tables `dbm_log`, `dbm_seo`, `dbm_settings`, `dbm_text_index`
+  - `002_upload_paths.sql`: 25 `/imglib/` references in 7 rich-text rows → `/s/i/`
+- New image fields store paths like `/news/<id>_<name>.jpg`; old values (`/_newimage/...`) keep working.
+- Local tests (PHP 8.4, DB `viktor_cms` = live dump of 2026-11-14 + migrations):
+  - crawl of 2,110 pages: all status codes match `php8`
+  - 2,109 pages are identical, with the old upload paths mapped to the new ones; the home page differs by its random projects
+  - all 4,035 `/s/` image and file URLs on those pages checked
+  - admin:
+    - login; tree, lists, properties, permissions, sorting, classes, users, settings, log, image and file libraries
+    - news with image upload, crop and thumbnail; edit (TinyMCE); move away and back; delete; multi-delete
+    - TinyMCE file manager upload and image manager; anonymous access gets 403
+  - lint and scanners clean
+- **Deploy plan (not done):**
+  1. backup files and DB
+  2. run `001` and `002` on `viktorandrie`
+  3. `mkdir s`; `mv imglib s/i`; `mv imglib_thumbnails s/ithumb`; `mv files s/files`; create `s/ithumb2`, `s/ithumb3`, `s/o`, `s/tmp`
+  4. add the new constants to the server `_settings.php`
+  5. swap the code folder like the PHP 8 cutover; empty `~/cache`
+- Gady modules the admin menu now shows (newsletter, languages, log, settings) are unused here. Newsletter has no tables on this site.
 
 ## Next
 1. Owner tests on live:
