@@ -179,7 +179,31 @@ Found by the local test run (2026-11-15), each a fatal on PHP 8:
 ## Deploy notes
 - The live `_settings.php` now starts with `<?php` (it was `<?`). Deploy code with `git archive` of a commit, excluding `CLAUDE.md`, `docs/`, `tools/` and `.gitignore`; never upload CRLF working-copy files.
 
-## CMS upgrade (branch `cms-upgrade`, local only, not deployed)
+## CMS upgrade live (2026-11-15 11:06:50) and new. subdomain
+- **Live:** `cms-upgrade` at `ac0c1e4`.
+  - Both DB scripts ran on `viktorandrie`. Uploads moved to `s/`; new constants appended to `_settings.php`.
+  - Backups in `~/deploy-backups/2026-11-15-cms/`:
+    - DB dump before the scripts
+    - `_settings.php.before-cms`
+    - `viktor-andrienko.com-php8/`: the previous code
+    - `rollback_002.sql`
+  - Rollback:
+    1. move `s/i`, `s/ithumb`, `s/files` back to `imglib`, `imglib_thumbnails`, `files` in the parked folder
+    2. swap the folders
+    3. run `rollback_002.sql`
+    - The other DB changes are additive, and the php8 code runs with them.
+  - Full crawl after the switch: all 2,110 pages match the php8 output with upload paths mapped; the home page differs by its random projects.
+  - **Live admin not tested yet** (owner: after the redesign).
+- **`new.viktor-andrienko.com`** (docroot `~/new.viktor-andrienko.com`, PHP 8.4): the redesign workspace.
+  - Code: `cms-upgrade` with `4737d9b` (per-site cache folder).
+  - DB: `viktorandrienko`, a copy of the live DB after the migration. Its credentials are in `~/.new-db.cnf` and in new.'s `_settings.php` (mode 600).
+  - Its own copy of `s/`, about 400 MB.
+  - Cache: `~/cache/new.viktor-andrienko.com`.
+  - `robots.txt` disallows everything (server-only).
+  - HTTPS needs the Let's Encrypt certificate attached in the panel.
+  - Admin not tested.
+
+## CMS upgrade (branch `cms-upgrade`)
 - `WEB-INF/` and `admin/` are gady `php8` as they are, except:
   - `WEB-INF/lang_en.php`, `WEB-INF/lang_ua.php`: this site's, needed by `index.php`
   - `admin/tiny_mce/imagemanager/`: this site's `php8` version. Gady's copy is unported and has no admin-session guard.
