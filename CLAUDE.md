@@ -91,21 +91,61 @@ Each item is a separate commit. Lint on PHP 8.4: `files=221 failed=0`.
     - `Options -Indexes`
 14. Contact form: `$errors` initialised (a valid submission hit `sizeof(null)`, a TypeError). `project_full.php`: `count($photos)` typo → `$photoes` (adds the closing `</tr>` after an odd last photo).
 
+Found by the local test run (2026-11-15), each a fatal on PHP 8:
+15. Incompatible overrides:
+    - `Field::create()` vs `FileField::create($node_id)`: every page was a 500
+    - the TinyMCE image driver stubs in `Transform.php`
+    - new scanner `tools/php8-migration/find_signature_mismatches.php` (0 hits on gady `php8`)
+16. `admin/nodes.php`:
+    - `contenttree()` wrote properties on unset `$rootMap`/`$item` (PHP 5 created the object silently); new scanner `find_autovivified_objects.php`
+    - `deleteselectednode()` and `addnode_form()` used `$request` before `global $request`. Multi-delete was fatal on PHP 5 too.
+17. `_foot.php`: `OVERRIDE_NODE_PHOTO_ID` is defined only by the news, friends and publications templates; every other page hit an undefined constant.
+18. TinyMCE image manager: `Files::*` and `Image_Transform::factory` called statically.
+19. `prepend.php`: `$HTTP_SERVER_VARS` read removed (a warning on every request).
+
+## Local test environment (no server needed)
+- Portable MariaDB 11.4.4 (official winx64 zip, checksum verified) in the session scratchpad. Data dir `mdb-data`, port **3307**, bound to 127.0.0.1, `sql_mode=''`. Live dump of 2026-11-14 imported as `viktorandrie`.
+- PHP 8.4 built-in server on `127.0.0.1:8084` with docroot = repo root, plus a router script that mimics `.htaccess`. Extensions loaded with `-d extension=mysqli/gd/mbstring/curl/openssl/fileinfo`; `short_open_tag=0`.
+- Local `_settings.php` (gitignored) points to `mysql://127.0.0.1:3307/viktorandrie`, user root, no password.
+- `files/`, `imglib/`, `imglib_thumbnails/`: junctions to copies of the live snapshot (gitignored).
+- Admin tests use a local-only user `localtest` (id 900, group 1) inserted into the local DB copy. The real admin passwords are not used.
+- Testing with curl from Git Bash: non-ASCII command-line arguments arrive as `?` (send values from UTF-8 files with `--data-urlencode name@file`); with `MSYS_NO_PATHCONV=1`, pass Windows paths (`cygpath -m`).
+
+## Local test results (PHP 8.4, 2026-11-15)
+- Public site: BFS crawl of every internal link, 2,110 pages, local vs live HTML (whitespace-normalised).
+  - All status codes match live: 2,100 × 200, 10 × 302 to `/_404`.
+  - 2,074 pages are identical.
+  - 35 differ only by the `</tr>` fix in `project_full.php`.
+  - The home page differs by `_foot.php`'s two random projects (`ORDER BY rand()`).
+- Admin, all OK:
+  - login; tree (`req.php` JSON); node list with paging
+  - create a news item with image upload, crop and thumbnail; edit; delete; multi-delete; move node and back
+  - properties, permissions, dependencies, sort, move dialog (`req1.php`)
+  - classes and users pages; link-field popups
+  - image library folder and upload (thumbnail made); file library folder and upload
+  - TinyMCE connector upload; image manager (images, editor, thumbs); both return 403 without an admin session
+  - UTF-8 (Cyrillic, quotes, backslash) is stored unchanged
+- Contact form: validation and the reCAPTCHA call run. Sending mail was not tested (needs a valid captcha); `CI_Email` builds the message without errors on 8.4.
+- Not ported: `admin/forms.php` needs `dbm/forms/FormDef.php`, which this site never had (500 on live too, not in the menu). Moderation is off (`_MODERATION_FEATURE_` false, no `dbm_moderation` table).
+
 ## Security issues on LIVE (owner to act; nothing changed there)
 - `https://viktor-andrienko.com/cache/USERS_CACHE` is downloadable: admin logins with **plaintext** passwords. Deny `cache/` and change all admin passwords.
 - `backup/*.sql.gz`: 7 Dumper DB dumps (2008–2009) are downloadable by guessable name.
 - `/phpmyadmin/` answers 200; `dumper.php` exists.
 - The TinyMCE file manager and image manager accept anonymous upload, rename and delete.
-- Admin passwords are stored and compared in plaintext (`dbm_users.password`, `admin/prepend.php`). Not changed on `php8`.
+- Admin passwords are stored and compared in plaintext (`dbm_users.password`, `admin/prepend.php`); `admin/main.php` even puts the logged-in admin's password in a hidden form field. Not changed on `php8`.
+- `admin/nodes.php` and the other admin controllers run any PHP function named in `?do=` with the request object as argument (admin session required). Not changed.
+
+## Deploy notes
+- The server-only `_settings.php` starts with a short tag `<?`. **Change it to `<?php` on staging and on live before switching to PHP 8.4**, or it prints as text and no constants get defined.
 
 ## Next
 1. Staging: subdomain to be named by the owner.
    - PHP 8.4 for that site in the panel
    - copy files server-side (without `backup/`, `phpmyadmin/`, `dumper.php`, `error_log`, `cache/*`)
-   - `mariadb-dump viktorandrie` → a separate staging DB; staging `_settings.php`; create `~/tmp`
-2. Test the public pages: compare the sitemap/crawl HTML with live. Then test the admin:
-   - login, tree, create/edit/delete/move a node
-   - image upload and crop, file library, image library
-   - TinyMCE file browser
-   - contact form mail
-3. Expect runtime-only PHP 8 errors (`count()` on null, arithmetic on `""`); check `~/tmp/php-errors.log` after each round.
+   - `mariadb-dump viktorandrie` → a separate staging DB; staging `_settings.php` (with `<?php`); create `~/tmp`
+2. On staging, repeat the local tests on the real Apache + php-fpm:
+   - `.htaccess` rules (403s)
+   - contact form mail through `mail()` / sendmail
+   - TinyMCE file browser in a real browser
+3. Check `~/tmp/php-errors.log` after each round.
