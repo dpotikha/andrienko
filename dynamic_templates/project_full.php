@@ -37,7 +37,7 @@ foreach ($section->getChildren() as $s) {
 </section>
 <?php } ?>
 <section class="wrap project-body" style="padding-top:24px;padding-bottom:64px">
-	<div class="rich"><?= $CurrentNode->tfields["text"] ?></div>
+	<div class="rich"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 	<aside>
 <?php if ($media) { ?>
 		<div class="mono muted" style="font-size:12px;letter-spacing:.08em;margin-bottom:8px">ВІДЕО Й АУДІО</div>

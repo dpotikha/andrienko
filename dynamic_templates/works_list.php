@@ -21,7 +21,7 @@ $sections = $work ? $work->getChildren() : array();
 <?php } ?>
 	</div>
 <?php } else { ?>
-	<div class="rich"><?= $CurrentNode->tfields["text"] ?></div>
+	<div class="rich"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 <?php } ?>
 </section>
 <?php tinclude("_foot") ?>

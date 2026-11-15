@@ -8,7 +8,7 @@ $news = Node::findByQuery("SELECT n.* FROM {news_item} n ORDER BY n.date DESC LI
 		<p style="margin:0;font-family:Unbounded,sans-serif;font-size:clamp(80px,14vw,160px);line-height:1;font-weight:700;color:var(--accent)">404</p>
 		<h1 class="h2" style="margin:16px 0 24px">Такої сторінки немає</h1>
 <?php if (strlen(plainText($CurrentNode->tfields["text"] ?? ''))) { ?>
-		<div class="rich"><?= $CurrentNode->tfields["text"] ?></div>
+		<div class="rich"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 <?php } ?>
 		<nav class="chips" aria-label="Розділи" style="font-size:14px">
 			<a class="btn btn-outline-accent" href="/">На головну</a>

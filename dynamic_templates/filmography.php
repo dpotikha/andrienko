@@ -33,10 +33,12 @@ krsort($decades);
 <?php foreach ($films as $f) {
 	$y = (int)$f->tfields["year"]["year"];
 	$work = array_filter(array(trim($f->tfields["position"] ?? ''), trim(plainText($f->tfields["roles"] ?? ''))), 'strlen');
+	// as before: a title links only when the entry points to a page with content (project or news)
+	$linked = isset($f->fields["link"]) ? $f->fields["link"]->getLinkedNode() : null;
 ?>
 				<tr data-decade="<?= $y ? intdiv($y, 10) * 10 : '' ?>">
 					<td><?= $y ?: '' ?></td>
-					<td><a href="<?= e($f->getHref()) ?>"><?= e($f->name) ?></a></td>
+					<td><?= $linked ? '<a href="' . e($linked->getHref()) . '">' . e($f->name) . '</a>' : e($f->name) ?></td>
 					<td><?= e(implode(' · ', $work)) ?></td>
 					<td><?= e($f->tfields["studio"] ?? '') ?></td>
 					<td><?= e($f->tfields["series"] ?? '') ?></td>
@@ -46,7 +48,7 @@ krsort($decades);
 		</table>
 	</div>
 <?php } else { ?>
-	<div class="rich"><?= $CurrentNode->tfields["text"] ?></div>
+	<div class="rich"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 <?php } ?>
 </section>
 <?php tinclude("_foot") ?>

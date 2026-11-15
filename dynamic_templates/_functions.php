@@ -56,6 +56,16 @@ function plainText($html) {
 	return trim(preg_replace('/\s+/u', ' ', $t));
 }
 
+// CMS rich text without the empty paragraphs the old editor left behind (<p>&nbsp;</p>, <p><br></p>, ...)
+function richText($html) {
+	$html = (string)$html;
+	$blank = '(?:\s|&nbsp;|&#160;|\x{00A0}|<br\s*/?>)';
+	// group 1: the paragraph tag; group 2: an inline wrapper inside it
+	$html = preg_replace('~<(p|div)\b[^>]*>(?:' . $blank . '|<(span|font|strong|b|em|i)\b[^>]*>' . $blank . '*</\2>)*</\1>~iu', '', $html);
+	$html = preg_replace('~^(?:\s|<br\s*/?>|&nbsp;)+|(?:\s|<br\s*/?>|&nbsp;)+$~iu', '', $html);
+	return $html;
+}
+
 // links to the node's parents, root and the node itself excluded
 function crumbs($node) {
 	$parents = $node->getParentList();
@@ -65,7 +75,7 @@ function crumbs($node) {
 		if ($p->id == $node->id) continue;
 		$out[] = '<a href="' . e($p->getHref()) . '">' . e($p->name) . '</a>';
 	}
-	return $out ? '<nav class="crumbs" aria-label="Шлях">' . implode(' / ', $out) . '</nav>' : '';
+	return $out ? '<nav class="wrap crumbs" aria-label="Шлях">' . implode(' / ', $out) . '</nav>' : '';
 }
 
 // the section a project belongs to (Радіо, Кіно, ...), for labels

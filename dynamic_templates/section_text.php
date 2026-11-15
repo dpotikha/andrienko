@@ -6,7 +6,7 @@ $photo = $CurrentNode->tfields["main_img"] ?? null;
 <section class="wrap split" style="padding-top:48px;padding-bottom:64px">
 	<div class="main">
 		<h1 class="h1" style="margin-bottom:28px"><?= e($CurrentNode->name) ?></h1>
-		<div class="rich"><?= $CurrentNode->tfields["text"] ?></div>
+		<div class="rich"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 <?php if ($sub) { ?>
 		<nav class="chips" aria-label="Розділи" style="margin-top:28px;font-size:14px">
 <?php foreach ($sub as $k => $s) { ?>

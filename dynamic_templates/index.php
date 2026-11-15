@@ -21,7 +21,7 @@ $lead = array_shift($news);
 	<div class="hero-text">
 		<p class="kicker" style="font-size:14px;letter-spacing:.1em">Актор · гуморист · сценарист · ведучий</p>
 		<h1>Віктор<br>Андрієнко</h1>
-		<div class="rich" style="max-width:560px"><?= $CurrentNode->tfields["text"] ?></div>
+		<div class="rich" style="max-width:560px"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 		<p style="display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 0">
 			<a class="btn btn-accent" href="/work">Дивитися роботи</a>
 			<a class="btn" href="/about/filmography">Фільмографія</a>

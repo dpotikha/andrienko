@@ -18,7 +18,7 @@ if (!isset($years[$year])) $year = (int)key($years);
 	</nav>
 </section>
 <?php if (strlen(trim(plainText($CurrentNode->tfields["text"] ?? '')))) { ?>
-<div class="wrap rich"><?= $CurrentNode->tfields["text"] ?></div>
+<div class="wrap rich"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 <?php } ?>
 <section class="wrap" style="padding-top:8px;padding-bottom:64px">
 <?php foreach ($years[$year] ?? array() as $n) { ?>

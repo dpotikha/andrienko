@@ -8,7 +8,7 @@ $err = function ($k) use ($errors) { return isset($errors[$k]) ? '<span class="e
 <section class="wrap split" style="padding-top:48px;padding-bottom:64px">
 	<div class="main" style="flex:1 1 420px">
 		<h1 class="h1" style="margin-bottom:28px"><?= e($CurrentNode->name) ?></h1>
-		<div class="rich"><?= $CurrentNode->tfields["text"] ?></div>
+		<div class="rich"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 	</div>
 	<form class="form-box" action="<?= e($CurrentNode->getHref()) ?>" method="post" style="flex:1 1 460px;min-width:0">
 		<input type="hidden" name="do" value="send">

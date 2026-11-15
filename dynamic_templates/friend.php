@@ -16,12 +16,12 @@ foreach ($CurrentNode->getChildren() as $c) {
 	<div class="main">
 		<h1 class="h1" style="margin-bottom:12px"><?= e($CurrentNode->name) ?></h1>
 <?php if ($ann !== '') { ?>
-		<p class="body" style="margin:0 0 28px;font-size:19px;line-height:1.55"><?= e($ann) ?></p>
+		<p class="body" style="margin:0 0 28px;font-size:19px;line-height:1.25"><?= e($ann) ?></p>
 <?php } ?>
 <?php if (strlen(trim($CurrentNode->tfields["article_name"] ?? ''))) { ?>
-		<h2 class="h3" style="font-size:21px;line-height:1.35;margin-bottom:16px"><?= e(plainText($CurrentNode->tfields["article_name"])) ?></h2>
+		<h2 class="h3" style="font-size:21px;line-height:1.25;margin-bottom:16px"><?= e(plainText($CurrentNode->tfields["article_name"])) ?></h2>
 <?php } ?>
-		<div class="rich"><?= $CurrentNode->tfields["article_text"] ?? '' ?></div>
+		<div class="rich"><?= richText($CurrentNode->tfields["article_text"] ?? '') ?></div>
 <?php if ($url !== '' && strpos($url, '@') === false) { ?>
 		<a class="more" href="<?= e(externalURL($url)) ?>"><?= e(humanLikeUrl(externalURL($url))) ?> ↗</a>
 <?php } ?>
@@ -31,7 +31,7 @@ foreach ($CurrentNode->getChildren() as $c) {
 <section class="wrap" style="padding-top:32px;padding-bottom:48px">
 	<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:24px">
 <?php foreach ($photos as $p) { ?>
-		<figure style="margin:0"><?= photoLink($p, "friend") ?><figcaption class="muted" style="margin-top:8px;font-size:14px;line-height:1.45"><?= e(plainText($p->tfields["name_"] ?? '')) ?></figcaption></figure>
+		<figure style="margin:0"><?= photoLink($p, "friend") ?><figcaption class="muted" style="margin-top:8px;font-size:14px;line-height:1.25"><?= e(plainText($p->tfields["name_"] ?? '')) ?></figcaption></figure>
 <?php } ?>
 	</div>
 </section>

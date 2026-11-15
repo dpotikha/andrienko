@@ -11,7 +11,7 @@ foreach ($CurrentNode->getChildren() as $c) {
 	<div class="article-main">
 		<div class="row-meta" style="color:var(--accent)"><?= $meta ?></div>
 		<h1 class="h1" style="font-size:clamp(28px,3.6vw,44px);line-height:1.12;margin:10px 0 28px"><?= e($CurrentNode->name) ?></h1>
-		<div class="rich"><?= $CurrentNode->tfields["text"] ?></div>
+		<div class="rich"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 	</div>
 <?php if (hasImg($img) || $photos) { ?>
 	<aside class="article-side" aria-label="Фото">

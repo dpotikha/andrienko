@@ -10,7 +10,7 @@ $items = $CurrentNode->getChildrenOfClass("pub", "n.date DESC");
 <?php if (hasImg($CurrentNode->tfields["main_img"] ?? null)) { ?>
 	<img class="fit" src="<?= e($CurrentNode->tfields["main_img"]["url"]) ?>" alt="" style="flex:0 1 auto">
 <?php } ?>
-	<div class="rich" style="flex:1 1 480px;min-width:0;max-width:720px"><?= $CurrentNode->tfields["text"] ?></div>
+	<div class="rich" style="flex:1 1 480px;min-width:0;max-width:720px"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 </div>
 <?php } ?>
 <section class="wrap" style="padding-top:8px;padding-bottom:64px">

@@ -4,7 +4,7 @@ $sections = $CurrentNode->getChildren();
 ?>
 <section class="wrap page-head" style="padding-top:48px"><h1 class="h1"><?= e($CurrentNode->name) ?></h1></section>
 <?php if (strlen(plainText($CurrentNode->tfields["text"] ?? ''))) { ?>
-<div class="wrap rich"><?= $CurrentNode->tfields["text"] ?></div>
+<div class="wrap rich"><?= richText($CurrentNode->tfields["text"] ?? '') ?></div>
 <?php } ?>
 <?php foreach ($sections as $s) {
 	// the four most recently added projects of the section
