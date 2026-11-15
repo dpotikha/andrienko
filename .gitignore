@@ -3,6 +3,8 @@
 /backup/
 *.sql
 *.sql.gz
+# DB migration scripts are code
+!/tools/cms-upgrade/*.sql
 
 # runtime
 /cache/
@@ -14,6 +16,7 @@ error_log
 /files/
 /imglib/
 /imglib_thumbnails/
+/s/
 /trash/
 
 Thumbs.db

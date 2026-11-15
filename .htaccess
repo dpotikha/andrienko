@@ -6,7 +6,11 @@ Options -Indexes
 # never served: runtime caches (USERS_CACHE holds logins and passwords), old DB dumps, CLI tools, templates, classes
 RewriteRule     ^(cache|backup|tools|dynamic_templates|WEB-INF)(/|$) - [F,L]
 # upload folders: nothing in them may run as a script
-RewriteRule     ^(files|imglib|imglib_thumbnails|content|trash)/.*\.(php[0-9]?|phtml|phar|pht|phps|cgi|pl|py|sh)(/|$) - [F,NC,L]
+RewriteRule     ^(s|content|trash)/.*\.(php[0-9]?|phtml|phar|pht|phps|cgi|pl|py|sh)(/|$) - [F,NC,L]
+# upload folders moved to the gady.com.ua layout (2026): keep old image and file URLs working
+RewriteRule     ^imglib_thumbnails/(.*)$ /s/ithumb/$1 [R=301,L]
+RewriteRule     ^imglib/(.*)$ /s/i/$1 [R=301,L]
+RewriteRule     ^files/(.*)$ /s/files/$1 [R=301,L]
 DirectoryIndex index.php
 
 RewriteCond     %{REQUEST_FILENAME}     !-f

@@ -21,7 +21,7 @@ if (empty($_SESSION['CurrentAdminUser'])) {
        PHP must be able to create files in this directory.
 	   Able to create directories is nice, but not necessary.
 */
-$IMConfig['base_dir'] = $_SERVER['DOCUMENT_ROOT'] . '/imglib';
+$IMConfig['base_dir'] = $_SERVER['DOCUMENT_ROOT'] . '/s/i';
 
 /*
  The URL to the above path, the web browser needs to be able to see it.
@@ -31,7 +31,7 @@ $IMConfig['base_dir'] = $_SERVER['DOCUMENT_ROOT'] . '/imglib';
  for this directory (i.e. disable PHP, Perl, CGI). We only want to store assets
  in this directory and its subdirectories.
 */
-$IMConfig['base_url'] = 'http://' . $_SERVER['SERVER_NAME']  . '/imglib';
+$IMConfig['base_url'] = '/s/i';
 
 /*
   Possible values: true, false
