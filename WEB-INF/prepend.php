@@ -996,9 +996,12 @@ _logTimeFromStart("point1");
 
 // The caches (USERS_CACHE holds logins and passwords) go to a "cache" folder next to the web root when it exists:
 // nginx serves static files itself, so .htaccess can't protect a cache folder inside the web root.
-$_cacheOutside = dirname(rtrim($_SERVER["DOCUMENT_ROOT"], "/")) . "/cache";
-DEFINE("_CACHE_DIR_", is_dir($_cacheOutside) ? $_cacheOutside : $_SERVER["DOCUMENT_ROOT"] . "/s/cache");
-unset($_cacheOutside);
+// Several sites in one home folder (live and new.) each use cache/<site folder> when that subfolder exists.
+$_docRoot = rtrim($_SERVER["DOCUMENT_ROOT"], "/");
+$_cacheOutside = dirname($_docRoot) . "/cache";
+if (is_dir($_cacheOutside . "/" . basename($_docRoot))) $_cacheOutside .= "/" . basename($_docRoot);
+DEFINE("_CACHE_DIR_", is_dir($_cacheOutside) ? $_cacheOutside : $_docRoot . "/s/cache");
+unset($_cacheOutside, $_docRoot);
 
 function _ftok($path, $proj) {
 
