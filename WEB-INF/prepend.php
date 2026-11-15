@@ -342,7 +342,7 @@ if(strpos (PHP_OS, "WIN") !== false ) {
 
 
 
-$DOC_ROOT = $GLOBALS["HTTP_SERVER_VARS"]["DOCUMENT_ROOT"];
+//$DOC_ROOT = $GLOBALS["HTTP_SERVER_VARS"]["DOCUMENT_ROOT"]; // removed in PHP 5.4
 
 $DOC_ROOT = $_SERVER["DOCUMENT_ROOT"];
 
