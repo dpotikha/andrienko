@@ -32,7 +32,7 @@ class Files
 	 * @param boolean $unique create unique destination file if true.
 	 * @return string the new copied filename, else error if anything goes bad.
 	 */
-	function copyFile($source, $destination_dir, $destination_file, $unique=true) 
+	static function copyFile($source, $destination_dir, $destination_file, $unique=true) 
 	{
 		if(!(file_exists($source) && is_file($source))) 
 			return FILE_ERROR_NO_SOURCE;
@@ -76,7 +76,7 @@ class Files
 	 * @param string $newFolder specifiy the full path of the new folder.
 	 * @return boolean true if the new folder is created, false otherwise.
 	 */
-	function createFolder($newFolder) 
+	static function createFolder($newFolder) 
 	{
 		mkdir ($newFolder, 0777);
 		return chmod($newFolder, 0777);
@@ -89,7 +89,7 @@ class Files
 	 * @param string $filename the orginal filename
 	 * @return string the escaped safe filename
 	 */
-	function escape($filename) 
+	static function escape($filename) 
 	{
 		Return preg_replace('/[^\w\._]/', '_', $filename);
 	}
@@ -99,7 +99,7 @@ class Files
 	 * @param string $file file to be deleted
 	 * @return boolean true if deleted, false otherwise.
 	 */
-	function delFile($file) 
+	static function delFile($file) 
 	{
 		if(is_file($file)) 
 			Return unlink($file);
@@ -115,7 +115,7 @@ class Files
 	 * error if the directory is not empty.
 	 * @return boolean true if deleted.
 	 */
-	function delFolder($folder, $recursive=false) 
+	static function delFolder($folder, $recursive=false) 
 	{
 		$deleted = true;
 		if($recursive) 
@@ -157,7 +157,7 @@ class Files
 	 * @param string $path the path
 	 * @return string path with trailing /
 	 */
-	function fixPath($path) 
+	static function fixPath($path) 
 	{
 		//append a slash to the path if it doesn't exists.
 		if(!(substr($path,-1) == '/'))
@@ -171,7 +171,7 @@ class Files
 	 * @param string $pathB path two
 	 * @return string a trailing slash combinded path.
 	 */
-	function makePath($pathA, $pathB) 
+	static function makePath($pathA, $pathB) 
 	{
 		$pathA = Files::fixPath($pathA);
 		if(substr($pathB,0,1)=='/')
@@ -186,7 +186,7 @@ class Files
 	 * @param string $pathB the ending path with file
 	 * @return string combined file path.
 	 */
-	function makeFile($pathA, $pathB) 
+	static function makeFile($pathA, $pathB) 
 	{		
 		$pathA = Files::fixPath($pathA);
 		if(substr($pathB,0,1)=='/')
@@ -201,7 +201,7 @@ class Files
 	 * @param int $size the raw filesize
 	 * @return string formated file size.
 	 */
-	function formatSize($size) 
+	static function formatSize($size) 
 	{
 		if($size < 1024) 
 			return $size.' bytes';	
