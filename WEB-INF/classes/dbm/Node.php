@@ -762,7 +762,8 @@ class Node {
 			die("Invalid call to Node::findByPath()");
 		}
                 global $MDB;
-                       $MDB->Query('SELECT id FROM dbm_nodes WHERE md5_path="'.md5($path).'" and absolute_path="'.$path.'"');
+                       // $path comes from the request URL: escape it (it was concatenated raw, an SQL injection on every page)
+                       $MDB->Query('SELECT id FROM dbm_nodes WHERE md5_path="'.md5($path).'" and absolute_path="'.db_escape($path).'"');
                        if(!$MDB->NumRows()){
                            return false;
                        }
