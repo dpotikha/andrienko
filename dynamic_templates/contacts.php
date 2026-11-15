@@ -50,30 +50,28 @@ switch($action) {
 			$admin_email = ADMIN_EMAIL;
 			$from = ADMIN_EMAIL_FROM;
 
-$adminEmailText = <<<EOT
-<html>
-<body>
-Вопрос с сайта Виктора Андриенка:<br>
-Имя: $form->name<br>
-Телефон: $form->phone<br>
-E-Mail: $form->email<br>
-Сообщение<pre>$form->text</pre>
-</body>
-</html>
-EOT;
-			//$from='fail_angel@ua.fm';
-			//$admin_email='fail_angel@ua.fm';
-			//sendMail($from, $admin_email, "Вопрос с сайта Виктора Андриенка", $adminEmailText);
-					$config['charset'] = 'UTF-8';
-					$config['mailtype'] = 'html';
-					$config['wordwrap'] = FALSE;
-					$email=new CI_Email($config);
-					$email->from($from);
-					$email->to($admin_email);
-					$email->subject("Вопрос с сайта Виктора Андриенка");
-					$email->message($adminEmailText);
-					$email->send();
-					
+			$h = fn($s) => htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); // visitor input goes into an HTML mail
+			$adminEmailText = "<html><body>Вопрос с сайта Виктора Андриенка:<br>"
+				. "Имя: " . $h($form->name) . "<br>"
+				. "Телефон: " . $h($form->phone) . "<br>"
+				. "E-Mail: " . $h($form->email) . "<br>"
+				. "Сообщение<pre>" . $h($form->text) . "</pre></body></html>";
+			// PHPMailer from the gady CMS core (the old core's CI_Email is gone); transport: PHP mail(), as before
+			try {
+				$mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+				$mail->CharSet = \PHPMailer\PHPMailer\PHPMailer::CHARSET_UTF8;
+				$mail->setFrom($from);
+				foreach (explode(',', $admin_email) as $to) {
+					if (trim($to) !== '') $mail->addAddress(trim($to));
+				}
+				if (filter_var($form->email, FILTER_VALIDATE_EMAIL)) $mail->addReplyTo($form->email, (string)$form->name);
+				$mail->Subject = "Вопрос с сайта Виктора Андриенка";
+				$mail->msgHTML($adminEmailText);
+				$mail->send();
+			} catch (\PHPMailer\PHPMailer\Exception $e) {
+				error_log("contact form mail failed: " . $e->getMessage());
+			}
+
 			Header("Location: " . $CurrentNode->getHref() . "?do=sent");
 		} else {
 			$request->setAttribute("form", $form);

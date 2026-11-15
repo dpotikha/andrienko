@@ -127,7 +127,7 @@ $project2= &$projects[1];
 		else {
 			if ( ($i==1 && $overridePhotoId!='news') || ($overridePhotoId=='news' && $i==0) ) { ?><div class="otherNews"><?php  } ?>
 			
-			<div><h6 style="padding-left:0px"><?= getFormattedDate($n->tfields["date"]["formatted_date"]) ?></h6><a href="<?= $n->getHref() ?>"><?= $n->name ?></a></div>
+			<div><h6 style="padding-left:0px"><?= siteFormattedDate($n->tfields["date"]["formatted_date"]) ?></h6><a href="<?= $n->getHref() ?>"><?= $n->name ?></a></div>
 			
 			<?php  if ($i==sizeof($lastNews)-1 && $i >= 1) { ?>
 				</div>

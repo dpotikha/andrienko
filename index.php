@@ -8,6 +8,7 @@ function getmicrotime1()
 define('ST',getmicrotime1()) ;
 Header("ContentType: text/html; charset=utf-8");
 require_once($_SERVER['DOCUMENT_ROOT'].'/WEB-INF/prepend.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/dynamic_templates/_functions.php'); // site helpers from the old CMS build
 $uri = $_SERVER['REQUEST_URI'];
 
 $path = $uri;

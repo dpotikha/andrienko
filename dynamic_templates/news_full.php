@@ -4,7 +4,7 @@ $img = $CurrentNode->tfields["photo"];
 ?>
 
 <div class="newsMain" id="bgNo">
-	<h6><?= getFormattedDate($CurrentNode->tfields["date"]["formatted_date"]) ?></h6>
+	<h6><?= siteFormattedDate($CurrentNode->tfields["date"]["formatted_date"]) ?></h6>
 	<h3><?= $CurrentNode->name ?></h3>
 	<table cellpadding="0" cellspacing="0" border="0" class="newsContent">
 		<tr>

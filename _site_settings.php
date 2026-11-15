@@ -83,9 +83,9 @@ $GLOBALS["months_names_genitive"] = array(
 	"Декабря"
 );
 
-function getFormattedDate($date = ""){
+function siteFormattedDate($date = ""){
 	if (empty($date)) return "";
 	$date = new Date($date);
-	return $date->getMonthName().' '.$date->getYear();
+	return $GLOBALS["months_names"][(int)$date->format("n")].' '.$date->getYear(); // the old core's Date::getMonthName()
 }
 ?>

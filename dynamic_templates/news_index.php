@@ -16,7 +16,7 @@ $offset = $pageNum * $rpp;
 	$img = $n->tfields["photo"];
 ?>
 <div class="newsMain" id="bgNo">
-	<h6 style="padding-left:0px"><?= getFormattedDate($n->tfields["date"]["formatted_date"]) ?></h6>
+	<h6 style="padding-left:0px"><?= siteFormattedDate($n->tfields["date"]["formatted_date"]) ?></h6>
 	<a href="<?= $n->getHref() ?>" class="newsName">
 	<?= $n->name ?>
 	</a>
