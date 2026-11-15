@@ -1,0 +1,142 @@
+<?php 
+        $isSuperadmin = ($CurrentAdminUser->group->id == 1);
+	$cuGroupRights = new NodeGroupRights($CurrentAdminUser->group, $node);
+	$userHasWriteRights = $cuGroupRights->hasWriteRight();
+	$request->setAttribute("userHasWriteRights", $userHasWriteRights);
+
+	if (!$userHasWriteRights) {
+		$disabledControlIfUserHasNoWriteRights = " disabled=true";
+	}
+
+	$restrict_edit = $CurrentAdminUser->group->restrictNodeEdit;
+	$request->setAttribute("restrict_edit", $restrict_edit);
+
+	$parents = $node->getParentList();
+	$request->setAttribute("parents", $parents);
+	$nodeClass = $node->getNodeClass();
+
+        $ndMap = new PHPObject();
+        $ndMap->node = $node;
+        $currentLoggedUser = $_SESSION[SESSION_LOGGED_USER_ATTR];
+        $ndGR = new NodeGroupRights($currentLoggedUser->group, $node);
+        $ndMap->hasWriteRight = $ndGR->hasWriteRight();
+        $ndMap->hasViewRight = $ndGR->hasViewRight();
+        $ndMap->hasDeleteRight = $ndGR->hasDeleteRight();
+?>
+<html>
+<head>
+<meta HTTP-EQUIV="content-type" CONTENT="text/html; charset=<?=ADMIN_CHARSET?>">
+<meta http-equiv="Expires" content="0">
+<meta http-equiv="Cache-Control" content="must-revalidate, post-check=0, pre-check=0">
+<meta http-equiv="pragma" content="no-cache">
+<title></title>
+<link rel=stylesheet href=/admin/css.css type="text/css">
+<script type="text/javascript" src="/admin/js/refresh_tree.js"></script>
+<script language="JavaScript">
+    function wop(url, w, h) {
+        w = window.open(url,'node_props','resizable=yes,toolbar=no,location=no,directories=no,status=no,menubar=no,width='+w+', height='+h+',scrollbars=yes,fullscreen=no,top=100, left=100');
+		w.focus();
+    }
+</script>
+</head>
+
+<body leftmargin=0 topmargin=0 marginwidth=0 marginheight=0 class=main<?php if ($request->getParameter('reload') != null) {?> onLoad="refreshTree(<?=$node->id?>, <?=$node->parent_id+0?>,'<?=rawurlencode($node->name)?>')"<?php }?>>
+
+<table width=100% border=0 cellpadding=4 cellspacing=0>
+<tr class=top4>
+<td height=40 id=pad18 colspan=2 class=head><?php  if (!$CurrentAdminUser->group->canManageUsers) { array_shift($parents); } $i=0;foreach ($parents as $parent) {$i++;?><?php if ($i!=1) {?> : <?php }?><a href="/admin/nodes.php?do=main&id=<?=$parent->id?>" id=black><nobr><?=$parent->name?></nobr></a><?php }?><?php if (sizeof($parents) != 0) {?> : <?php }?><b><nobr><?=$node->name?></nobr></b></td>
+</tr>
+</table>
+<table width=100% border=0 cellpadding=0 cellspacing=0 class=top42><td><img src=/admin/_img/s.gif width=1 height=5></td></table>
+
+
+<div id=pad5>
+<?php $msg = $request->getParameter("msg"); if ($msg != null) {?><span id="red"><?=$AdminTrnsl[$msg]?></span><?php }?>&nbsp;
+</div>
+
+<?php  if (!$restrict_edit
+	|| $nodeClass->checkFlag("USE_SHORTNAME")
+	|| ($CurrentAdminUser->group->canManageUsers && $node->getChildrenCountForGroup($CurrentAdminUser->group->id) > 0)
+	|| ($userHasWriteRights && $CurrentAdminUser->group->canManageUsers)
+	|| ($userHasWriteRights && !$restrict_edit)
+    || $nodeClass->checkFlag("HAS_COMMENTS")
+	|| $nodeClass->checkFlag("HAS_SEO")
+        || $nodeClass->checkFlag("HAS_MULTIPHOTO")
+	) { ?>
+<table width=100% border=0 cellpadding=0 cellspacing=0>
+<tr><td id=pad18>
+
+<table width=100% cellpadding=0 cellspacing=0 border=0 id=PropBg1>
+<tr>
+<?php  $n = ($active_tab == "editing") ? "3" : "2"; ?>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_3.gif" width="11" height="22" alt="" border="0"></td>
+<td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=main&id=<?=$node->id?>"><?=$AdminTrnsl["Editing"]?></a>&nbsp;</td>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
+
+<?php  if ($isSuperadmin || ($nodeClass->checkFlag('SHOW_PROPERTIES') && (!$restrict_edit || $ndMap->hasWriteRight))) { ?>
+<?php $n = ($active_tab == "properties") ? "3" : "2"; ?>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
+<td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=properties&node_id=<?=$node->id?>"><?=$AdminTrnsl["Properties"]?></a>&nbsp;</td>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
+<?php  } ?>
+
+<?php  if ($isSuperadmin || ($nodeClass->checkFlag('SHOW_SORTING') && $node->getChildrenCountForGroup($CurrentAdminUser->group->id) > 0&&(!$restrict_edit || $ndMap->hasWriteRight))) { ?>
+<?php $n = ($active_tab == "sorting") ? "3" : "2"; ?>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
+<td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=children_sort&node_id=<?=$node->id?>"><?=$AdminTrnsl["Sort"]?></a>&nbsp;</td>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
+<?php }?>
+
+<?php  if ($isSuperadmin || ($nodeClass->checkFlag('SHOW_PERMISSIONS') && $userHasWriteRights && $CurrentAdminUser->group->canManageUsers)) { ?>
+<?php $n = ($active_tab == "permissions") ? "3" : "2"; ?>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
+<td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=permissions&node_id=<?=$node->id?>"><?=$AdminTrnsl["Permissions"]?></a>&nbsp;</td>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
+<?php }?>
+
+<?php // if($userHasWriteRights && !$restrict_edit) { ?>
+<?php  if ($isSuperadmin) { ?>
+<?php $n = ($active_tab == "dependencies") ? "3" : "2"; ?>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
+<td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=dependencies&node_id=<?=$node->id?>"><?=$AdminTrnsl["Dependent_Classes"]?></a>&nbsp;</td>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
+<?php }?>
+
+<?php  if ($nodeClass->checkFlag('HAS_COMMENTS')) { ?>
+<?php $n = ($active_tab == "comments") ? "3" : "2"; ?>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
+<td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=comments&node_id=<?=$node->id?>"><?=$AdminTrnsl["Comments"]?></a>&nbsp;</td>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
+<?php }?>
+
+<?php  if ($nodeClass->checkFlag('HAS_SEO')) { ?>
+<?php $n = ($active_tab == "seo") ? "3" : "2"; ?>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
+<td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=seo&node_id=<?=$node->id?>"><?=$AdminTrnsl["SEO"]?></a>&nbsp;</td>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
+<?php }?>
+
+<?php  //if(in_array($node->nodeClassId, array(422,425,426,427,433, 421, 430,431,432))){ ?>
+<?php /* if ($nodeClass->checkFlag('HAS_SEO')) {/ ?>
+<?$n = ($active_tab == "tags") ? "3" : "2"; ?>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
+<td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=tags&node_id=<?=$node->id?>"><?=$AdminTrnsl["Tags_Tab"]?></a>&nbsp;</td>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
+<? }*/?>
+
+<?php  if ($nodeClass->checkFlag('HAS_MULTIPHOTO')) { ?>
+<?php $n = ($active_tab == "multiphoto") ? "3" : "2"; ?>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_1.gif" width="11" height="22" alt="" border="0"></td>
+<td id=PropBg<?=$n?> nowrap>&nbsp;<a href="/admin/nodes.php?do=multiphoto&node_id=<?=$node->id?>"><?=$AdminTrnsl["MULTIPHOTO"]?></a>&nbsp;</td>
+<td id=PropBg<?=$n?>><img src="/admin/_img/prop_2.gif" width="11" height="22" alt="" border="0"></td>
+<?php }?>
+
+<td width=100%>&nbsp;</td>
+</tr>
+</table>
+
+</td>
+</tr>
+</table>
+<?php  } ?>
+<!-- nodes header end -->

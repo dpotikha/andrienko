@@ -980,14 +980,14 @@ class NodeQuery {
 		$QUOTE_CHARACTER = "'";
 
 		$tokenStr = "";
-		for ($j = 0; $j < strlen($s); $j++) {
-			$c = $s[$j];
+		for ($j = 0; $j < mb_strlen($s); $j++) {
+			$c = mb_substr($s,$j,1);
 
 			if ($c == $QUOTE_CHARACTER) {
 				$tokenStr .= $QUOTE_CHARACTER;
 
-				for ($j++; $j < strlen($s) && $s[$j] != "'"; $j++)
-					$tokenStr .= $s[$j];
+				for ($j++; $j < mb_strlen($s) && mb_substr($s,$j,1) != "'"; $j++)
+					$tokenStr .= mb_substr($s,$j,1);
 
 				$tokenStr .= $QUOTE_CHARACTER;
 			} else if (_isSQLDelimiter($c)) {
@@ -1025,11 +1025,11 @@ class NodeQuery {
 
 
 function _isTableDefClassSpec($tableDef) {
-	return ((strpos($tableDef, "{") === 0) && (strpos($tableDef, "}") === (strlen($tableDef) - 1)));
+	return ((strpos($tableDef, "{") === 0) && (strpos($tableDef, "}") === (mb_strlen($tableDef) - 1)));
 }
 
 function _getClassesShortnamesFromTableSpec($tableDef) {
-	return explode(",", substr($tableDef, 1, strlen($tableDef) - 2));;
+	return explode(",", mb_substr($tableDef, 1, mb_strlen($tableDef) - 2));;
 }
 
 

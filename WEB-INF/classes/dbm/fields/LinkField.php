@@ -40,7 +40,7 @@ class LinkField extends StringField {
 				$this->value = $rValue;
 				break;
 			}
-			if (strlen($rValue) != 0) {
+			if (mb_strlen($rValue) != 0) {
 				$rootNode = Node::findByPath($root_node_path);
 				if ($rootNode == null) {
 					$verror = $AdminTrnsl["BadRootNodePath"];

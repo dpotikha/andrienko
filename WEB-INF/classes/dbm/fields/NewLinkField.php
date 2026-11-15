@@ -29,7 +29,7 @@ class NewLinkField extends IntegerField {
 			$this->value = $dbValue;
 			$this->lazyLoading = true;
 		} else {
-			
+
 			$this->linkedNode = $fieldRS->getNode($tableAlias . "___" . $shortname);
 			$this->value = (int)$this->linkedNode->id;
 			$this->lazyLoading = false;
@@ -40,7 +40,7 @@ class NewLinkField extends IntegerField {
 		global $AdminTrnsl;
 		if (is_object($o) && strtolower(get_class($o)) == 'httprequest') {
 			$rValue = $o->getParameter($this->fieldDefShortname);
-			if(!is_numeric($rValue)){
+			if(!is_numeric($rValue)) {
 				$n=Node::findByPath($rValue);
 				$rValue=$n->id;
 			}
@@ -57,8 +57,8 @@ class NewLinkField extends IntegerField {
 		do {
 			if ($rValue != 0) {
 				$rootNode = Node::findByPath($root_node_path);
-//				echo $root_node_path;
-				
+				//				echo $root_node_path;
+
 				if ($rootNode == null) {
 					$verror = $AdminTrnsl["BadRootNodePath"];
 					break;
@@ -76,7 +76,7 @@ class NewLinkField extends IntegerField {
 					$verror = $AdminTrnsl["SpecifiedPathIsNotGranted"];
 					break;
 				}
-	
+
 				$linkedNodeClass = $linkedNode->getNodeClass();
 				$classname = $linkedNodeClass->shortname;
 				if ($allowed_classes != "*" && strpos("," . $allowed_classes . ",", "," . $classname . ",") === false) {
@@ -88,9 +88,9 @@ class NewLinkField extends IntegerField {
 				$this->linkedNode = $linkedNode;
 
 			} else if($fieldDef->required) {
-				$verror = $AdminTrnsl["RequiredField"];
-				break;
-			}
+					$verror = $AdminTrnsl["RequiredField"];
+					break;
+				}
 		} while(false);
 
 		return $verror;

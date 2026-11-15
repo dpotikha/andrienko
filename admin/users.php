@@ -178,6 +178,7 @@ function create_group(&$request) {
 	$can_man_imglib = $request->getParameter("can_man_imglib") == 1 ? true : false;
 	$restrict_nodeedit = $request->getParameter("restrict_nodeedit") == 1 ? true : false;
 	$is_moderator = $request->getParameter("is_moderator") == 1 ? true : false;
+        $can_man_settings = $request->getParameter("can_man_settings") == 1 ? true : false;
 
 	if ( UserGroup::findByName($name) == null ) {
 		if (strlen($name) < 2) {
@@ -185,7 +186,7 @@ function create_group(&$request) {
 			usetemplate("users/create_group");
 		} else {
 			Validator::validateShortname($name);
-			$ug = UserGroup::create($name, $desc, $can_man_class, $can_man_user, $can_man_imglib, $restrict_nodeedit, $is_moderator);
+			$ug = UserGroup::create($name, $desc, $can_man_class, $can_man_user, $can_man_imglib, $restrict_nodeedit, $is_moderator, $can_man_settings);
 
 			usetemplate("users/index");
 		}
@@ -213,6 +214,7 @@ function update_group(&$request) {
 	$can_man_imglib = $request->getParameter("can_man_imglib") == 1 ? true : false;
 	$restrict_nodeedit = $request->getParameter("restrict_nodeedit") == 1 ? true : false;
 	$is_moderator = $request->getParameter("is_moderator") == 1 ? true : false;
+        $can_man_settings = $request->getParameter("can_man_settings") == 1 ? true : false;
 
 	$grp_ex = true;
 	$e_ug = UserGroup::findByName($name);
@@ -238,6 +240,7 @@ function update_group(&$request) {
             $ug->canManageImgLib = $can_man_imglib;
             $ug->restrictNodeEdit = $restrict_nodeedit;
             $ug->isModerator = $is_moderator;
+            $ug->canManageSettings = $can_man_settings;
             $ug->store();
 
    			usetemplate("users/index");

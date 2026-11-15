@@ -28,6 +28,7 @@ class FieldDef {
 
 	var $shown = false;
 	var $required = false;
+        var $hide = false;
 	var $order = 0;
 
 	function getNodeClass() {
@@ -40,7 +41,7 @@ class FieldDef {
 		return $DBM_FIELD_TYPES[$this->fieldTypeId];
 	}
 
-	function __construct($nodeClass, $name, $shortname, $ft, $required, $shownInNodeList, $order, $id = -1) {
+	function __construct($nodeClass, $name, $shortname, $ft, $required, $shownInNodeList, $order, $hideFromUsers = 0, $id = -1) {
 		$this->id = $id;
 		$this->nodeClassId = $nodeClass->id;
 		$this->name = $name;
@@ -49,6 +50,7 @@ class FieldDef {
 		$this->required = $required;
 		$this->shown = $shownInNodeList;
 		$this->order = $order;
+                $this->hide = $hideFromUsers;
 
 		if ($id != -1) {
 			$this->prepareFieldParamValues();
@@ -89,9 +91,9 @@ class FieldDef {
 	function create() {
 		$this->id = DBUtils::getNextSequnceID("class_fields");
 
-		$params = array($this->id, $this->name, $this->shortname, $this->nodeClassId, $this->fieldTypeId, $this->required, $this->shown, $this->order);
+		$params = array($this->id, $this->name, $this->shortname, $this->nodeClassId, $this->fieldTypeId, $this->required, $this->shown, $this->hide, $this->order);
 		DBUtils::execUpdate(
-			"INSERT INTO dbm_class_fields (id, name, shortname, class_id, type_id, required, shown, `order`) VALUES (?,?,?,?,?,?,?,?)",
+			"INSERT INTO dbm_class_fields (id, name, shortname, class_id, type_id, required, shown, hide, `order`) VALUES (?,?,?,?,?,?,?,?,?)",
 			$params
 		);
 
@@ -146,7 +148,7 @@ class FieldDef {
 	 * get
 	 */
 	function getParameterValue($shortname) {
-		if (!array_key_exists($shortname, $this->fieldParameters)) {
+		if (is_array($this->fieldParameters) && !array_key_exists($shortname, $this->fieldParameters)) {
 			$fieldType = $this->getFieldType();
 			$param = $fieldType->getParameter($shortname);
 			return $param->default_value;
@@ -161,8 +163,8 @@ class FieldDef {
 	function store() {
 		global $DBM_FIELD_TYPES;
 
-		$sql = "UPDATE dbm_class_fields SET shortname=?, name=?, type_id=?, required=?, shown=?, `order`=? WHERE id=?";
-		DBUtils::execUpdate($sql, array($this->shortname, $this->name, $this->fieldTypeId, $this->required, $this->shown, $this->order, $this->id));
+		$sql = "UPDATE dbm_class_fields SET shortname=?, name=?, type_id=?, required=?, shown=?, hide=?, `order`=? WHERE id=?";
+		DBUtils::execUpdate($sql, array($this->shortname, $this->name, $this->fieldTypeId, $this->required, $this->shown, $this->hide, $this->order, $this->id));
 		NodeClass::removeNodeClassFromCache($this->nodeClassId);
 
 		if (($this->oldshortname != null) || ($this->oldfieldTypeId != null)) {

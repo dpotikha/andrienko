@@ -11,6 +11,17 @@ DEFINE("NODECLASS_FLAG_USE_MULTIFORMS", 16);
 DEFINE("NODECLASS_FLAG_USE_ADMINURL_AND_TEMPLATE", 32);
 DEFINE("NODECLASS_FLAG_NODENAME_READONLY", 64);
 DEFINE("NODECLASS_FLAG_CACHE", 128);
+DEFINE("NODECLASS_FLAG_FRIENDLY_URL", 256);
+DEFINE("NODECLASS_FLAG_USE_ORDERING", 512);
+
+DEFINE("NODECLASS_FLAG_SHOW_PROPERTIES", 1024);
+DEFINE("NODECLASS_FLAG_SHOW_SORTING", 2048); //drag & drop
+DEFINE("NODECLASS_FLAG_SHOW_PERMISSIONS", 4096);
+DEFINE("NODECLASS_FLAG_HAS_COMMENTS", 8192);
+DEFINE("NODECLASS_FLAG_HAS_SEO", 16384);
+DEFINE("NODECLASS_FLAG_HAS_MULTIPHOTO", 32768);
+
+DEFINE("NODECLASS_FLAG_USE_SITEMAP", 65536);
 
 global $NODECLASS_FLAG_NAMES;
 $NODECLASS_FLAG_NAMES = array(
@@ -22,6 +33,15 @@ $NODECLASS_FLAG_NAMES = array(
 	"USE_MULTIFORMS",
 	"USE_ADMINURL_AND_TEMPLATE",
 	"CACHE",
+	"FRIENDLY_URL",
+        "USE_ORDERING",
+        "SHOW_PROPERTIES",
+        "SHOW_SORTING",
+        "SHOW_PERMISSIONS",
+        "HAS_COMMENTS",
+        "HAS_SEO",
+        "HAS_MULTIPHOTO",
+        "USE_SITEMAP",
 );
 
 class NodeClass {
@@ -77,6 +97,7 @@ class NodeClass {
 			$required = $res->getBoolean("required");
 			$order = $res->getInt("order");
 			$shownInNodeList = $res->getBoolean("shown");
+                        $hideFromUsers = $res->getBoolean("hide");
 
 			$type_id = $res->getInt("type_id");
 			$ft = $DBM_FIELD_TYPES[$type_id];
@@ -84,7 +105,7 @@ class NodeClass {
 				die("No such Field Type with id=$type_id");
 			}
 
-			$fd = new FieldDef($this, $name, $shortname, $ft, $required, $shownInNodeList, $order, $id);
+			$fd = new FieldDef($this, $name, $shortname, $ft, $required, $shownInNodeList, $order, $hideFromUsers, $id);
 
 			$this->fieldDefs[$fd->shortname] = $fd;
 			$this->fieldDefsById[$fd->id] = $fd;
@@ -110,13 +131,27 @@ class NodeClass {
 		}
 	}
 
-	function updateFieldDef($id, $shortname, $name, $type, $required, $shown) {
+	function updateFieldDef($id, $shortname, $name, $type, $required, $shown, $hide) {
 		$fd = $this->getFieldDef($id);
 		$fd->setShortname($shortname);
 		$fd->name = $name;
 		$fd->setFieldTypeId($type);
 		$fd->required = $required;
 		$fd->shown = $shown;
+                $fd->hide = $hide;
+		$fd->store();
+		NodeClass::removeNodeClassFromCache($this->id);
+	}
+
+        function updateFieldDefWithOrder($id, $shortname, $name, $type, $required, $shown, $order, $hide) {
+		$fd = $this->getFieldDef($id);
+		$fd->setShortname($shortname);
+		$fd->name = $name;
+		$fd->setFieldTypeId($type);
+		$fd->required = $required;
+		$fd->shown = $shown;
+                $fd->order = $order;
+                $fd->hide = $hide;
 		$fd->store();
 		NodeClass::removeNodeClassFromCache($this->id);
 	}
@@ -137,7 +172,7 @@ class NodeClass {
 		return sizeof($this->fieldDefs);
 	}
 
-	function addFieldDef($shortname, $name, $type_id, $required, $shown) {
+	function addFieldDef($shortname, $name, $type_id, $required, $shown, $hide) {
 		global $DBM_FIELD_TYPES;
 		$sql = null;
 
@@ -148,7 +183,7 @@ class NodeClass {
 		}
 
 		$order = $this->getLastFieldOrder() + 1;
-		$fd = new FieldDef($this, $name, $shortname, $ft, $required, $shown, $order);
+		$fd = new FieldDef($this, $name, $shortname, $ft, $required, $shown, $order, $hide);
 		$fd->create();
 
 		NodeClass::removeNodeClassFromCache($this->id);
@@ -235,7 +270,7 @@ class NodeClass {
 		}
 		$pstmt->close();
 		
-		if(strlen($ids) != 0) {
+		if(mb_strlen($ids) != 0) {
 			$sql = "DELETE FROM dbm_node_dependencies WHERE submissed_class_id= ? and node_id IN (" . $ids . ")";
 			$pstmt = $connection->prepareStatement($sql);
 			$pstmt->setInt(1, $dep_class->id);

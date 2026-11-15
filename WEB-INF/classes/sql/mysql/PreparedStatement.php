@@ -25,21 +25,21 @@ class PreparedStatement {
 
 	function _construct($sql) {
 		$currentPart = "";
-		$strLen = strlen($sql);
+		$strLen = mb_strlen($sql);
 		for ($j = 0; $j < $strLen; $j++) {
-			$c = $sql[$j];
+			$c = mb_substr($sql,$j,1);
 			if ($c == '?') {
 				$this->parts[] = $currentPart;
 				$currentPart = "";
 			} else if ($c == "'") {
 				$currentPart .= "'";
-				for ($j++; $j < $strLen && $sql[$j] != "'"; $j++) {
-					$currentPart .= $sql[$j];
+				for ($j++; $j < $strLen && mb_substr($sql,$j,1) != "'"; $j++) {
+					$currentPart .= mb_substr($sql,$j,1);
 				}
 
 				$currentPart .= "'";
 			} else {
-				$currentPart .= $sql[$j];
+				$currentPart .= mb_substr($sql,$j,1);
 			}
 		}
 		$this->parts[] = $currentPart;
@@ -98,7 +98,7 @@ class PreparedStatement {
 
 	function setFloat($i, $float) {
 		$this->checkIndex($i);
-		$float = (float)$float;
+		$float =  preg_replace(array('/,/i','/[^0-9\.\-]/i'),array('.',''),$float);
 		$this->values[$i] = "".$float;
 	}
 

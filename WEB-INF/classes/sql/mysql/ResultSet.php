@@ -150,7 +150,7 @@ class ResultSet {
 
 	function getFloat($i) {
 		$this->checkColumnIndex($i);
-		return (float)$this->currentRow[$i];
+		return preg_replace(array('/,/i','/[^0-9\.\-]/i'),array('.',''),$this->currentRow[$i]);
 	}
 
 	function getBoolean($i) {

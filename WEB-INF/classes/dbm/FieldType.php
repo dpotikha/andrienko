@@ -114,6 +114,8 @@ $STRING_PARAMLIST = array(
     new FieldParameter("regex", "Regular Expression",  ""),
     new FieldParameter("regex_error_msg", "Regular Expression Error Message",  ""),
     new FieldParameter("control_type", "Type of the html control",  "normal", array("normal"=>"Normal", "readonly"=>"Readonly", "orderinfo" => "Order Info")),
+    new FieldParameter("default_value", "Default value",  "")
+
 );
 $FIELDTYPE_STRING = new FieldType(3, "String", "StringField", "TEXT", "String", $STRING_PARAMLIST);
 
@@ -149,11 +151,13 @@ $FIELDTYPE_FLOAT = new FieldType(6, "Float", "FloatField", "FLOAT", "Float", $FL
 $WYSIWYG_PARAMLIST = array(
     new FieldParameter("max_length", "Maximum String Length",  "65536")
 );
-$FIELDTYPE_WYSIWYG = new FieldType(7, "WYSiWYG text", "WysiwygTextField", "TEXT", "String", $WYSIWYG_PARAMLIST);
+//$FIELDTYPE_WYSIWYG = &new FieldType(7, "WYSiWYG text", "WysiwygTextField", "TEXT", "String", $WYSIWYG_PARAMLIST);
 
 //===================================================================//
 
 $BOOL_PARAMLIST = array(
+    new FieldParameter("control_type", "Type of the html control",  "normal", array("normal"=>"Normal","checkbox"=>"CheckBox", "readonly"=>"Readonly")),
+    new FieldParameter("default_value", "Default value",  "0")
 );
 $FIELDTYPE_BOOL = new FieldType(8, "Boolean (yes/no)", "BoolField", "TINYINT", "Int", $BOOL_PARAMLIST);
 
@@ -203,7 +207,7 @@ $CMMULTILINK_PARAMLIST = array(
     new FieldParameter("max_depth", "Maximum depth of subtree under relative root node",  "10"),
     new FieldParameter("control_type", "Type of the html control", "radio",
 			array(
-				"checkboxes"=>"Checkboxes"
+				"checkboxes"=>"Checkboxes", "readonly"=>"Readonly"
 				)
 			),
 );
@@ -228,6 +232,7 @@ $FIELDTYPE_LIST = new FieldType(13, "MultiList", "ListField", "VARCHAR(255)", "S
 				"radio"=>"Radio buttons",
 				"checkboxes"=>"Checkboxes",
 				"select1"=>"Dropdown",
+                                "readonly"=>"Readonly"
 				)
 			),
 		new FieldParameter("default_value", "Default value", "")
@@ -238,9 +243,12 @@ $FIELDTYPE_NEWIMAGE = new FieldType(14, "NewImage", "NewImageField", "TEXT", "St
     array(
 	    new FieldParameter("max_size", "Maximum File Size (in bytes)",  "2097152"),
 	    new FieldParameter("aext", "Allowed File Extensions (separate values by ',')",  "jpg,JPG,jpeg,JPEG,gif,GIF,png,PNG"),
+	    new FieldParameter("parent_save", "Parent Node Folder", "false",array("false"=>'false','true'=>'true')),
 	    new FieldParameter("thumbnail_width", "Thumbnail width", "100"),
 	    new FieldParameter("thumbnail_height", "Thumbnail height", "70"),
 	    new FieldParameter("thumb_resize_strategy", "Thumbnail Image resize strategy", "crop", array("crop"=>"Crop Image","bywidth"=>"By Width","byheight"=>"By Height", "bygreaterside"=>"By Larger Side", "bysmallerside"=>"By Smaller Side")),
+            new FieldParameter("thumb_area", "Thumbnail Image Area", "thumb_area", array("maximum"=>"Maximize","minimum"=>"Minimize")),
+            new FieldParameter("thumb_adds", "Additionals Thumbnails Images", ""),
 	    new FieldParameter("width", "Width", "300"),
 	    new FieldParameter("height", "Height", "200"),
 	    new FieldParameter("resize_strategy", "Image resize strategy", "crop", array("crop"=>"Crop Image","bywidth"=>"By Width","byheight"=>"By Height", "bygreaterside"=>"By Larger Side", "bysmallerside"=>"By Smaller Side")),
@@ -249,8 +257,44 @@ $FIELDTYPE_NEWIMAGE = new FieldType(14, "NewImage", "NewImageField", "TEXT", "St
     )
 );
 
+$FIELDTYPE_WATERMARK_IMAGE = new FieldType(24, "WatermarkImage", "WatermarkImageField", "TEXT", "String",
+    array(
+	    
+            new FieldParameter("max_size", "Maximum File Size (in bytes)",  "2097152"),
+	    new FieldParameter("aext", "Allowed File Extensions (separate values by ',')",  "jpg,JPG,jpeg,JPEG,gif,GIF,png,PNG"),
+	    new FieldParameter("thumbnail_width", "Thumbnail width", "100"),
+	    new FieldParameter("thumbnail_height", "Thumbnail height", "70"),
+	    new FieldParameter("thumb_resize_strategy", "Thumbnail Image resize strategy", "crop", array("crop"=>"Crop Image","bywidth"=>"By Width","byheight"=>"By Height", "bygreaterside"=>"By Larger Side", "bysmallerside"=>"By Smaller Side")),
+            new FieldParameter("thumb_area", "Thumbnail Image Area", "thumb_area", array("maximum"=>"Maximize","minimum"=>"Minimize")),
+	    new FieldParameter("thumb_adds", "Additionals Thumbnails Images", ""),
+	    new FieldParameter("width", "Width", "300"),
+	    new FieldParameter("height", "Height", "200"),
+	    new FieldParameter("resize_strategy", "Image resize strategy", "crop", array("crop"=>"Crop Image","bywidth"=>"By Width","byheight"=>"By Height", "bygreaterside"=>"By Larger Side", "bysmallerside"=>"By Smaller Side")),
+            new FieldParameter("cc", "Center-Center Image", ""),
+	    new FieldParameter("cb", "Center-Bottom Image", ""),
+	    new FieldParameter("lt", "Left-Top Image", ""),
+	    new FieldParameter("rt", "Right-Top Image", ""),
+	    new FieldParameter("lb", "Left-Bottom Image", ""),
+	    new FieldParameter("lt", "Left-Top Image", ""),
+	    new FieldParameter("rb", "Right-Bottom Image", ""),
+             
+	    new FieldParameter("cc_padding", "Center-Center Padding", "0"),
+	    new FieldParameter("cb_padding", "Center-Bottom Padding", "10"),
+	    new FieldParameter("lt_padding", "Left-Top Padding", "10"),
+	    new FieldParameter("rt_padding", "Right-Top Padding", "10"),
+	    new FieldParameter("lb_padding", "Left-Bottom Padding", "10"),
+	    new FieldParameter("lt_padding", "Left-Top Padding", "10"),
+	    new FieldParameter("rb_padding", "Right-Bottom Padding", "10"),
+             
+        
+	    new FieldParameter("save_original", "Save original","false" ,array("false","true")),
+            new FieldParameter("control_type", "Type of the html control", "normal", array("normal"=>"Normal")),
+    )
+);
+
+
 $FIELDTYPE_SERVERFILE = new FieldType(15, "Server File", "ServerFileField", "TEXT", "String",
-    array(new FieldParameter("root", "Root", "/"))
+    array(new FieldParameter("root", "Root Folder",  "/"), )
 );
 
 $FIELDTYPE_LIST = new FieldType(16, "List", "SingleListField", "TINYINT", "Int",
@@ -261,6 +305,7 @@ $FIELDTYPE_LIST = new FieldType(16, "List", "SingleListField", "TINYINT", "Int",
 				"radio"=>"Radio buttons",
 				"select"=>"Dropdown with 'Any' element",
 				"select_r"=>"Dropdown",
+                                "readonly"=>"Readonly"
 				)
 			),
 		new FieldParameter("any_el_name", "Name for 'Any' element", ""),
@@ -275,13 +320,15 @@ $STATS_PARAMLIST = array(
 //$FIELDTYPE_STATS = &new FieldType(61, "Statistic", "Stats", "String", "String", $STATS_PARAMLIST);
 
 $FTINY_PARAMLIST = array(
-    new FieldParameter("max_length", "Maximum String Length",  "65536")
+    new FieldParameter("max_length", "Maximum String Length",  "65536"),
+    new FieldParameter("control_type", "Type of the html control",  "normal", array("normal"=>"Normal", "readonly"=>"Readonly")),
 );
 $FIELDTYPE_WYSIWYG = new FieldType(30, "Full Editor", "fTinyTextField", "TEXT", "String", $FTINY_PARAMLIST);
 
 //===================================================================//
 $STINY_PARAMLIST = array(
-    new FieldParameter("max_length", "Maximum String Length",  "65536")
+    new FieldParameter("max_length", "Maximum String Length",  "65536"),
+    new FieldParameter("control_type", "Type of the html control",  "normal", array("normal"=>"Normal", "readonly"=>"Readonly")),
 );
 $FIELDTYPE_WYSIWYG = new FieldType(31, "Small Editor", "sTinyTextField", "TEXT", "String", $STINY_PARAMLIST);
 

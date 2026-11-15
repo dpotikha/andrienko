@@ -63,7 +63,7 @@ input.button41  {font-size:11px; border:2px solid #919191; color:#ffffff; backgr
 input.button42  {font-size:11px; border:2px solid #919191; color:#ffffff; background:#5B5B5B url(_img/button_sort_up.gif) no-repeat; margin:0px 3px 0px 0px; cursor:pointer}
 input.button43  {font-size:11px; border:2px solid #919191; color:#ffffff; background:#5B5B5B url(_img/button_sort_bottom.gif) no-repeat; margin:0px 3px 0px 0px; cursor:pointer}
 input.button44  {font-size:11px; border:2px solid #919191; color:#ffffff; background:#5B5B5B url(_img/button_sort_top.gif) no-repeat; margin:0px 3px 0px 0px; cursor:pointer}
-
+.dragHandle     {cursor:move; background-color:#E8A400; color:white; padding-left:3px; padding-right:3px;}
 
 .top1           {background-color:#dcdcdc}
 .top11          {background-color:#345E00}
@@ -117,3 +117,7 @@ hr                      {color:#ccd7e8}
  font-size:11px;
   white-space:nowrap;
 }
+
+img.admin_preview {
+	max-width:250px;
+	}

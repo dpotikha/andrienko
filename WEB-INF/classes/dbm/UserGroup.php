@@ -1,5 +1,4 @@
 <?php
-
 $USER_GROUPS_CACHE = null;
 
 class UserGroup {
@@ -11,6 +10,7 @@ class UserGroup {
 	var $canManageImgLib = false;
 	var $restrictNodeEdit = true;
 	var $isModerator = true;
+        var $canManageSettings = false;
 
 	function __construct($id) {
 		$this->id = $id;
@@ -21,7 +21,7 @@ class UserGroup {
 	 * Notice that id must specify existing row in DB
 	 */
 	function _load() {
-		$sql = "SELECT name, description, canManageClasses, canManageUsers, canManageImgLib, restrictNodeEdit, isModerator FROM dbm_user_groups WHERE id=?";
+		$sql = "SELECT name, description, canManageClasses, canManageUsers, canManageImgLib, restrictNodeEdit, isModerator, canManageSettings FROM dbm_user_groups WHERE id=?";
 		$rs = DBUtils::execSelect($sql, array($this->id));
 		if ($rs->next()) {
 			$this->name = $rs->getString(1);
@@ -31,6 +31,7 @@ class UserGroup {
 			$this->canManageImgLib = $rs->getBoolean(5);
 			$this->restrictNodeEdit = $rs->getBoolean(6);
 			$this->isModerator = $rs->getBoolean(7);
+                        $this->canManageSettings = $rs->getBoolean(8);
 		} else {
 			die("UserGroup _load failed. No such record in database.");
 		}
@@ -41,8 +42,8 @@ class UserGroup {
 	 * Changes only name and description.
 	 */
 	function _store() {
-		$sql = "UPDATE dbm_user_groups SET name=?, description=?, canManageClasses=?, canManageUsers=?, canManageImgLib=?, restrictNodeEdit=?, isModerator=? WHERE id=?";
-		DBUtils::execUpdate($sql, array($this->name, $this->description, $this->canManageClasses, $this->canManageUsers, $this->canManageImgLib, $this->restrictNodeEdit, $this->isModerator, $this->id));
+		$sql = "UPDATE dbm_user_groups SET name=?, description=?, canManageClasses=?, canManageUsers=?, canManageImgLib=?, restrictNodeEdit=?, isModerator=?, canManageSettings=? WHERE id=?";
+		DBUtils::execUpdate($sql, array($this->name, $this->description, $this->canManageClasses, $this->canManageUsers, $this->canManageImgLib, $this->restrictNodeEdit, $this->isModerator, $this->canManageSettings, $this->id));
 	}
 
 	/**
@@ -69,11 +70,11 @@ class UserGroup {
 	/**
 	 * Creates new in database and returns id of created row
 	 */
-	static function _create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator) {
+	static function _create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator, $canManageSettings) {
 		$id = DBUtils::getNextSequnceID("user_groups");
-		$sql = "INSERT INTO dbm_user_groups (id, name, description,canmanageclasses,canmanageusers,canManageImgLib,restrictNodeEdit, isModerator) VALUES (?,?,?,?,?,?,?,?)";
+		$sql = "INSERT INTO dbm_user_groups (id, name, description,canmanageclasses,canmanageusers,canManageImgLib,restrictNodeEdit, isModerator, canManageSettings) VALUES (?,?,?,?,?,?,?,?,?)";
 
-		DBUtils::execUpdate($sql, array($id, $name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator));
+		DBUtils::execUpdate($sql, array($id, $name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator, $canManageSettings));
 
 		$sql = "INSERT INTO dbm_group_rights SELECT ? AS group_id, id as node_id, ? AS rights FROM dbm_nodes";
 		DBUtils::execUpdate($sql, array($id, 0));
@@ -129,7 +130,7 @@ class UserGroup {
 
 		if ($USER_GROUPS_CACHE === null) {
 			$USER_GROUPS_CACHE = array();
-	
+
 			$e = UserGroup::_findAll();
 			foreach ($e as $group_id) {
 				$group = new UserGroup($group_id);
@@ -141,9 +142,9 @@ class UserGroup {
 	}
 
 	/*=========================================================================
-	
+
 	 operations for manipulating users and user grouops
-	
+
 	=========================================================================*/
 	/**
 	 * Get unsorted list of user group objects
@@ -175,8 +176,8 @@ class UserGroup {
 	/**
 	 * Create new users group in database and put created to cache
 	 */
-	static function create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator) {
-		$id = UserGroup::_create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator);
+	static function create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator, $canManageSettings) {
+		$id = UserGroup::_create($name, $description, $canManageClasses, $canManageUsers, $canManageImgLib, $restrictNodeEdit, $isModerator, $canManageSettings);
 
 		$g = new UserGroup($id);
 		$g->_load();

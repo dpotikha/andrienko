@@ -1,0 +1,3 @@
+<?php $cname = $CM_CONTROL_NAME;?>
+<?= $CM_PARAMS['value'] ? $AdminTrnsl["Yes"] : $AdminTrnsl["No"] ?>
+<span style="display:none;"><?=$AdminTrnsl["Yes"]?> <input type="radio" name="<?=$cname?>" value="1"<?php if ($CM_PARAMS['value']) {?> CHECKED<?php }?>>&nbsp;&nbsp;&nbsp;<?=$AdminTrnsl["No"]?> <input type="radio" name="<?=$cname?>" value="0"<?php if (!$CM_PARAMS['value']) {?> CHECKED<?php }?>></span>

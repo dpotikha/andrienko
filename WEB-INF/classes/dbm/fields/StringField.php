@@ -25,15 +25,15 @@ class StringField extends Field {
 
 		$verror = null;
 		do {
-			if (strlen($rValue) == 0 && $fieldDef->required) {
+			if (mb_strlen($rValue) == 0 && $fieldDef->required) {
 				$verror = $AdminTrnsl["RequiredField"];
 				break;
 			}
-			if (strlen($rValue) > $max_length) {
+			if (mb_strlen($rValue) > $max_length) {
 				$verror = $AdminTrnsl["Length_of_string_too_long"] . $max_length;
 				break;
 			}
-			if (strlen($rValue) < $min_length) {
+			if (mb_strlen($rValue) < $min_length) {
 				$verror = $AdminTrnsl["Length_of_string_too_short"] . $max_length;
 				break;
 			}

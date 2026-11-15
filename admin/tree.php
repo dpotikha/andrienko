@@ -60,6 +60,7 @@ var treeExample = function() {
 								tempNode.id=oResults.ResultSet.Result[i].id;
 								tempNode.page=oResults.ResultSet.Result[i].page;
 								tempNode.nowrap=true;
+								tempNode.adminURL=adminURL;
 								if(oResults.ResultSet.Result[i].ch==0)
 								tempNode.dynamicLoadComplete=true;
 							}
@@ -95,8 +96,9 @@ var treeExample = function() {
 		   
 		   var root = tree.getRoot();
 		   
-	   		var tempNode = new YAHOO.widget.TextNode("<a href='/admin/nodes.php?do=main&id=<?=$root->id?>' class='clear_tree' target='main'  onclick='ChangeStyle(this)'><?=$root->name?></a>", root, false);
+	   		var tempNode = new YAHOO.widget.TextNode("<a href='/admin/nodes.php?do=main&id=<?=$root->id?>' class='clear_tree' target='main'  onclick='ChangeStyle(this)'><?=addslashes($root->name)?></a>", root, false);
 			tempNode.id=<?=$root->id?>;
+			tempNode.adminURL='/admin/nodes.php?do=main&id=<?=$root->id?>';
 			tempNode.page=-1;
 		    tree.draw();
 		    tempNode.expand();
@@ -145,8 +147,6 @@ div.SeparatorLine{
 <?php 
 	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 	$showSiteSettings = false;
-		?>
-        <?php 
 	if ($currentLoggedUser->group->canManageUsers) {
 		?>
 			<div><a href="/admin/users.php" target="main" class="clear_tree" onClick="ChangeStyle(this)"><?=$AdminTrnsl["Users_Management"]?></a></div>
@@ -179,6 +179,15 @@ div.SeparatorLine{
         <?php 
 	}
 ?>
+			<div><a href="/admin/mlangs.php" target="main" class="clear_tree" onClick="ChangeStyle(this)"><?=$AdminTrnsl["Menu_Languages"]?></a></div>
+			<?php   if ($currentLoggedUser->group->canManageSettings) { ?>
+                       <!-- <div><a href="/admin/delivery.php" target="main" class="clear_tree" onClick="ChangeStyle(this)"><?=$AdminTrnsl["Menu_Delivery"]?></a></div>-->
+        
+			<div><a href="/admin/settings.php" target="main" class="clear_tree" onClick="ChangeStyle(this)"><?=$AdminTrnsl["Menu_Settings"]?></a></div>
+        <?php  } ?>
+                        <?php   if ($currentLoggedUser->group->id <=2) { ?>
+			<div><a href="/admin/logger.php" target="main" class="clear_tree" onClick="ChangeStyle(this)">Logger</a></div>
+        <?php  } ?>
 </div>
 
 
@@ -195,8 +204,15 @@ div.SeparatorLine{
 		if(node!=null){
 			if(page!=null) node.page=page;
 			if(node_title!=null){
+				var adminURL=node.adminURL;
+				var url="";
+				if(adminURL!=""){
+					url=adminURL;
+				}else{
+					url="/admin/nodes.php?do=main&id="+node_id;
+				}
 				node.label=node_title;
-				node.href="/admin/nodes.php?do=main&id="+node_id;
+				node.href=url;
 				node.target='main'
 				node.labelStyle ="tree";
 				node.clickFunction="ChangeStyle(this,"+node_id+")";

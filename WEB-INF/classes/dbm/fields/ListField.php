@@ -7,7 +7,7 @@ define("LINKFIELD_DB_DELIMITER", ",,,");
 class ListField extends StringField {
 	function haveOther() {
 		$fieldDef = $this->getFieldDef();
-		return strlen($fieldDef->getParameterValue("other_name")) > 0;
+		return mb_strlen($fieldDef->getParameterValue("other_name")) > 0;
 	}
 
 	function setSingleValue($o) {
@@ -42,7 +42,7 @@ class ListField extends StringField {
 			$v = new LFValue();
 			$v->constructFromDB($dbValue, $this->haveOther());
 			$fieldDef = $this->getFieldDef();
-			if ($fieldDef->required && (sizeof($v->indexes) == 0 && (!$this->haveOther() || strlen($v->other) == 0))) {
+			if ($fieldDef->required && (sizeof($v->indexes) == 0 && (!$this->haveOther() || mb_strlen($v->other) == 0))) {
 				$verror = $AdmTrnsl["RequiredField"];
 				break;
 			}
@@ -76,7 +76,7 @@ class ListField extends StringField {
 	}
 
 	function getValue() {
-		if ($this->value != null && strlen($this->value) != 0) {
+		if ($this->value != null && mb_strlen($this->value) != 0) {
 			$params = array();
 			$fieldDef = $this->getFieldDef();
 			$other_name = $fieldDef->getParameterValue("other_name");
@@ -142,18 +142,18 @@ class ListField extends StringField {
 			return $result;
 		$fromIndex = 0;
 		$str = trim($str);
-		$strlen = strlen($str);
+		$strlen = mb_strlen($str);
 		while($fromIndex < $strlen) {
 			$indx = strpos($str, $delim, $fromIndex);
 			if ($indx === false) {
-				$result[] = trim(substr($str, $fromIndex));
+				$result[] = trim(mb_substr($str, $fromIndex));
 				break;
 			}
 			if ($indx != 0) {
-				$substr = trim(substr($str, $fromIndex, $indx-$fromIndex));
+				$substr = trim(mb_substr($str, $fromIndex, $indx-$fromIndex));
 				$result[] = $substr;
 			}
-			$fromIndex = $indx + strlen($delim);
+			$fromIndex = $indx + mb_strlen($delim);
 		}
 		return $result;
 	}
@@ -164,14 +164,14 @@ class ListField extends StringField {
 			return $result;
 		$fromIndex = 0;
 		$str = trim($str);
-		$strlen = strlen($str);
+		$strlen = mb_strlen($str);
 		for (; $fromIndex < $strlen;) {
 			$indx = strpos($str, $delim, $fromIndex);
 			if ($indx === false) {
-				$result[] = trim(substr($str, $fromIndex));
+				$result[] = trim(mb_substr($str, $fromIndex));
 				break;
 			}
-			$substr = trim(substr($str, $fromIndex, $indx-$fromIndex));
+			$substr = trim(mb_substr($str, $fromIndex, $indx-$fromIndex));
 			$result[] = $substr;
 			$fromIndex = $indx + strlen($delim);
 			if ($fromIndex == $strlen) {

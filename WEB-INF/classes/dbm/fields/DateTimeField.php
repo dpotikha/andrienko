@@ -42,6 +42,7 @@ class DateTimeField extends Field {
 		} elseif(is_string($o)) {
 			$rValue = $o;
 		}
+//		p($rValue);
 			$this->value = new Date($rValue);
 	}
 

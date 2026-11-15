@@ -13,42 +13,42 @@ class Connection {
 		return $this->dblink;
 	}
 	function __construct ($url, $properties=null) {
-		$i = strpos($url, "://");
+		$i = mb_strpos($url, "://");
 		if ($i === false)
 			die("mysql Connection()   Bad url.");
 		$i += 3;
-		$j = strpos($url, '/', $i);
+		$j = mb_strpos($url, '/', $i);
 		if ($j === false)
 			die("mysql Connection()   Bad url.");
 		$port = 3306;
-		$l = strpos($url, ':', $i);
+		$l = mb_strpos($url, ':', $i);
 		$host = "";
 		if ($l !== false && $l < $j) {
-			$host =  substr($url, $i, $l-$i);
-			$port = (int)substr($url,$l + 1, $j-$l-1);
+			$host =  mb_substr($url, $i, $l-$i);
+			$port = (int)mb_substr($url,$l + 1, $j-$l-1);
 		} else {
-			$host = substr($url, $i, $j-$i);
+			$host = mb_substr($url, $i, $j-$i);
 		}
 
-		$paramsIndex = strpos($url, '?', $j);
+		$paramsIndex = mb_strpos($url, '?', $j);
 		$dbname = "";
 		if ($paramsIndex !== false) {
-			$dbname = substr($url, $j + 1, $paramsIndex - $j - 1);
-			$params = substr($url, $paramsIndex+1);
+			$dbname = mb_substr($url, $j + 1, $paramsIndex - $j - 1);
+			$params = mb_substr($url, $paramsIndex+1);
 
 	        $fromIndex = 0;
-	        for (;$fromIndex < strlen($params);) {
-	            $indx = strpos($params, '&', $fromIndex);
-            	$eindx = strpos($params, '=', $fromIndex);
+	        for (;$fromIndex < mb_strlen($params);) {
+	            $indx = mb_strpos($params, '&', $fromIndex);
+            	$eindx = mb_strpos($params, '=', $fromIndex);
 	            if ($indx === false) {
-	            	$properties[substr($params, $fromIndex, $eindx - $fromIndex)] = substr($params, $eindx+1);
+	            	$properties[mb_substr($params, $fromIndex, $eindx - $fromIndex)] = mb_substr($params, $eindx+1);
 	                break;
 	            }
-                $properties[substr($params, $fromIndex, $eindx-$fromIndex)] = substr($params, $eindx+1, $indx-$eindx-1);
+                $properties[mb_substr($params, $fromIndex, $eindx-$fromIndex)] = mb_substr($params, $eindx+1, $indx-$eindx-1);
 	            $fromIndex = $indx+1;
 	        }
 		} else {
-			$dbname = substr($url, $j + 1);
+			$dbname = mb_substr($url, $j + 1);
 		}
 
 		$user = null;

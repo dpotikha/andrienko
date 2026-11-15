@@ -251,14 +251,14 @@ class imageTransform
                     // fred at webblake dot net and webmaster at webnetwizard dotco dotuk, thanks!
                     $fp = fopen($this->sourceFile, "rb");
                     $result = fread($fp, 13);
-                    $colorFlag = ord(substr($result,10,1)) >> 7;
-                    $background = ord(substr($result,11));
+                    $colorFlag = ord(mb_substr($result,10,1)) >> 7;
+                    $background = ord(mb_substr($result,11));
                     if ($colorFlag) {
                         $tableSizeNeeded = ($background + 1) * 3;
                         $result = fread($fp, $tableSizeNeeded);
-                        $this->transparentColorRed = ord(substr($result, $background * 3, 1));
-                        $this->transparentColorGreen = ord(substr($result, $background * 3 + 1, 1));
-                        $this->transparentColorBlue = ord(substr($result, $background * 3 + 2, 1));
+                        $this->transparentColorRed = ord(mb_substr($result, $background * 3, 1));
+                        $this->transparentColorGreen = ord(mb_substr($result, $background * 3 + 1, 1));
+                        $this->transparentColorBlue = ord(mb_substr($result, $background * 3 + 2, 1));
                     }
                     fclose($fp);
                     // -- here ends the code related to transparency handling
@@ -340,7 +340,7 @@ class imageTransform
     {
     
         // get target file extension
-        $targetFileExtension = strtolower(substr($this->targetFile, strrpos($this->targetFile, ".") + 1));
+        $targetFileExtension = mb_strtolower(mb_substr($this->targetFile, mb_strrpos($this->targetFile, ".") + 1));
         
         // image saving process goes according to required extension
         switch ($targetFileExtension) {

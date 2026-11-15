@@ -29,23 +29,28 @@ if(count($childs)>0){
 	}
 	foreach($childs as $k=>$v){
 		$newarr[$i]["id"]=$v->id;
-		$newarr[$i]["title"]=$v->name;//mb_convert_encoding($v->name, 'UTF-8', 'cp-1251');
+		$newarr[$i]["title"]=$v->name; // json_encode escapes quotes itself
 		$ch1=$v->getChildrenCountForAdminTree($_SESSION["CurrentAdminUser"]);
 		$newarr[$i]["ch"]=($ch1>0)?1:0;
 		$newarr[$i]["tb"]=0;//0-none;1-bottom;2-top
 		$newarr[$i]["page"]=1;//0-none;1-bottom;2-top
 		$newarr[$i]["adminURL"]=(strlen($v->adminUrl))?$v->adminUrl:"";
 		$i++;
+                //echo $v->name.'<br/>';
 	}
 	if($page<$pagesCount){
 		$newarr[$i]["id"]=0;
 		$newarr[$i]["title"]="<a name='".$aname."'></a><a href='javascript:ReloadNode(".$r->id.",".($page+1).",null,2)'><img src='/admin/yui/arrow-down.gif' border=0></a>";
 		$newarr[$i]["ch"]=0;
 	}
+        
 }
-
+//dump($newarr);
 $arr=array("ResultSet"=>array("Result"=>$newarr));
 //print_r($arr);
 echo json_encode($arr, JSON_INVALID_UTF8_SUBSTITUTE);
+//dump(json_decode(json_encode($arr)),'',10);
+//dump($JS->decode($JS->encode($arr)),'',90);
+
 
 ?>

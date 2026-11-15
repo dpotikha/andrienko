@@ -41,18 +41,33 @@ function getNodeXML($node, $depth, $page) {
 	$newarr=array();	
 	global $allowed_classes,$node_path,$allowed_classes_str;
 	if(count($allowed_classes)==1){
+		if($depth>1)
+		$node_class=NodeClass::findById($node->nodeClassId);
+		else
 		$node_class=NodeClass::findById($allowed_classes[0]);
 		$sortBy=(strlen($node_class->orderBy))?$node_class->orderBy:"n.subtree_order ASC";
-	}else
-		$sortBy="n.subtree_order ASC";
+	}else{
+                //sdump($allowed_classes);
+                if($node->id==1010){
+                    $sortBy="IF(n.class_id=370,1,0) DESC, IF(n.class_id=391,n.date,n.subtree_order) DESC";
+                }else{
+                    $sortBy="n.subtree_order ASC";
+                }
+		
+        }
+	//sdump($sortBy);	
 	if($page>0){
-		$rpp = 10;
+		$rpp = 30;
 		$childrenCount = $node->getChildrenCount();
+		
 		$pagesCount = floor($childrenCount / $rpp) + ($childrenCount % $rpp != 0 ? 1 : 0);
 		$offset = ($page-1)*$rpp;
+
 		$children = $node->getChildren($sortBy, $offset, $rpp);
 	}else
+	
 		$children = $node->getChildren($sortBy);
+		
 	$k=0;
 	if($page>0&&$page>1){
 		$newarr[$k]["id"]=0;
@@ -62,6 +77,7 @@ function getNodeXML($node, $depth, $page) {
 	}
 	foreach ($children as $child) {
 		$title = $child->name;
+                if($child->id==4913)continue;
 
 		if ($allowed_classes_str != "*") {
 			$hasAllowedChildren = $child->hasChildrenOfClasses($allowed_classes, $depth);
@@ -74,8 +90,9 @@ function getNodeXML($node, $depth, $page) {
 		if ($hasAllowedChildren || $isOfOneOfAllowedClasses) {
 			$newarr[$k]["id"]=$child->id;
 			$newarr[$k]["depth"]=$depth-1;
-			$newarr[$k]["title"]=$child->name;
+			$newarr[$k]["title"]=str_replace(array('"', "'"), '&quot;',$child->name);
 			$newarr[$k]["ch"]=($hasAllowedChildren)?1:0;
+                        $newarr[$k]["i"]=($isOfOneOfAllowedClasses)?1:0;
 			$newarr[$k]["tb"]=0;//0-none;1-bottom;2-top
 			$newarr[$k]["page"]=1;//0-none;1-bottom;2-top
 			$newarr[$k]["absolutePath"]=$child->absolutePath;//0-none;1-bottom;2-top

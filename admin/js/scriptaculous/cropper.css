@@ -15,6 +15,9 @@
 .imgCrop_wrap,
 .imgCrop_wrap * {
 	font-size: 0;
+	line-height: 0;
+	opacity: 1;
+	filter:alpha(opacity=100);
 }
 
 .imgCrop_overlay {
@@ -45,7 +48,7 @@
 	height: 100%;
 	background-color: #FFF;
 	opacity: 0.01;
-	filter:alpha(opacity=1);
+	filter:alpha(opacity=01);
 }
 
 .imgCrop_marqueeHoriz {

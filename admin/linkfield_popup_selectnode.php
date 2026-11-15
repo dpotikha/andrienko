@@ -48,10 +48,13 @@ var treeExample = function() {
 							for (var i=0, j=oResults.ResultSet.Result.length; i<j; i++) {
 								var tempNode = new YAHOO.widget.TextNode(oResults.ResultSet.Result[i].title, node, false);
 								if(oResults.ResultSet.Result[i].ch==0){
-									tempNode.href="javascript:selectNode('"+oResults.ResultSet.Result[i].absolutePath+"')";
+									//tempNode.href="javascript:selectNode('"+oResults.ResultSet.Result[i].absolutePath+"')";
 									tempNode.dynamicLoadComplete=true;
 								}
-								tempNode.href="javascript:selectNode('"+oResults.ResultSet.Result[i].absolutePath+"')";
+								//tempNode.href="javascript:selectNode('"+oResults.ResultSet.Result[i].absolutePath+"')";
+                                                                if(oResults.ResultSet.Result[i].i==1){
+								    tempNode.href="javascript:selectNode('"+oResults.ResultSet.Result[i].absolutePath+"')";
+								} else tempNode.href="javascript:;";
 								tempNode.id=oResults.ResultSet.Result[i].id;
 								tempNode.nowrap=true;
 								tempNode.d=oResults.ResultSet.Result[i].depth;
@@ -83,6 +86,29 @@ var treeExample = function() {
 			YAHOO.util.Connect.asyncRequest('GET', sUrl, callback);
 		};
 
+
+<?php 
+function getRootHref(){
+    global $request;
+    $root = Node::findByPath($request->getParameter("rn"));
+    $allowed_classes_str = $request->getParameter("cs");
+    if ($allowed_classes_str != "*") {
+	$allowed_classes_shortnames = explode(",", $allowed_classes_str);
+	$allowed_classes = array();
+	foreach($allowed_classes_shortnames as $classShortname) {
+		$nc = NodeClass::findByShortname($classShortname);
+		$allowed_classes[] = $nc->id;
+	}
+    }
+    if ($allowed_classes_str != "*") {
+            $cnc = $root->getNodeClass();
+            $isOfOneOfAllowedClasses = in_array($cnc->id, $allowed_classes);
+    } else $isOfOneOfAllowedClasses = true;
+    if ($isOfOneOfAllowedClasses)
+        return "\"javascript:selectNode('" . $root->id . "')\"";
+    else return "'javascript:;'";
+}
+?>
         function buildTree() {
 		   tree = new YAHOO.widget.TreeView("treeDiv1");
 		   
@@ -91,7 +117,8 @@ var treeExample = function() {
 		   var root = tree.getRoot();
 		   
 	   		var tempNode = new YAHOO.widget.TextNode("<?=$root->name?>", root, false);
-			tempNode.href="javascript:selectNode('<?=$root->id?>')";
+			//tempNode.href="javascript:selectNode('<?=$root->id?>')";
+                        tempNode.href=<?=getRootHref()?>;
 			tempNode.id=<?=$root->id?>;
 			tempNode.page=-1;
 			tempNode.d="<?=$d?>";

@@ -15,12 +15,12 @@ class FileField extends Field {
 
 	function computeFileName($node_id=0, $field_id=0, $ext="") {
 		if ($node_id != 0) {
-			return $node_id . "_" . $field_id . (strlen($ext) != 0 ? "." . $ext : "");
+			return $node_id . "_" . $field_id . (mb_strlen($ext) != 0 ? "." . $ext : "");
 		} else {
 			if ($this->nodeId != 0) {
 				//$node = &Node::findById($this->nodeId);
 				//if ($node != null) {
-					return $this->nodeId . "_" . $this->fieldDefId . (strlen((string)$this->value) != 0 ? "." . $this->value : "");
+					return $this->nodeId . "_" . $this->fieldDefId . (mb_strlen((string)$this->value) != 0 ? "." . $this->value : "");
 				//}
 			}
 			return "";
@@ -52,19 +52,19 @@ class FileField extends Field {
 			$fieldDef = $this->getFieldDef();
 			if ($del != null && $del == "1") {
 				if ($fieldDef->required) {
-					$verror = "Не могу удалить файл. Обязательное поле.";
+					$verror = "пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.";
 					break;
 				}
 				$this->deleteOnStore = true;
 			} else {
-				if (strlen($this->tmpFileName) == 0) {
+				if (mb_strlen($this->tmpFileName) == 0) {
 					if ($fieldDef->required && (!$this->filePath || !file_exists($this->filePath))) {
-						$verror = "Обязательное поле.";
+						$verror = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.";
 						break;
 					}
 				} else {
 					if ((@filesize($this->tmpFilePath) == 0) && $fieldDef->required && !file_exists($this->tmpFilePath)) {
-						$verror = "Обязательное поле.";
+						$verror = "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ.";
 						break;
 					}
 

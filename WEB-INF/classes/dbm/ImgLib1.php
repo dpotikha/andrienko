@@ -2,13 +2,13 @@
 
 DEFINE("dtformat", "dd.MM.yyyy HH:mm:ss");
 
-DEFINE('MAX_IMAGE_SIDE', 500);
-DEFINE('IMAGE_THUMBNAIL_SIDE', 100);
+DEFINE('MAX_IMAGE_SIDE', 1200);
+DEFINE('IMAGE_THUMBNAIL_SIDE', 300);
 DEFINE('_IMG_RESIZE_STRATEGY_BYWIDTH', 0);
 DEFINE('_IMG_RESIZE_STRATEGY_BYGREATERSIDE', 1);
 
 function getParentDir($path) {
-	return substr($path, 0, strrpos($path, "/"));
+	return mb_substr($path, 0, strrpos($path, "/"));
 }
 
 function FILE_COMPARATOR_BY_NAME ($o1, $o2) {
@@ -67,7 +67,7 @@ class ImgLibFolder {
 		if (strlen($this->dir) == strlen($imglibDirPath)) {
 			return "";
 		} else {
-			return str_replace("\\", "/", substr($this->dir, strlen($imglibDirPath) + 1));
+			return str_replace("\\", "/", mb_substr($this->dir, strlen($imglibDirPath) + 1));
 		}
 	}
 
@@ -78,7 +78,7 @@ class ImgLibFolder {
 		$relPath = $this->getRelPath();
 		$i = strrpos($relPath, "/");
 		if ($i !== false) {
-			return ImgLibFolder::findByRelDir(substr($relPath, 0, $i));
+			return ImgLibFolder::findByRelDir(mb_substr($relPath, 0, $i));
 		} else {
 			return ImgLibFolder::findByRelDir("");
 		}
@@ -92,7 +92,7 @@ class ImgLibFolder {
 		$relPath = $this->getRelPath();
 		$i = strrpos($relPath, "/");
 		if ($i !== false) {
-			return substr($relPath, 0, $i);
+			return mb_substr($relPath, 0, $i);
 		} else {
 			return "";
 		}
@@ -233,7 +233,7 @@ class ImgLibFolder {
 						@mkdir($imglibThumbnalesDirPath . $dir, 0777);
 					}
 				}
-				$relDir = substr($dir, 1);
+				$relDir = mb_substr($dir, 1);
 			}
 			$folder = new ImgLibFolder($imglibDirPath . '/' . $relDir);
 		}
@@ -320,7 +320,7 @@ class Image {
 		return $thumbnail;
 	}
 
-	function saveTo($filename, $qual=90) {
+	function saveTo($filename, $qual=95) {
 		if ($this->resizable) {
 			if ($this->isgif) {
 				imagegif($this->im, $filename);
@@ -503,8 +503,8 @@ class ImgLibImage {
 	static function& findByUrl($url) {
 		if (strlen($url) == 0) return null;
 		$pos = strrpos($url, '/');
-		$folderRelPath = ($pos === false || $pos == 0) ? "" : substr($url, 1, $pos-1);
-		$imageName = substr($url, $pos + 1);
+		$folderRelPath = ($pos === false || $pos == 0) ? "" : mb_substr($url, 1, $pos-1);
+		$imageName = mb_substr($url, $pos + 1);
 		$folder = &ImgLibFolder::findByRelDir($folderRelPath);
 		$i = new ImgLibImage($folder, $imageName);
 		if ($i->error == true) {

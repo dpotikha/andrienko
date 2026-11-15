@@ -1,31 +1,32 @@
 <?php
 
+function getmicrotime1() {
+    list($usec, $sec) = explode(" ", microtime());
+    return ((float) $usec + (float) $sec);
+}
 
-
+//define('ST',getmicrotime1());
 require_once("prepend.php");
+require_once($_SERVER['DOCUMENT_ROOT'] . "/admin/check_node.php");
+/* if(isset($_POST['do'])&&$_POST['do']=='updatenode'){
+  print_r($_POST);
+  //echo ini_get('memory_limit');
+  exit();
+  } */
 
-require_once("check_node.php");
-/*if(isset($_POST['do'])&&$_POST['do']=='updatenode'){
-	print_r($_POST);
-	//echo ini_get('memory_limit');
-	exit();
-}*/
 
+//dump($LOCALES);
 
-define('NODES_PER_PAGE', 30);
-
+define('NODES_PER_PAGE', 60);
 define('NODELINKS_PER_PAGE', 20);
 
-
-
-$action = (string)$request->getParameter("do");
+$action = (string) $request->getParameter("do");
 
 
 
-if ($action == null || $action=="") {
-
-	$action = "_default";
-
+if ($action == null || $action == "") {
+    $ddd = 'jkhjk';
+    $action = "_default";
 }
 
 
@@ -34,2526 +35,3098 @@ $action($request);
 
 function _default(&$request) {
 
-	contenttree($request);
-
+    contenttree($request);
 }
 
-function deliveryNews($node){
-
-	$post=array(
-
-		"lang"=>0,
-
-		"name_en"=>$node->name,
-
-		"name_ru"=>$node->tfields["name_ru"],
-
-		"name_ua"=>$node->tfields["name_ua"],
-
-		"text_en"=>$node->tfields["text_en"],
-
-		"text_ru"=>$node->tfields["text_ru"],
-
-		"text_ua"=>$node->tfields["text_ua"],
-
-		"toall"=>0,
-
-	);
-
-	send_Emails($post);
-
-
-
+function changeSortOrder($request) {
+    $orderBy = 'n.' . $request->getParameter('orderBy');
+    $classNode = NodeClass::findById($request->getParameter('nodeClass'));
+    if ($classNode->orderBy == $orderBy . ' ASC')
+        $classNode->orderBy = $orderBy . ' DESC';
+    else
+        $classNode->orderBy = $orderBy . ' ASC';
+    $classNode->store();
+    Header("Location: /admin/nodes.php?do=main&id=" . $request->getParameter('returnToNode'));
+    exit;
 }
 
-function afu($request){
+function deliveryNews($node) {
 
-	if(count($_FILES))
-	{	
-		require_once ("imageclass.php");
-		$DOC_ROOT=$_SERVER['DOCUMENT_ROOT'];
-		if(isset($_POST["cropper_old_path"])&&strlen($_POST["cropper_old_path"])){
-			directoryClass::rmdir(FIELD_IMGLIB_DIR."/_newimage/tmp/".$_POST["cropper_old_path"]."/");
-			directoryClass::rmdir(FIELD_IMGLIB_THUMBNAILS_DIR."/_newimage/tmp/".$_POST["cropper_old_path"]."/");
-		}
-		
-		$uniq_temp_folder=uniqNumber();
-		$tmp_folder_path="/imglib/_newimage/tmp/".$uniq_temp_folder."/";
-		
-		directoryClass::createDirIfNotExists("/_newimage/tmp/".$uniq_temp_folder."/start/",array(FIELD_IMGLIB_DIR,FIELD_IMGLIB_THUMBNAILS_DIR));
-		directoryClass::createDirIfNotExists("/_newimage/tmp/".$uniq_temp_folder."/end/",array(FIELD_IMGLIB_DIR,FIELD_IMGLIB_THUMBNAILS_DIR));
-		directoryClass::createDirIfNotExists("/_newimage/tmp/".$uniq_temp_folder."/finish/",array(FIELD_IMGLIB_DIR,FIELD_IMGLIB_THUMBNAILS_DIR));
-		$filename=name2shortname($_FILES["file"]["name"]);
-		@move_uploaded_file($_FILES["file"]["tmp_name"],$DOC_ROOT.$tmp_folder_path."start/".$filename);
-		list($width, $height) =getimagesize($DOC_ROOT.$tmp_folder_path."start/".$filename);
+    $post = array(
+        "lang" => 0,
+        "name_en" => $node->name,
+        "name_ru" => $node->tfields["name_ru"],
+        "name_ua" => $node->tfields["name_ua"],
+        "text_en" => $node->tfields["text_en"],
+        "text_ru" => $node->tfields["text_ru"],
+        "text_ua" => $node->tfields["text_ua"],
+        "toall" => 0,
+    );
 
-		$new_width=0;
-		$new_height=0;
-		$max_width=700;
-		if($width>$max_width){
-			$new_width=$max_width;
-			$new_height=$new_width*$height/$width;
-			$img = new imageClass();
-			$img->setSourceFile($DOC_ROOT.$tmp_folder_path."start/".$filename);
-			$img->setTargetFile($DOC_ROOT.$tmp_folder_path."end/".$filename);
-			$img->setJpegOutputQuality(100);	
-			$img->resizeToWidth($new_width);
-		}else{
-			$new_width=$width;
-			$new_height=$height;
-			@copy($DOC_ROOT.$tmp_folder_path."start/".$filename,$DOC_ROOT.$tmp_folder_path."end/".$filename);
-		}
-					
-?>[
-	{
-		folder: "<?=$uniq_temp_folder?>",
-		img_name: "<?=$filename?>",
-		width:<?=$new_width?>,
-		height:<?=$new_height?>
-	}
-]<?php 
-		exit();
-	}
+    send_Emails($post);
+}
+function tags($request) {
+    global $AdminTrnsl;
+
+    global $session;
+    global $MDB;
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+
+    $node_id = (int) $request->getParameter("node_id");
+
+    $node = Node::findById($node_id);
+
+    if ($node == null) {
+
+        Header("Location: /admin/main.php");
+        die();
+
+        return;
+    }
+    if (isset($_GET['autocomplete'])) {
+        tinclude('blocks/startGZipJS');
+        $_GET['query'] = preg_replace('/ +/', ' ', trim($_GET['query']));
+        $_GET['query'] = CProtect::string($_GET['query']);
+        $search_type = $_GET['search_type'];
+        $category = $_GET['category'];
+
+        if ($search_type == 0) {
+            $MDB->Query('SELECT n.*, p.name as catname FROM dbm_nodes as n, dbm_nodes as p WHERE p.id=n.parent_id AND n.dynamic_template="tag_item" AND  (n.name LIKE "' . db_escape($_GET['query']) . '%") ORDER BY n.name ASC LIMIT 0,50');
+        } else {
+            $MDB->Query('SELECT n.*, p.name as catname FROM dbm_nodes as n, dbm_nodes as p WHERE p.id=n.parent_id AND n.dynamic_template="tag_item" AND  (n.name LIKE "%' . db_escape($_GET['query']) . '%") ORDER BY n.name ASC LIMIT 0,50');
+        }
+
+        $res = $MDB->getRecords();
+        $s = array();
+        $data = array();
+        foreach ($res as $k => $v) {
+            $s[] = trim($v['name']);
+            $data[] = array($v['id'], trim($v['catname']));
+        }
+        if (!count($s)) {
+            $s[] = $AdminTrnsl["Tags_NothingFound"];
+            $data[] = array('x');
+        }
+
+        echo json_encode(array('query' => $_GET['query'], 'suggestions' => $s, 'data' => $data));
+        exit();
+    }
+    if (isset($_POST['section'])) {
+        if ($_POST['section'] == 'delete_tag') {
+            $MDB->Query('DELETE FROM dbm_tags WHERE tag_id=' . (int)$_POST['id'] . '  AND node_id=' . $node_id);
+        } elseif ($_POST['section'] == 'add_tag') {
+
+            if ($_POST['tag_id'] == 0) {
+                $v = trim($_POST['val']);
+                if (strlen($v)) {
+                    $MDB->Query('SELECT n.* FROM dbm_nodes as n WHERE n.parent_id='.(int)$_POST['category'].' AND n.name="' . db_escape($v) . '"');
+                    $res = $MDB->NextResult();
+                    if ($res) {
+                        $tag_id = $res['id'];
+                    } else {
+                        $catNode=QNode::getInstance($_POST['category']);
+                        if($catNode && $catNode->parent_id==31131){
+                            $tagNode=QNode::createNode($catNode->getHref(), $v, '', 'tag_item');
+                            $tag_id = $tagNode->id;
+                        }
+                    }
+                    if($tag_id){
+                         $MDB->Query('REPLACE INTO dbm_tags SET tag_id=' . $tag_id . ' , node_id=' . $node_id);
+                    }
+                }
+            } elseif ($_POST['tag_id'] > 0) {
+                $MDB->Query('REPLACE INTO dbm_tags SET tag_id=' . $_POST['tag_id'] . ' , node_id=' . $node_id);
+            }
+            echo 1;
+        }
+        exit();
+    }
+    if (isset($_GET['getlist'])) {
+
+
+        $where_ads = array();
+
+
+        $MDB->Query('SELECT count(n.id) as scount FROM dbm_nodes as n,dbm_nodes as p, dbm_tags as t WHERE p.id=n.parent_id AND t.tag_id=n.id AND n.dynamic_template="tag_item" AND t.node_id=' . $node_id);
+
+
+        $count = array_shift($MDB->NextResult());
+        $limit = $_POST['record_per_page'];
+        $page = $_POST['page'];
+        $totalPages = ceil($count / $limit);
+        if ($page > $totalPages)
+            $page = $totalPages;
+        if ($page <= 0)
+            $page = 1;
+        $offset = ($page - 1) * $limit;
+        $sortList = array(
+            'n.id',
+            'n.name',
+            'p.name',
+        );
+
+
+        if (trim($_POST['sortList']) == '')
+            $sortExp = array();
+        else
+            $sortExp = explode(',', $_POST['sortList']);
+        $sortParams = array();
+        for ($j = 0; $j < count($sortExp); $j = $j + 2) {
+            $sortParams[] = $sortList[$sortExp[$j]] . ' ' . ($sortExp[$j + 1] == 1 ? 'ASC' : 'DESC');
+        }
+        if (empty($sortParams)) {
+            $sortParams[] = 'n.name ASC';
+        }
+
+        $MDB->Query('SELECT 
+                        n.id, n.name as tagname, p.name as catname
+                    FROM dbm_nodes as n,dbm_nodes as p, dbm_tags as t WHERE p.id=n.parent_id AND t.tag_id=n.id AND n.dynamic_template="tag_item" AND t.node_id=' . $node_id . '
+                    ORDER BY 
+                        ' . implode(',', $sortParams) . ' 
+                    LIMIT 
+                        ' . $offset . ',' . $limit);
+
+        $res = $MDB->getRecords();
+        ob_start();
+        foreach ($res as $k => $v) {
+            ?>
+            <tr id="row_<?= $v['id'] ?>">
+                <td><?= $v['id'] ?></td>
+                <td><?= $v['tagname'] ?></td>
+                <td><?= $v['catname'] ?></td>
+                <td>
+                    &nbsp;<a href="javascript:;" class="row_delete" rel="<?= $v['id'] ?>" rev="<?= htmlspecialchars($v['tagname']) ?>"><img src="/admin/_img/ico/delete.jpg"></a>
+                </td>
+            </tr>
+            <?php 
+        }
+        $content = ob_get_contents();
+        ob_end_clean();
+        $data = array(
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'totalRecords' => $count,
+            'content' => $content,
+            'errors' => '',
+            'generateTime' => ''
+        );
+
+        tinclude('blocks/ajaxcontent', $data);
+        exit();
+    }
+
+    //$action = $request->getParameter("action");
+    //$request->setAttribute("children", $c);
+    //$request->setAttribute("parents", $node->getParentList());
+    //error_reporting(E_ALL);
+    //ini_set('display_errors','On');
+    $request->setAttribute("node", $node);
+    /* if (isset($_GET['do1']) && $_GET['do1'] == 'update') {
+      $MDB->Query("SELECT * FROM dbm_seo WHERE node_id = $node_id AND lang='" . $_GET['lang'] . "'");
+      $seo = $MDB->NextResult();
+      if ($seo) {
+      $MDB->QUpdate('dbm_seo', array(
+      'lang' => $_GET['lang'],
+      'node_id' => $_GET['node_id'],
+      'seo_title' => $_POST['seo_title'],
+      'seo_keywords' => $_POST['seo_keywords'],
+      'seo_description' => $_POST['seo_description'],
+      'seo_google' => $_POST['seo_google'],
+      'seo_google_childs' => $_POST['seo_google_childs']
+      ), " node_id = $node_id AND lang='" . $_GET['lang'] . "'");
+      } else {
+      $MDB->QIns('dbm_seo', array(
+      'lang' => $_GET['lang'],
+      'node_id' => $_GET['node_id'],
+      'seo_title' => $_POST['seo_title'],
+      'seo_keywords' => $_POST['seo_keywords'],
+      'seo_description' => $_POST['seo_description'],
+      'seo_google' => $_POST['seo_google'],
+      'seo_google_childs' => $_POST['seo_google_childs']
+      ));
+      }
+      header('Location: /admin/nodes.php?do=seo&node_id=' . $node_id . ' &do1=success');
+      exit();
+      } */
+
+    usetemplate("nodes/tags");
+}
+function afu($request) {
+
+    if (count($_FILES)) {
+        require_once ("imageclass.php");
+        $DOC_ROOT = $_SERVER['DOCUMENT_ROOT'];
+        if (isset($_POST["cropper_old_path"]) && strlen($_POST["cropper_old_path"])) {
+            directoryClass::rmdir($DOC_ROOT . "/tmp/" . $_POST["cropper_old_path"] . "/");
+        }
+
+        $uniq_temp_folder = uniqNumber();
+        $tmp_folder_path = "/s/tmp/" . $uniq_temp_folder . "/";
+        @mkdir($DOC_ROOT . $tmp_folder_path . "start/", 0777, true);
+        @mkdir($DOC_ROOT . $tmp_folder_path . "end/", 0777, true);
+        @mkdir($DOC_ROOT . $tmp_folder_path . "finish/", 0777, true);
+
+        $fname = $_FILES["file"]["name"];
+        $fname = explode('.', $fname);
+        $ext = array_pop($fname);
+        $fname = implode('.', $fname);
+        $filename = name2shortname($fname) . '.' . name2shortname($ext);
+        @move_uploaded_file($_FILES["file"]["tmp_name"], $DOC_ROOT . $tmp_folder_path . "start/" . $filename);
+        list($width, $height) = getimagesize($DOC_ROOT . $tmp_folder_path . "start/" . $filename);
+
+        $new_width = 0;
+        $new_height = 0;
+        $max_width = 1920;
+        if ($width > $max_width) {
+
+
+            $new_width = $max_width;
+            $new_height = $new_width * $height / $width;
+
+
+            $thumb = PhpThumbFactory::create($DOC_ROOT . $tmp_folder_path . "start/" . $filename);
+            $thumb->resize($new_width);
+            $thumb->save($DOC_ROOT . $tmp_folder_path . "end/" . $filename);
+
+
+            /* $img = new imageClass();
+              $img->setSourceFile($DOC_ROOT.$tmp_folder_path."start/".$filename);
+              $img->setTargetFile($DOC_ROOT.$tmp_folder_path."end/".$filename);
+              $img->setJpegOutputQuality(100);
+              $img->resizeToWidth($new_width); */
+        } else {
+            $new_width = $width;
+            $new_height = $height;
+            @copy($DOC_ROOT . $tmp_folder_path . "start/" . $filename, $DOC_ROOT . $tmp_folder_path . "end/" . $filename);
+        }
+        ?>[
+        {
+        folder: "<?= $uniq_temp_folder ?>",
+        img_name: "<?= $filename ?>",
+        width:<?= str_replace(',', '.', $new_width) ?>,
+        height:<?= str_replace(',', '.', $new_height) ?>
+        }
+        ]<?php 
+        exit();
+    }
 }
 
+function contenttree($request) {
 
-function contenttree($request1) {
+    global $session;
 
-	global $session,$request;
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+    $root = Node::findRoot();
 
-	$root =  Node::findRoot();
-
-	$nodeClass = $root->getNodeClass();
-
-
-
-	$shownFieldDefs = array();
-
-	$fieldDefs = $nodeClass->getFieldDefs();
-
-	$fieldDefsKeys = array_keys($fieldDefs);
-
-	foreach ($fieldDefsKeys as $k) {
-
-		$fd = $fieldDefs[$k];
-
-		if ($fd->shown) {
-
-			$shownFieldDefs[] = $fd;
-
-		}
-
-	}
+    $nodeClass = $root->getNodeClass();
 
 
 
-	$rootMap = new PHPObject(); // PHP 8 no longer creates an object on property write
+    $shownFieldDefs = array();
+    $fieldDefs = $nodeClass->getFieldDefs();
 
-	$rootMap->node = $root;
+    $fieldDefsKeys = array_keys($fieldDefs);
 
-	$ndGR = new NodeGroupRights($currentLoggedUser->group, $root);
+    foreach ($fieldDefsKeys as $k) {
 
-	$rootMap->hasWriteRight = $ndGR->hasWriteRight();
+        $fd = $fieldDefs[$k];
 
-	$rootMap->hasViewRight = $ndGR->hasViewRight();
+        if ($fd->shown) {
 
-	$rootMap->hasDeleteRight = $ndGR->hasDeleteRight();
+            $shownFieldDefs[] = $fd;
+        }
+    }
+
+    $rootMap = new PHPObject();
+
+    $rootMap->node = $root;
+
+    $ndGR = new NodeGroupRights($currentLoggedUser->group, $root);
+
+    $rootMap->hasWriteRight = $ndGR->hasWriteRight();
+
+    $rootMap->hasViewRight = $ndGR->hasViewRight();
+
+    $rootMap->hasDeleteRight = $ndGR->hasDeleteRight();
+
+
+    $item = new PHPObject();
+    
+    $item->nodes = array($rootMap);
+
+    $item->shownFields = $shownFieldDefs;
+
+    $item->fieldCount = sizeof($fieldDefs);
+
+    $item->nodeClass = $nodeClass;
 
 
 
-	$item = new PHPObject();
+    $request->setAttribute("item", $item);
 
-	$item->nodes = array($rootMap);
-
-	$item->shownFields = $shownFieldDefs;
-
-	$item->fieldCount = sizeof($fieldDefs);
-
-	$item->nodeClass = $nodeClass;
-
-
-
-	$request->setAttribute("item", $item);
-
-	usetemplate("nodes/contenttree");
-
+    usetemplate("nodes/contenttree");
 }
-
-
 
 function main($request) {
 
-	editnode($request);
-
+    editnode($request);
 }
 
 /*
 
-function addnode_moder_form(&$request) {
+  function addnode_moder_form(&$request) {
 
-	global $session;
+  global $session;
 
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+  $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
 
 
-	$mid = (int)$request->getParameter("mid");
+  $mid = (int)$request->getParameter("mid");
 
-	$ma = &ModeratedAction::findById($mid);
+  $ma = &ModeratedAction::findById($mid);
 
 
 
-	$data = &$ma->data;
+  $data = &$ma->data;
 
 
 
-	$nodeClass = &NodeClass::findById($data->class_id);
+  $nodeClass = &NodeClass::findById($data->class_id);
 
-	$parentId = $data->parent_id;
+  $parentId = $data->parent_id;
 
-	$parent = &Node::findById($parentId);
+  $parent = &Node::findById($parentId);
 
 
 
-	if ($parent != null) {
+  if ($parent != null) {
 
-		$gr = &new NodeGroupRights($currentLoggedUser->group, $parent);
+  $gr = &new NodeGroupRights($currentLoggedUser->group, $parent);
 
-		$request->setAttribute("userHasWriteRights", $gr->hasWriteRight());
+  $request->setAttribute("userHasWriteRights", $gr->hasWriteRight());
 
-		$pList = &$parent->getParentList();
+  $pList = &$parent->getParentList();
 
-		$pList[] = &$parent;
+  $pList[] = &$parent;
 
-		$request->setAttribute("parents", $pList);
+  $request->setAttribute("parents", $pList);
 
-		$request->setAttribute("parent", $parent);
+  $request->setAttribute("parent", $parent);
 
-		$request->setAttribute("parent_id", $parent->id);
+  $request->setAttribute("parent_id", $parent->id);
 
-	} else {
+  } else {
 
-		$request->setAttribute("userHasWriteRights", true);
+  $request->setAttribute("userHasWriteRights", true);
 
-		$request->setAttribute("parents", array());
+  $request->setAttribute("parents", array());
 
-		$request->setAttribute("parent_id", -1);
+  $request->setAttribute("parent_id", -1);
 
-	}
+  }
 
-	$request->setAttribute("nodeClass", $nodeClass);
+  $request->setAttribute("nodeClass", $nodeClass);
 
-	$fieldDefs = &$nodeClass->getFieldDefs();
+  $fieldDefs = &$nodeClass->getFieldDefs();
 
 
 
 
 
-	$iparams = array();
+  $iparams = array();
 
 
 
-	$fieldDefsKeys = array_keys($fieldDefs);
+  $fieldDefsKeys = array_keys($fieldDefs);
 
-	foreach ($fieldDefsKeys as $k) {
+  foreach ($fieldDefsKeys as $k) {
 
-		$fieldDef = &$fieldDefs[$k];
+  $fieldDef = &$fieldDefs[$k];
 
 
 
-		$item = &new PHPObject();
+  $item = &new PHPObject();
 
 
 
-		$shortname = $fieldDef->shortname;
+  $shortname = $fieldDef->shortname;
 
 
 
-		$field = &$data->fieldList[$shortname];
+  $field = &$data->fieldList[$shortname];
 
-		$params = null;
+  $params = null;
 
-		$params = $field->getParamersForIncludeControlJSP();
+  $params = $field->getParamersForIncludeControlJSP();
 
 
 
-		$item->jspname = $field->getJSPControlName();
+  $item->jspname = $field->getJSPControlName();
 
-		$item->fieldDef = &$fieldDef;
+  $item->fieldDef = &$fieldDef;
 
-		$item->params = $params;
+  $item->params = $params;
 
-		$iparams[] = &$item;
+  $iparams[] = &$item;
 
-	}
+  }
 
 
 
-	$request->setAttribute("fieldDefs", $iparams);
+  $request->setAttribute("fieldDefs", $iparams);
 
-	$request->setAttribute("validationErrors", $fieldErrors);
+  $request->setAttribute("validationErrors", $fieldErrors);
 
 
 
-	$nodePropsMap = new phpobject();
+  $nodePropsMap = new phpobject();
 
-	$nodePropsMap->NodeName = $data->NodeName;
+  $nodePropsMap->NodeName = $data->NodeName;
 
-	$nodePropsMap->NodeShortname = $data->NodeShortname;
+  $nodePropsMap->NodeShortname = $data->NodeShortname;
 
-	$nodePropsMap->NodeDynamicTemplate = $data->NodeDynamicTemplate;
+  $nodePropsMap->NodeDynamicTemplate = $data->NodeDynamicTemplate;
 
-	$nodePropsMap->NodeAdminURL = $data->NodeAdminURL;
+  $nodePropsMap->NodeAdminURL = $data->NodeAdminURL;
 
-	$request->setAttribute("nodeProps", $nodePropsMap);
+  $request->setAttribute("nodeProps", $nodePropsMap);
 
 
 
-	$request->setAttribute("moder_action", $ma);
+  $request->setAttribute("moder_action", $ma);
 
 
 
-	usetemplate("nodes/addnode");
+  usetemplate("nodes/addnode");
 
+  }
+
+ */
+
+function generateTempLogin() {
+    global $MDB;
+    $search = false;
+    while (!$search) {
+        $MDB->Query('SELECT * FROM dbm_sec_logins ORDER BY rand() LIMIT 0,1');
+        $res = $MDB->NextResult();
+        $MDB->Query('SELECT * FROM dbm_nodes WHERE name="' . $res['login'] . '" AND parent_id=9392  LIMIT 0,1');
+        $count = $MDB->NumRows();
+        if (!$count)
+            $search = true;
+    }
+    $MDB->Query('SELECT * FROM dbm_sec_passwords ORDER BY rand() LIMIT 0,2');
+    $res1 = $MDB->NextResult();
+    $res2 = $MDB->NextResult();
+    return array('login' => $res['login'], 'password' => $res1['pass'] . $res2['pass']);
 }
 
-*/
-function generateTempLogin(){
-	global $MDB;
-	$search=false;
-	while(!$search){
-		$MDB->Query('SELECT * FROM dbm_sec_logins ORDER BY rand() LIMIT 0,1');
-		$res=$MDB->NextResult();
-		$MDB->Query('SELECT * FROM dbm_nodes WHERE name="'.$res['login'].'" AND parent_id=9392  LIMIT 0,1');
-		$count=$MDB->NumRows();
-		if(!$count)$search=true;
-	}
-	$MDB->Query('SELECT * FROM dbm_sec_passwords ORDER BY rand() LIMIT 0,2');
-	$res1=$MDB->NextResult();
-	$res2=$MDB->NextResult();
-	return array('login'=>$res['login'],'password'=>$res1['pass'].$res2['pass']);
-	
+function addnode_form($request) {
+    if ($_GET['class_id'] == 207) {
+        $arr = generateTempLogin();
+        $request->setAttribute('login', $arr['login']);
+        $request->setAttribute('password', $arr['password']);
+        $request->setAttribute('date_start', date('d.m.Y H:i:s'));
+        $request->setAttribute('date_end', date('d.m.Y H:i:s', time() + 31 * 24 * 3600));
+    }
+    global $session;
+
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+
+
+
+    $nodeClass = NodeClass::findById($request->getParameter("class_id"));
+
+    if ($nodeClass == null) {
+
+        Header("Location: /admin/main.php");
+        die();
+    }
+
+    $parentId = (int) $request->getParameter("parent_id");
+
+    $parent = Node::findById($parentId);
+
+    if (($parent == null) && (Node::hasRoot())) {
+
+        Header("Location: /admin/main.php");
+        die();
+    }
+
+
+
+    if ($parent != null) {
+
+        $gr = new NodeGroupRights($currentLoggedUser->group, $parent);
+
+        $request->setAttribute("userHasWriteRights", $gr->hasWriteRight());
+
+        $pList = $parent->getParentList();
+
+        $pList[] = $parent;
+
+        $request->setAttribute("parents", $pList);
+
+        $request->setAttribute("parent", $parent);
+
+        $request->setAttribute("parent_id", $parent->id);
+    } else {
+
+        $request->setAttribute("userHasWriteRights", true);
+
+        $request->setAttribute("parents", array());
+
+        $request->setAttribute("parent_id", -1);
+    }
+
+    $request->setAttribute("nodeClass", $nodeClass);
+
+    $fieldDefs = $nodeClass->getFieldDefs();
+
+
+
+    $iparams = array();
+
+    $fieldDefsKeys = array_keys($fieldDefs);
+
+    foreach ($fieldDefsKeys as $k) {
+
+        $fieldDef = $fieldDefs[$k];
+
+
+
+        $item = new PHPObject();
+
+
+
+        $field = $fieldDef->getFieldInstance();
+
+        $field->setDefaultValue();
+
+        $params = $field->getParamersForIncludeControlJSP();
+
+
+
+        $item->jspname = $field->getJSPControlName();
+
+        $item->fieldDef = $fieldDef;
+
+        $item->params = $params;
+
+        $iparams[] = $item;
+    }
+
+    $fieldDefsArray = array($iparams);
+
+    $request->setAttribute("fieldDefsArray", $fieldDefsArray);
+
+
+
+    $nodePropsMap = new phpobject();
+
+    $nodePropsMap->NodeDynamicTemplate = $nodeClass->default_template;
+
+    $nodePropsArray = array($nodePropsMap);
+
+
+
+    $formsCount = 1;
+
+
+
+    $request->setAttribute("nodePropsArray", $nodePropsArray);
+
+    $request->setAttribute("formsCount", $formsCount);
+
+
+    if ($_GET['class_id'] == 207) {
+        usetemplate("nodes/addnode_tempuser");
+    } else {
+        usetemplate("nodes/addnode");
+    }
 }
-function addnode_form($request1) {
-
-	global $session,$request; // was declared after the class 207 branch used $request
-	if($_GET['class_id']==207){
-		$arr=generateTempLogin();
-		$request->setAttribute('login',$arr['login']);
-		$request->setAttribute('password',$arr['password']);
-		$request->setAttribute('date_start',date('d.m.Y H:i:s'));
-		$request->setAttribute('date_end',date('d.m.Y H:i:s',time()+31*24*3600));
-	}
-
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
-
-
-
-	$nodeClass =  NodeClass::findById($request->getParameter("class_id"));
-
-	if ($nodeClass == null) {
-
-		Header("Location: /admin/main.php");die();
-
-	}
-
-	$parentId = (int)$request->getParameter("parent_id");
-
-	$parent =  Node::findById($parentId);
-
-	if (($parent == null) && (Node::hasRoot())) {
-
-		Header("Location: /admin/main.php");die();
-
-	}
-
-
-
-	if ($parent != null) {
-
-		$gr = new NodeGroupRights($currentLoggedUser->group, $parent);
-
-		$request->setAttribute("userHasWriteRights", $gr->hasWriteRight());
-
-		$pList = $parent->getParentList();
-
-		$pList[] = $parent;
-
-		$request->setAttribute("parents", $pList);
-
-		$request->setAttribute("parent", $parent);
-
-		$request->setAttribute("parent_id", $parent->id);
-
-	} else {
-
-		$request->setAttribute("userHasWriteRights", true);
-
-		$request->setAttribute("parents", array());
-
-		$request->setAttribute("parent_id", -1);
-
-	}
-
-	$request->setAttribute("nodeClass", $nodeClass);
-
-	$fieldDefs = $nodeClass->getFieldDefs();
-
-
-
-	$iparams = array();
-
-	$fieldDefsKeys = array_keys($fieldDefs);
-
-	foreach ($fieldDefsKeys as $k) {
-
-		$fieldDef = $fieldDefs[$k];
-
-
-
-		$item = new PHPObject();
-
-
-
-		$field = $fieldDef->getFieldInstance();
-
-		$field->setDefaultValue();
-
-		$params = $field->getParamersForIncludeControlJSP();
-
-
-
-		$item->jspname = $field->getJSPControlName();
-
-		$item->fieldDef = $fieldDef;
-
-		$item->params = $params;
-
-		$iparams[] = $item;
-
-	}
-
-	$fieldDefsArray = array($iparams);
-
-	$request->setAttribute("fieldDefsArray", $fieldDefsArray);
-
-
-
-	$nodePropsMap = new phpobject();
-
-	$nodePropsMap->NodeDynamicTemplate = $nodeClass->default_template;
-
-	$nodePropsArray = array($nodePropsMap);
-
-
-
-	$formsCount = 1;
-
-
-
-	$request->setAttribute("nodePropsArray", $nodePropsArray);
-
-	$request->setAttribute("formsCount", $formsCount);
-
-
-	if($_GET['class_id']==207){
-		usetemplate("nodes/addnode_tempuser");
-	}else{
-		usetemplate("nodes/addnode");
-	}
-
-}
-
-
 
 function addnode($request) {
 
-	/*if(isset($_POST['class_id'])&&$_POST['class_id']==207){
-		$login=$_POST['f00_NodeName'];
-		$password=$_POST['f00_password'];
-		@mkdir($_SERVER['DOCUMENT_ROOT'].'/files/secure_files/tempfiles/'.$login.'/',0777);
-		@chmod($_SERVER['DOCUMENT_ROOT'].'/files/secure_files/tempfiles/'.$login.'/',0777);
-	}*/
-	global $session, $AdminTrnsl;
+    if (isset($_POST['class_id']) && $_POST['class_id'] == 207) {
+        $login = $_POST['f00_NodeName'];
+        $password = $_POST['f00_password'];
+        @mkdir($_SERVER['DOCUMENT_ROOT'] . '/files/secure_files/tempfiles/' . $login . '/', 0777);
+        @chmod($_SERVER['DOCUMENT_ROOT'] . '/files/secure_files/tempfiles/' . $login . '/', 0777);
+    }
+    global $session, $AdminTrnsl;
 
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
 
 
-	$nodeClass =  NodeClass::findById((int)$request->getParameter("class_id"));
+    $nodeClass = NodeClass::findById((int) $request->getParameter("class_id"));
 
-	//print_r($nodeClass->fieldDefs["image"]->fieldParameters);
+    //print_r($nodeClass->fieldDefs["image"]->fieldParameters);
 
-	
 
-	if ($nodeClass == null) {
 
-		Header("Location: /admin/main.php");die();
+    if ($nodeClass == null) {
 
-	}
+        Header("Location: /admin/main.php");
+        die();
+    }
 
-	$parentId = (int)$request->getParameter("parent_id");
+    $parentId = (int) $request->getParameter("parent_id");
 
-	$parent = Node::findById($parentId);
+    $parent = Node::findById($parentId);
 
-	if (($parent == null) && (Node::hasRoot())) {
+    if (($parent == null) && (Node::hasRoot())) {
 
-		Header("Location: /admin/main.php");die();
+        Header("Location: /admin/main.php");
+        die();
+    }
 
-	}
+    /*
 
-/*
+      $moder_id = (int)$request->getParameter("moder_id");
 
-	$moder_id = (int)$request->getParameter("moder_id");
+      if ($moder_id) {
 
-	if ($moder_id) {
+      $ma = &ModeratedAction::findById($moder_id);
 
-		$ma = &ModeratedAction::findById($moder_id);
+      }
 
-	}
+     */
 
-*/
+    //var_dump($request);
 
-//var_dump($request);
+    if ($parent != null) {
 
-	if ($parent != null) {
+        $gr = new NodeGroupRights($currentLoggedUser->group, $parent);
 
-		$gr = new NodeGroupRights($currentLoggedUser->group, $parent);
+        $request->setAttribute("userHasWriteRights", $gr->hasWriteRight());
 
-		$request->setAttribute("userHasWriteRights", $gr->hasWriteRight());
+        if (!$gr->hasWriteRight()) {
 
-		if (!$gr->hasWriteRight()) {
+            die($AdminTrnsl["You_do_not_have_rights_to_view_this_node"]);
+        }
 
-			die($AdminTrnsl["You_do_not_have_rights_to_view_this_node"]);
+        $pList = $parent->getParentList();
 
-		}
+        $pList[] = $parent;
 
-		$pList = $parent->getParentList();
+        $request->setAttribute("parents", $pList);
 
-		$pList[] = $parent;
+        $request->setAttribute("parent", $parent);
 
-		$request->setAttribute("parents", $pList);
+        $request->setAttribute("parent_id", $parent->id);
+    } else {
 
-		$request->setAttribute("parent", $parent);
+        $request->setAttribute("userHasWriteRights", true);
 
-		$request->setAttribute("parent_id", $parent->id);
+        $request->setAttribute("parents", array());
 
-	} else {
+        $request->setAttribute("parent_id", -1);
+    }
 
-		$request->setAttribute("userHasWriteRights", true);
+    $request->setAttribute("nodeClass", $nodeClass);
 
-		$request->setAttribute("parents", array());
 
-		$request->setAttribute("parent_id", -1);
 
-	}
+    $fieldDefs = $nodeClass->getFieldDefs();
 
-	$request->setAttribute("nodeClass", $nodeClass);
 
 
+    $formsCount = (int) $request->getParameter("forms_count");
 
-	$fieldDefs = $nodeClass->getFieldDefs();
 
 
+    $everythingWasSuccess = true;
 
-	$formsCount = (int)$request->getParameter("forms_count");
 
 
+    $fieldErrorsArray = array();
 
-	$everythingWasSuccess = true;
+    $nodePropsArray = array();
 
+    $fieldListArray = array();
 
+    for ($formNumber = 0; $formNumber < $formsCount; $formNumber++) {
 
-	$fieldErrorsArray = array();
+        $formNumberFormatted = sprintf("%02d", $formNumber);
 
-	$nodePropsArray = array();
+        $fieldNamePrefix = "f" . $formNumberFormatted . "_";
 
-	$fieldListArray = array();
 
-	for ($formNumber = 0; $formNumber < $formsCount; $formNumber++) {
 
-		$formNumberFormatted = sprintf("%02d", $formNumber);
+        //it's a nice trick for multiple forms
 
-		$fieldNamePrefix = "f" . $formNumberFormatted . "_";
+        $request->parametersPrefix = $fieldNamePrefix;
 
 
 
-		//it's a nice trick for multiple forms
+        //let's validate fields
 
-		$request->parametersPrefix = $fieldNamePrefix;
+        $fieldErrors = array();
 
+        $fieldList = array();
 
 
-		//let's validate fields
 
-		$fieldErrors = array();
+        $fieldDefsKeys = array_keys($fieldDefs);
 
-		$fieldList = array();
+        foreach ($fieldDefsKeys as $k) {
 
+            $fieldDef = $fieldDefs[$k];
 
+            $field = $fieldDef->getFieldInstance();
 
-		$fieldDefsKeys = array_keys($fieldDefs);
+            $verror = $field->setValue($request);
 
-		foreach ($fieldDefsKeys as $k) {
+            if ($verror) {
 
-			$fieldDef = $fieldDefs[$k];
+                $fieldErrors[$fieldDef->shortname] = $verror;
+            }
 
-			$field = $fieldDef->getFieldInstance();
+            $fieldList[$fieldDef->shortname] = $field;
+        }
 
-			$verror = $field->setValue($request);
 
-			if ($verror) {
 
-				$fieldErrors[$fieldDef->shortname] = $verror;
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-			}
+        if ($fieldList["artikel"] != null) {
 
-			$fieldList[$fieldDef->shortname] = $field;
+            $existingItem = findItemByArtikel($fieldList["artikel"]->value);
 
-		}
+            if ($existingItem != null) {
 
+                $fieldErrors["artikel"] = "ArtikelNr ist schon belegt";
+            }
+        }
 
+        if ($nodeClass->shortname == "subscriber") {
 
-		//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            $existingSubscriber = findAbonentByEmail($fieldList["email"]->value);
 
-		if ($fieldList["artikel"] != null) {
+            if ($existingSubscriber != null) {
 
-			$existingItem = findItemByArtikel($fieldList["artikel"]->value);
+                $fieldErrors["email"] = "E-Mail Adresse ist schon vergeben";
+            }
+        }
 
-			if ($existingItem != null) {
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //now validate node fields
 
-				$fieldErrors["artikel"] = "ArtikelNr ist schon belegt";
+        $NodeName = (string) $request->getParameter("NodeName");
 
-			}
+        $NodeShortname = (string) $request->getParameter("NodeShortname");
 
-		}
+        $NodeDynamicTemplate = (string) $request->getParameter("NodeDynamicTemplate");
 
-		if ($nodeClass->shortname == "subscriber") {
+        $NodeAdminURL = (string) $request->getParameter("NodeAdminURL");
 
-			$existingSubscriber = findAbonentByEmail($fieldList["email"]->value);
 
-			if ($existingSubscriber != null) {
 
-				$fieldErrors["email"] = "E-Mail Adresse ist schon vergeben";
+        if (strlen($NodeName) == 0)
+            $fieldErrors["NodeName"] = $AdminTrnsl["RequiredField"];
 
-			}
 
-		}
 
-		//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if ($parent != null) {
 
+            if (!Validator::validateShortname($NodeShortname)) {
 
+                $fieldErrors["NodeShortname"] = $AdminTrnsl["NodeEditInvalidShortname"];
+            }
+        } else {
 
-		//now validate node fields
+            $NodeShortname = "";
+        }
 
-		$NodeName = (string)$request->getParameter("NodeName");
 
-		$NodeShortname = (string)$request->getParameter("NodeShortname");
 
-		$NodeDynamicTemplate = (string)$request->getParameter("NodeDynamicTemplate");
+        if (($parent != null) && $parent->hasChildren($NodeShortname)) {
 
-		$NodeAdminURL = (string)$request->getParameter("NodeAdminURL");
+            $fieldErrors["NodeShortname"] = $AdminTrnsl["NodeEditShortnameUsed"];
+        }
 
 
 
-		if (strlen($NodeName) == 0)
+        checkNodeNameByClass($NodeName, $nodeClass, $fieldList);
 
-			$fieldErrors["NodeName"] = $AdminTrnsl["RequiredField"];
+        $nodePropsMap = new phpobject();
 
+        $nodePropsMap->NodeName = $NodeName;
 
+        $nodePropsMap->NodeShortname = $NodeShortname;
 
-		if ($parent != null) {
+        $nodePropsMap->NodeDynamicTemplate = $NodeDynamicTemplate;
 
-			if(!Validator::validateShortname($NodeShortname)) {
+        $nodePropsMap->NodeAdminURL = $NodeAdminURL;
 
-				$fieldErrors["NodeShortname"] = $AdminTrnsl["NodeEditInvalidShortname"];
 
-			}
 
-		} else {
+        $fieldErrorsArray[$formNumber] = $fieldErrors;
 
-			$NodeShortname = "";
+        $nodePropsArray[$formNumber] = $nodePropsMap;
 
-		}
+        $fieldListArray[$formNumber] = $fieldList;
 
 
 
-		if (($parent != null) && $parent->hasChildren($NodeShortname)) {
+        if (sizeof($fieldErrors) > 0) {
 
-			$fieldErrors["NodeShortname"] = $AdminTrnsl["NodeEditShortnameUsed"];
+            $everythingWasSuccess = false;
+        }
 
-		}
 
 
+        //return back empty value
 
-		checkNodeNameByClass($NodeName,$nodeClass,$fieldList);
+        $request->parametersPrefix = "";
+    }
 
-		$nodePropsMap = new phpobject();
+    //if validation not failed create node:
 
-		$nodePropsMap->NodeName = $NodeName;
+    if ($everythingWasSuccess == true) {
 
-		$nodePropsMap->NodeShortname = $NodeShortname;
+        //if ($currentLoggedUser->group->isModerator) {
 
-		$nodePropsMap->NodeDynamicTemplate = $NodeDynamicTemplate;
+        for ($formNumber = 0; $formNumber < $formsCount; $formNumber++) {
 
-		$nodePropsMap->NodeAdminURL = $NodeAdminURL;
+            $nodePropsMap = $nodePropsArray[$formNumber];
 
+            $fieldList = $fieldListArray[$formNumber];
 
 
-		$fieldErrorsArray[$formNumber] = $fieldErrors;
 
-		$nodePropsArray[$formNumber] = $nodePropsMap;
+            $createdNode = Node::createWithPreparedValues($parent, $nodePropsMap->NodeName, $nodePropsMap->NodeShortname, $nodePropsMap->NodeDynamicTemplate, $nodePropsMap->NodeAdminURL, $currentLoggedUser->id, $nodeClass->id, $fieldList);
 
-		$fieldListArray[$formNumber] = $fieldList;
+            //if ($ma) {
+            //	ModeratedAction::remove($ma->id);
+            //}
+        }
 
+        /* } else {
 
+          $moderatedCreateAction = new PHPObject();
 
-		if (sizeof($fieldErrors) > 0) {
+          $moderatedCreateAction->parent_id = $parent->id;
 
-			$everythingWasSuccess = false;
+          $moderatedCreateAction->NodeName = $NodeName;
 
-		}
+          $moderatedCreateAction->NodeShortname = $NodeShortname;
 
+          $moderatedCreateAction->NodeDynamicTemplate = $NodeDynamicTemplate;
 
+          $moderatedCreateAction->NodeAdminURL = $NodeAdminURL;
 
-		//return back empty value
+          $moderatedCreateAction->user_id = $currentLoggedUser->id;
 
-		$request->parametersPrefix = "";
+          $moderatedCreateAction->class_id = $nodeClass->id;
 
-	}
+          $moderatedCreateAction->fieldList = $fieldList;
 
-	//if validation not failed create node:
 
-	if ($everythingWasSuccess == true) {
 
-		//if ($currentLoggedUser->group->isModerator) {
+          $moderatedCreateAction->ParentPath = $parent->absolutePath;
 
-			for ($formNumber = 0; $formNumber < $formsCount; $formNumber++) {
 
-				$nodePropsMap = $nodePropsArray[$formNumber];
 
-				$fieldList = $fieldListArray[$formNumber];
+          ModeratedAction::create(-1, $currentLoggedUser->id, "create", $moderatedCreateAction);
 
+          $forwardUrl = "/admin/nodes.php?do=main&id=" . $parent->id . "&msg=nodes_created_moderated";
 
+          } */
 
-				$createdNode =  Node::createWithPreparedValues($parent, $nodePropsMap->NodeName, $nodePropsMap->NodeShortname,
+        $forwardUrl = "/admin/nodes.php?do=main&id=";
 
-					$nodePropsMap->NodeDynamicTemplate, $nodePropsMap->NodeAdminURL,
+        $forwardUrl .= $createdNode->parent_id;
 
-					$currentLoggedUser->id, $nodeClass->id, $fieldList);
+        Header("Location: " . $forwardUrl . "&reload=1");
 
-					if($parent->shortname=="news"&&$nodePropsMap->NodeDynamicTemplate=="news_full"){
+        return;
+    }
 
-						deliveryNews($createdNode);
 
-//						print_r($createdNode);					
 
-					}
+    $fieldDefsArray = array();
 
 
 
-				//if ($ma) {
+    for ($formNumber = 0; $formNumber < $formsCount; $formNumber++) {
 
-				//	ModeratedAction::remove($ma->id);
+        $iparams = array();
 
-				//}
+        $fieldList = $fieldListArray[$formNumber];
 
-			}
 
-		/*} else {
 
-			$moderatedCreateAction = new PHPObject();
+        $fieldDefsKeys = array_keys($fieldDefs);
 
-			$moderatedCreateAction->parent_id = $parent->id;
+        foreach ($fieldDefsKeys as $k) {
 
-			$moderatedCreateAction->NodeName = $NodeName;
+            $fieldDef = $fieldDefs[$k];
 
-			$moderatedCreateAction->NodeShortname = $NodeShortname;
 
-			$moderatedCreateAction->NodeDynamicTemplate = $NodeDynamicTemplate;
 
-			$moderatedCreateAction->NodeAdminURL = $NodeAdminURL;
+            $item = new PHPObject();
 
-			$moderatedCreateAction->user_id = $currentLoggedUser->id;
 
-			$moderatedCreateAction->class_id = $nodeClass->id;
 
-			$moderatedCreateAction->fieldList = $fieldList;
+            $shortname = $fieldDef->shortname;
 
+            $errMsg = $fieldErrors[$shortname];
 
 
-			$moderatedCreateAction->ParentPath = $parent->absolutePath;
 
+            $field = $fieldList[$shortname];
 
+            $params = $field->getParamersForIncludeControlJSP();
 
-			ModeratedAction::create(-1, $currentLoggedUser->id, "create", $moderatedCreateAction);
 
-			$forwardUrl = "/admin/nodes.php?do=main&id=" . $parent->id . "&msg=nodes_created_moderated";
 
-		}*/
+            $item->jspname = $field->getJSPControlName();
 
-		$forwardUrl = "/admin/nodes.php?do=main&id=";
+            $item->fieldDef = $fieldDef;
 
-		$forwardUrl .= $createdNode->parent_id;
+            $item->params = $params;
 
-		Header("Location: " . $forwardUrl . "&reload=1");
+            $iparams[] = $item;
+        }
 
-		return;
+        $fieldDefsArray[$formNumber] = $iparams;
+    }
 
-	}
 
 
+    $request->setAttribute("fieldDefsArray", $fieldDefsArray);
 
-	$fieldDefsArray = array();
+    $request->setAttribute("validationErrorsArray", $fieldErrorsArray);
 
+    $request->setAttribute("nodePropsArray", $nodePropsArray);
 
+    $request->setAttribute("formsCount", $formsCount);
 
-	for ($formNumber = 0; $formNumber < $formsCount; $formNumber++) {
 
-		$iparams = array();
 
-		$fieldList = $fieldListArray[$formNumber];
+    //if ($ma) {
+    //$request->setAttribute("moder_action", $ma);
+    //}
 
 
 
-		$fieldDefsKeys = array_keys($fieldDefs);
-
-		foreach ($fieldDefsKeys as $k) {
-
-			$fieldDef = $fieldDefs[$k];
-
-	
-
-			$item = new PHPObject();
-
-	
-
-			$shortname = $fieldDef->shortname;
-
-			$errMsg = $fieldErrors[$shortname];
-
-	
-
-			$field = $fieldList[$shortname];
-
-			$params = $field->getParamersForIncludeControlJSP();
-
-	
-
-			$item->jspname = $field->getJSPControlName();
-
-			$item->fieldDef = $fieldDef;
-
-			$item->params = $params;
-
-			$iparams[] =$item;
-
-		}
-
-		$fieldDefsArray[$formNumber] = $iparams;
-
-	}
-
-
-
-	$request->setAttribute("fieldDefsArray", $fieldDefsArray);
-
-	$request->setAttribute("validationErrorsArray", $fieldErrorsArray);
-
-	$request->setAttribute("nodePropsArray", $nodePropsArray);
-
-	$request->setAttribute("formsCount", $formsCount);
-
-
-
-	//if ($ma) {
-
-		//$request->setAttribute("moder_action", $ma);
-
-	//}
-
-
-
-	usetemplate("nodes/addnode");
-
+    usetemplate("nodes/addnode");
 }
 
+function deletenode($request) {
 
+    global $session;
 
-function deletenode($request1) {
-
-	global $session,$request;
-
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
-
-
-
-	$node_id = (int)$request->getParameter("id");
-
-	$node =  Node::findById($node_id);
-
-	if ($node == null) {
-
-		Header("Location: /admin/main.php");die();
-
-	}
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
 
 
-	$parent_id = $node->parent_id;
+    $node_id = (int) $request->getParameter("id");
+
+    $node = Node::findById($node_id);
+
+    if ($node == null) {
+
+        Header("Location: /admin/main.php");
+        die();
+    }
 
 
 
-	$forwardUrl = null;
+    $parent_id = $node->parent_id;
 
 
 
-	if ($parent_id != null) {
-
-		$forwardUrl = "/admin/nodes.php?do=main&id=" . $parent_id . "&reload=1&";
-
-	} else {
-
-		$forwardUrl = "/admin/main.php?";
-
-	}
+    $forwardUrl = null;
 
 
 
-	if ($currentLoggedUser->group->isModerator) {
+    if ($parent_id != null) {
 
-		Node::remove($node_id);
+        $forwardUrl = "/admin/nodes.php?do=main&id=" . $parent_id . "&reload=1&";
+    } else {
 
-	} else {
-
-		$moderatedCreateAction = new PHPObject();
-
-		$moderatedCreateAction->NodeName = $node->name;
-
-		$moderatedCreateAction->NodePath = $node->absolutePath;
-
-		ModeratedAction::create($node_id, $currentLoggedUser->id, "delete", $moderatedCreateAction);
-
-		$forwardUrl .= "msg=nodes_deleted_moderated";
-
-	}
+        $forwardUrl = "/admin/main.php?";
+    }
 
 
 
-	Header("Location: ".$forwardUrl);
+    if ($currentLoggedUser->group->isModerator) {
+        checkNodeOnRemove($node_id);
+        Node::remove($node_id);
+    } else {
 
+        $moderatedCreateAction = new PHPObject();
+
+        $moderatedCreateAction->NodeName = $node->name;
+
+        $moderatedCreateAction->NodePath = $node->absolutePath;
+
+        ModeratedAction::create($node_id, $currentLoggedUser->id, "delete", $moderatedCreateAction);
+
+        $forwardUrl .= "msg=nodes_deleted_moderated";
+    }
+
+
+
+    Header("Location: " . $forwardUrl);
 }
 
+function deleteselectednode($request) {
+
+//print_r($request->getParameter("delete_node"));
+
+    $deletenodes = $request->getParameter("delete_node");
+
+    global $session;
+
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+
+    foreach ($deletenodes as $k => $node_id) {
+
+        //	$node_id = (int)$request->getParameter("id");
+
+        $node = Node::findById($node_id);
+
+        if ($node == null) {
+
+            Header("Location: /admin/main.php");
+            die();
+        }
 
 
-function deleteselectednode($request1){
 
-	global $session,$request; // was declared after the first $request use: multi-delete was a fatal error
+        $parent_id = $node->parent_id;
 
-	$deletenodes=$request->getParameter("delete_node");
 
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
-	foreach($deletenodes as $k=>$node_id){
+        $forwardUrl = null;
 
-	//	$node_id = (int)$request->getParameter("id");
 
-		$node =  Node::findById($node_id);
 
-		if ($node == null) {
+        if ($parent_id != null) {
 
-			Header("Location: /admin/main.php");die();
+            $forwardUrl = "/admin/nodes.php?do=main&id=" . $parent_id . "&reload=1&";
+        } else {
 
-		}
+            $forwardUrl = "/admin/main.php?";
+        }
 
-	
 
-		$parent_id = $node->parent_id;
 
-	
+        if ($currentLoggedUser->group->isModerator) {
 
-		$forwardUrl = null;
+            checkNodeOnRemove($node_id);
+            Node::remove($node_id);
+        } else {
 
-	
+            $moderatedCreateAction = new PHPObject();
 
-		if ($parent_id != null) {
+            $moderatedCreateAction->NodeName = $node->name;
 
-			$forwardUrl = "/admin/nodes.php?do=main&id=" . $parent_id . "&reload=1&";
+            $moderatedCreateAction->NodePath = $node->absolutePath;
 
-		} else {
+            ModeratedAction::create($node_id, $currentLoggedUser->id, "delete", $moderatedCreateAction);
 
-			$forwardUrl = "/admin/main.php?";
+            $forwardUrl .= "msg=nodes_deleted_moderated";
+        }
+    }
 
-		}
-
-	
-
-		if ($currentLoggedUser->group->isModerator) {
-
-			Node::remove($node_id);
-
-		} else {
-
-			$moderatedCreateAction = new PHPObject();
-
-			$moderatedCreateAction->NodeName = $node->name;
-
-			$moderatedCreateAction->NodePath = $node->absolutePath;
-
-			ModeratedAction::create($node_id, $currentLoggedUser->id, "delete", $moderatedCreateAction);
-
-			$forwardUrl .= "msg=nodes_deleted_moderated";
-
-		}
-
-	}
-
-	Header("Location: ".$forwardUrl);
-
+    Header("Location: " . $forwardUrl);
 }
 
-function editnode_moder($request1) {
+function editnode_moder($request) {
 
-	global $session, $AdminTrnsl,$request;
+    global $session, $AdminTrnsl;
 
 
 
-	$mid = (int)$request->getParameter("mid");
+    $mid = (int) $request->getParameter("mid");
 
-	$ma = ModeratedAction::findById($mid);
+    $ma = ModeratedAction::findById($mid);
 
 
 
-	$data = $ma->data;
+    $data = $ma->data;
 
 
 
-	$node_id = $ma->node_id;
+    $node_id = $ma->node_id;
 
-	$node = Node::findById($node_id);
+    $node = Node::findById($node_id);
 
-	if ($node == null) {
+    if ($node == null) {
 
-		Header("Location: /admin/main.php");die();
+        Header("Location: /admin/main.php");
+        die();
+    }
 
-	}
 
 
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+    $gr = new NodeGroupRights($currentLoggedUser->group, $node);
 
-	$gr = new NodeGroupRights($currentLoggedUser->group, $node);
+    if (!$gr->hasViewRight()) {
 
-	if (!$gr->hasViewRight()) {
+        die($AdminTrnsl["You_do_not_have_rights_to_view_this_node"]);
+    }
 
-		die($AdminTrnsl["You_do_not_have_rights_to_view_this_node"]);
 
-	}
 
+    $all_deps = $node->findAllDepends();
 
+    $request->setAttribute("depends", $all_deps);
 
-	$all_deps = $node->findAllDepends();
 
-	$request->setAttribute("depends", $all_deps);
 
+    $nodeClass = $node->getNodeClass();
 
+    $request->setAttribute("nodeClass", $nodeClass);
 
-	$nodeClass = $node->getNodeClass();
 
-	$request->setAttribute("nodeClass", $nodeClass);
 
+    $request->setAttribute("node", $node);
 
+    $fieldDefs = $nodeClass->getFieldDefs();
 
-	$request->setAttribute("node", $node);
 
-	$fieldDefs = $nodeClass->getFieldDefs();
 
+    $iparams = array();
 
 
-	$iparams = array();
 
+    $fieldDefsKeys = array_keys($fieldDefs);
 
+    foreach ($fieldDefsKeys as $k) {
 
-	$fieldDefsKeys = array_keys($fieldDefs);
+        $fieldDef = $fieldDefs[$k];
 
-	foreach ($fieldDefsKeys as $k) {
+        $fieldShortname = $fieldDef->shortname;
 
-		$fieldDef = $fieldDefs[$k];
+        $field = $data->fieldList[$fieldShortname];
 
-		$fieldShortname = $fieldDef->shortname;
+        $params = $field->getParamersForIncludeControlJSP();
 
-		$field = $data->fieldList[$fieldShortname];
 
-		$params = $field->getParamersForIncludeControlJSP();
 
+        $item = new PHPObject();
 
+        $item->jspname = $field->getJSPControlName();
 
-		$item = new PHPObject();
+        $item->fieldDef = $fieldDef;
 
-		$item->jspname = $field->getJSPControlName();
+        $item->params = $params;
 
-		$item->fieldDef = $fieldDef;
+        $iparams[] = $item;
+    }
 
-		$item->params = $params;
 
-		$iparams[] = $item;
 
-	}
+    $request->setAttribute("fieldDefs", $iparams);
 
+    $request->setAttribute("NodeName", $data->NodeName);
 
+    subnodeslist($request, $node, $all_deps, $currentLoggedUser);
 
-	$request->setAttribute("fieldDefs", $iparams);
 
-	$request->setAttribute("NodeName", $data->NodeName);
 
-	subnodeslist($request, $node, $all_deps, $currentLoggedUser);
+    $request->setAttribute("moder_action", $ma);
 
 
 
-	$request->setAttribute("moder_action", $ma);
-
-
-
-	usetemplate("nodes/editnode");
-
+    usetemplate("nodes/editnode");
 }
 
+function editnode($request) {
 
+    global $session, $AdminTrnsl;
 
-function editnode($request1) {
-
-	global $session, $AdminTrnsl,$request;
-
-	$node_id = (int)$request->getParameter("id");
-
-
-
-	$node =  Node::findById($node_id);
-
-	if ($node == null) {
-
-		Header("Location: /admin/main.php");die();
-
-	}
+    $node_id = (int) $request->getParameter("id");
 
 
 
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
-//	print_r($currentLoggedUser);
+    $node = Node::findById($node_id);
 
+    if ($node == null) {
 
-	$gr = new NodeGroupRights($currentLoggedUser->group, $node);
-//	print_r($gr);
-
-	if (!$gr->hasViewRight()) {
-
-		die($AdminTrnsl["You_do_not_have_rights_to_view_this_node"]);
-
-	}
+        Header("Location: /admin/main.php");
+        die();
+    }
 
 
 
-	$all_deps = $node->findAllDepends();
-	$request->setAttribute("depends", $all_deps);
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+    //	print_r($currentLoggedUser);
+
+
+    $gr = new NodeGroupRights($currentLoggedUser->group, $node);
+    //	print_r($gr);
+
+    if (!$gr->hasViewRight()) {
+
+        die($AdminTrnsl["You_do_not_have_rights_to_view_this_node"]);
+    }
 
 
 
-	$nodeClass = $node->getNodeClass();
+    $all_deps = $node->findAllDepends();
 
-	$request->setAttribute("nodeClass", $nodeClass);
-
-
-
-	$request->setAttribute("node", $node);
-
-	$fieldDefs = $nodeClass->getFieldDefs();
+    $request->setAttribute("depends", $all_deps);
+    //print_r($all_deps);
 
 
 
-	$iparams = array();
+    $nodeClass = $node->getNodeClass();
+
+    $request->setAttribute("nodeClass", $nodeClass);
 
 
 
-	$fieldDefsKeys = array_keys($fieldDefs);
+    $request->setAttribute("node", $node);
 
-	foreach ($fieldDefsKeys as $k) {
-
-		$fieldDef = $fieldDefs[$k];
-
-		$fieldShortname = $fieldDef->shortname;
-
-		$field = $node->getField($fieldShortname);
-
-		$params = $field->getParamersForIncludeControlJSP();
+    $fieldDefs = $nodeClass->getFieldDefs();
 
 
 
-		$item = new PHPObject();
-
-		$item->jspname = $field->getJSPControlName();
-
-		$item->fieldDef = $fieldDef;
-
-		$item->params = $params;
-
-		$iparams[] = $item;
-
-	}
-
-	$request->setAttribute("fieldDefs", $iparams);
-
-	$request->setAttribute("NodeName", $node->name);
-
-	subnodeslist($request, $node, $all_deps, $currentLoggedUser);
+    $iparams = array();
 
 
 
-	usetemplate("nodes/editnode");
+    $fieldDefsKeys = array_keys($fieldDefs);
 
+    foreach ($fieldDefsKeys as $k) {
+
+        $fieldDef = $fieldDefs[$k];
+
+        $fieldShortname = $fieldDef->shortname;
+
+        $field = $node->getField($fieldShortname);
+
+        $params = $field->getParamersForIncludeControlJSP();
+
+
+
+        $item = new PHPObject();
+
+        $item->jspname = $field->getJSPControlName();
+
+        $item->fieldDef = $fieldDef;
+
+        $item->params = $params;
+
+        $iparams[] = $item;
+    }
+
+    $request->setAttribute("fieldDefs", $iparams);
+
+    $request->setAttribute("NodeName", $node->name);
+
+    subnodeslist($request, $node, $all_deps, $currentLoggedUser);
+
+
+
+    usetemplate("nodes/editnode");
 }
 
+function subnodeslist($request, $node, $all_deps, $currentLoggedUser) {
 
+    $pageNumMap = $request->getParameter("pagenum");
 
-function subnodeslist($request1, $node, $all_deps, $currentLoggedUser) {
+    $childrenByClasses = array();
 
-	global $request;
-	
-	$pageNumMap = $request->getParameter("pagenum");
-
-	$childrenByClasses = array();
-
-	$childrenCount = 0;
+    $childrenCount = 0;
 
 
 
-	$all_deps_keys = array_keys($all_deps);
+    $all_deps_keys = array_keys($all_deps);
 
-	foreach ($all_deps_keys as $k) {
+    foreach ($all_deps_keys as $k) {
 
-		$nodeClass = $all_deps[$k];
-
-
-
-		$item = new PHPObject();
+        $nodeClass = $all_deps[$k];
 
 
 
-		$item->nodeClass = $nodeClass;
-
-		$classChildsCount = $node->getChildrenCountOfClassForGroup($currentLoggedUser->group->id, $nodeClass->id);
-
-//		echo $classChildsCount;
-
-		$orderBy = $nodeClass->orderBy;
-
-		$orderByDesc = false;
+        $item = new PHPObject();
 
 
 
-		if (!$orderBy) {
+        $item->nodeClass = $nodeClass;
 
-			$orderBy = "n.subtree_order";
+        $classChildsCount = $node->getChildrenCountOfClassForGroup($currentLoggedUser->group->id, $nodeClass->id);
 
-		}/* else {
+        //		echo $classChildsCount;
 
-			list($orderBy, $_descStr) = explode(" ", $orderBy);
+        $orderBy = $nodeClass->orderBy;
 
-			if (strtoupper(trim($_descStr)) == 'DESC') {
-
-				$orderByDesc = true;
-
-			}
-
-		}*/
+        $orderByDesc = false;
 
 
 
-		if ($classChildsCount <= NODES_PER_PAGE) {
+        if (!$orderBy) {
 
-			$classChilds = $node->getChildrenOfClassForGroup($currentLoggedUser->group->id, $nodeClass, $orderBy);
+            $orderBy = "n.subtree_order";
+        }/* else {
 
-			$item->nodespagesCount = 0;
+          list($orderBy, $_descStr) = explode(" ", $orderBy);
 
-		} else {
+          if (strtoupper(trim($_descStr)) == 'DESC') {
+
+          $orderByDesc = true;
+
+          }
+
+          } */
+
+
+
+        if ($classChildsCount <= NODES_PER_PAGE) {
+
+            $classChilds = $node->getChildrenOfClassForGroup($currentLoggedUser->group->id, $nodeClass, $orderBy);
+
+            $item->nodespagesCount = 0;
+        } else {
 
             $page = (int)($pageNumMap[$nodeClass->shortname] ?? 0); // "" or junk: 0 on PHP 5, TypeError in PHP 8 (and it reaches SQL as the offset)
 
-			$pagesCount = floor($classChildsCount / NODES_PER_PAGE) + ($classChildsCount % NODES_PER_PAGE != 0 ? 1 : 0);
+            $pagesCount = floor($classChildsCount / NODES_PER_PAGE) + ($classChildsCount % NODES_PER_PAGE != 0 ? 1 : 0);
 
-			$offset = $page*NODES_PER_PAGE;
+            $offset = $page * NODES_PER_PAGE;
 
-			$classChilds = $node->getChildrenOfClassForGroup($currentLoggedUser->group->id, $nodeClass, $orderBy, $offset, NODES_PER_PAGE);
-
-
-
-			$item->nodespagesCount = $pagesCount;
-
-			$item->nodesOffset = $offset;
-
-			$item->nodesPage = $page;
-
-		}
-
-		$classChildsP = array();
-
-		$classChildsKeys = array_keys($classChilds);
+            $classChilds = $node->getChildrenOfClassForGroup($currentLoggedUser->group->id, $nodeClass, $orderBy, $offset, NODES_PER_PAGE);
 
 
 
-		foreach ($classChildsKeys as $cck) {
+            $item->nodespagesCount = $pagesCount;
 
-			$nd = $classChilds[$cck];
+            $item->nodesOffset = $offset;
 
+            $item->nodesPage = $page;
+        }
 
+        $classChildsP = array();
 
-			$ndMap = new PHPObject();
-
-			$ndMap->node = $nd;
-
-			$ndGR = new NodeGroupRights($currentLoggedUser->group, $nd);
-
-			$ndMap->hasWriteRight = $ndGR->hasWriteRight();
-
-			$ndMap->hasViewRight = $ndGR->hasViewRight();
-
-			$ndMap->hasDeleteRight = $ndGR->hasDeleteRight();
+        $classChildsKeys = array_keys($classChilds);
 
 
 
-			$classChildsP[] = $ndMap;
+        foreach ($classChildsKeys as $cck) {
 
-		}
-
-
-
-		$item->nodes = $classChildsP;
-
-		$item->nodesCount = $classChildsCount;
-
-		$childrenCount += sizeof($classChildsP);
-
-		if (sizeof($classChildsP) > 1) {
-
-			$item->sort = false; //Temporary!!!
-
-		} else {
-
-			$item->sort = false;
-
-		}
+            $nd = $classChilds[$cck];
 
 
 
-		$shownFieldDefs = array();
+            $ndMap = new PHPObject();
 
-		$fieldDefs = $nodeClass->getFieldDefs();
+            $ndMap->node = $nd;
 
-		$fieldDefsKeys = array_keys($fieldDefs);
+            $ndGR = new NodeGroupRights($currentLoggedUser->group, $nd);
 
-		foreach ($fieldDefsKeys as $fdk) {
+            $ndMap->hasWriteRight = $ndGR->hasWriteRight();
 
-			$fieldDef = $fieldDefs[$fdk];
+            $ndMap->hasViewRight = $ndGR->hasViewRight();
 
-			if ($fieldDef->shown) {
-
-				$shownFieldDefs[] = $fieldDef;
-
-			}
-
-		}
+            $ndMap->hasDeleteRight = $ndGR->hasDeleteRight();
 
 
 
-		$item->shownFields = $shownFieldDefs;
-
-		$item->fieldCount = sizeof($fieldDefs);
-
-		$childrenByClasses[] = $item;
-
-	}
+            $classChildsP[] = $ndMap;
+        }
 
 
 
-	$request->setAttribute("childrenByClasses", $childrenByClasses);
+        $item->nodes = $classChildsP;
 
-	$request->setAttribute("childrenCount", $childrenCount);
+        $item->nodesCount = $classChildsCount;
 
+        $childrenCount += sizeof($classChildsP);
+
+        if (sizeof($classChildsP) > 1) {
+
+            $item->sort = false; //Temporary!!!
+        } else {
+
+            $item->sort = false;
+        }
+
+
+
+        $shownFieldDefs = array();
+
+        $fieldDefs = $nodeClass->getFieldDefs();
+
+        $fieldDefsKeys = array_keys($fieldDefs);
+
+        foreach ($fieldDefsKeys as $fdk) {
+
+            $fieldDef = $fieldDefs[$fdk];
+
+            if ($fieldDef->shown) {
+
+                $shownFieldDefs[] = $fieldDef;
+            }
+        }
+
+
+
+        $item->shownFields = $shownFieldDefs;
+
+        $item->fieldCount = sizeof($fieldDefs);
+
+        $childrenByClasses[] = $item;
+    }
+
+
+
+    $request->setAttribute("childrenByClasses", $childrenByClasses);
+
+    $request->setAttribute("childrenCount", $childrenCount);
 }
 
+function updatenode($request) {
 
+    global $session, $AdminTrnsl;
 
-function updatenode($request1) {
-	global $session, $AdminTrnsl,$request;
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+    $node_id = (int) $request->getParameter("id");
 
-	$node_id = (int)$request->getParameter("id");
+    $node = Node::findById($node_id);
 
-	$node =  Node::findById($node_id);
 
 
 
 
+    if ($node == null) {
 
-	if ($node == null) {
+        Header("Location: /admin/main.php");
+        die();
+    }
 
-		Header("Location: /admin/main.php");die();
 
-	}
 
+    $mid = (int) $request->getParameter("moder_id");
 
+    if ($mid != 0) {
 
-	$mid = (int)$request->getParameter("moder_id");
+        $ma = ModeratedAction::findById($mid);
+    }
 
-	if ($mid != 0) {
 
-		$ma = ModeratedAction::findById($mid);
 
-	}
+    $nodeClass = $node->getNodeClass();
 
+    $request->setAttribute("nodeClass", $nodeClass);
 
 
-	$nodeClass = $node->getNodeClass();
 
-	$request->setAttribute("nodeClass", $nodeClass);
+    $cuGroupRights = new NodeGroupRights($currentLoggedUser->group, $node);
 
+    if (!$cuGroupRights->hasWriteRight()) {
 
+        die($AdminTrnsl["You_do_not_have_rights_to_update_data_of_this_node"]);
+    }
 
-	$cuGroupRights = new NodeGroupRights($currentLoggedUser->group, $node);
 
-	if (!$cuGroupRights->hasWriteRight()) {
 
-		die($AdminTrnsl["You_do_not_have_rights_to_update_data_of_this_node"]);
+    $all_deps = $node->findAllDepends();
 
-	}
+    $request->setAttribute("depends", $all_deps);
 
 
 
-	$all_deps = $node->findAllDepends();
+    //let's validate fields
 
-	$request->setAttribute("depends", $all_deps);
+    $fieldErrors = array();
 
+    $fieldList = array();
 
 
-	//let's validate fields
 
-	$fieldErrors = array();
+    $_keys = array_keys($node->fields);
 
-	$fieldList = array();
+    foreach ($_keys as $fieldShortname) {
 
+        $field = $node->fields[$fieldShortname];
 
+        $fieldDef = $field->getFieldDef();
 
-	$_keys = array_keys($node->fields);
+        $verror = $field->setValue($request);
 
-	foreach ($_keys as $fieldShortname) {
+        if ($verror != null) {
 
-		$field = &$node->fields[$fieldShortname];
+            $fieldErrors[$fieldDef->shortname] = $verror;
+        }
 
-		$fieldDef = $field->getFieldDef();
+        $fieldList[$fieldDef->shortname] = $field;
+    }
 
-		$verror = $field->setValue($request);
 
-		if ($verror != null) {
 
-			$fieldErrors[$fieldDef->shortname] = $verror;
 
-		}
 
-		$fieldList[$fieldDef->shortname] = $field;
 
-	}
 
+    $NodeName = (string) $request->getParameter("NodeName");
 
+    if (strlen($NodeName) == 0)
+        $fieldErrors["NodeName"] = $AdminTrnsl["RequiredField"];
 
+    //		print_r($fieldErrors);
+    //		echo (int)count($fieldErrors);
+    //if validation not failed update fields data
 
+    if (sizeof($fieldErrors) == 0) {
 
+        //print_r($node);
 
+        $forwardUrl = "/admin/nodes.php?do=main&reload=yes&id=" . $node->id;
 
-	$NodeName = (string)$request->getParameter("NodeName");
+        if ($currentLoggedUser->group->isModerator) {
 
-	if (strlen($NodeName) == 0)
+            $node->name = $NodeName;
 
-		$fieldErrors["NodeName"] = $AdminTrnsl["RequiredField"];
+            $node->store();
 
-//		print_r($fieldErrors);
+            $forwardUrl .= "&msg=Node_update_success";
 
-//		echo (int)count($fieldErrors);
+            if ($ma) {
 
-	//if validation not failed update fields data
+                ModeratedAction::remove($ma->id);
+            }
+        } else {
 
-	if (sizeof($fieldErrors) == 0) {
+            $moderatedCreateAction = new PHPObject();
 
-		//print_r($node);
+            $moderatedCreateAction->NodeName = $NodeName;
 
-		$forwardUrl = "/admin/nodes.php?do=main&reload=yes&id=" . $node->id;
+            $moderatedCreateAction->NodePath = $node->absolutePath;
 
-		if ($currentLoggedUser->group->isModerator) {
+            $moderatedCreateAction->fieldList = $fieldList;
 
-			$node->name = $NodeName;
+            ModeratedAction::create($node->id, $currentLoggedUser->id, "update", $moderatedCreateAction);
 
-			$node->store();
+            $forwardUrl .= "&msg=nodes_updated_moderated";
+        }
 
-			$forwardUrl .= "&msg=Node_update_success";
+        checkNodeName($NodeName, $node);
 
-			if ($ma) {
+        Header("Location: " . $forwardUrl);
 
-				ModeratedAction::remove($ma->id);
+        return;
+    }
 
-			}
 
-		} else {
 
-			$moderatedCreateAction = new PHPObject();
+    $request->setAttribute("node", $node);
 
-			$moderatedCreateAction->NodeName = $NodeName;
 
-			$moderatedCreateAction->NodePath = $node->absolutePath;
 
-			$moderatedCreateAction->fieldList = $fieldList;
+    $iparams = array();
 
-			ModeratedAction::create($node->id, $currentLoggedUser->id, "update", $moderatedCreateAction);
+    $fieldDefs = $nodeClass->getFieldDefs();
 
-			$forwardUrl .= "&msg=nodes_updated_moderated";
+    $_keys = array_keys($fieldDefs);
 
-		}
+    foreach ($_keys as $_k) {
 
-		checkNodeName($NodeName,$node);
+        $fieldDef = $fieldDefs[$_k];
 
-		Header("Location: ".$forwardUrl);
+        $item = new phpobject();
 
-		return;
 
-	}
 
+        $fieldShortname = $fieldDef->shortname;
 
+        $field = $fieldList[$fieldShortname];
 
-	$request->setAttribute("node", $node);
+        $params = $field->getParamersForIncludeControlJSP();
 
 
 
-	$iparams = array();
+        $item->jspname = $field->getJSPControlName();
 
-	$fieldDefs = $nodeClass->getFieldDefs();
+        $item->fieldDef = $fieldDef;
 
-	$_keys = array_keys($fieldDefs);
+        $item->params = $params;
 
-	foreach ($_keys as $_k) {
+        $iparams[] = $item;
+    }
 
-		$fieldDef = $fieldDefs[$_k];
+    $request->setAttribute("fieldDefs", $iparams);
 
-		$item = new phpobject();
+    $request->setAttribute("validationErrors", $fieldErrors);
 
 
 
-		$fieldShortname = $fieldDef->shortname;
+    $request->setAttribute("NodeName", $NodeName);
 
-		$field = $fieldList[$fieldShortname];
+    subnodeslist($request, $node, $all_deps, $currentLoggedUser);
 
-		$params = $field->getParamersForIncludeControlJSP();
 
 
+    if ($ma) {
 
-		$item->jspname = $field->getJSPControlName();
+        $request->setAttribute("moder_action", $ma);
+    }
 
-		$item->fieldDef = $fieldDef;
 
-		$item->params = $params;
 
-		$iparams[] = $item;
-
-	}
-
-	$request->setAttribute("fieldDefs", $iparams);
-
-	$request->setAttribute("validationErrors", $fieldErrors);
-
-
-
-	$request->setAttribute("NodeName", $NodeName);
-
-	subnodeslist($request, $node, $all_deps, $currentLoggedUser);
-
-
-
-	if ($ma) {
-
-		$request->setAttribute("moder_action", $ma);
-
-	}
-
-
-
-	usetemplate("nodes/editnode");
-
+    usetemplate("nodes/editnode");
 }
 
+function properties($request) {
 
+    global $session;
 
-function properties($request1) {
-
-	global $session,$request;
-
-	$node_id = (int)$request->getParameter("node_id");
-
-
-
-	$node =  Node::findById($node_id);
-
-	if ($node == null) {
-
-		die("Invalid request argument");
-
-	}
+    $node_id = (int) $request->getParameter("node_id");
 
 
 
-	$nodeMap = new phpobject();
+    $node = Node::findById($node_id);
 
-	$nodeMap->NodeShortname = $node->shortname;
+    if ($node == null) {
 
-	$nodeMap->NodeDynamicTemplate = $node->dynamicTemplate;
-
-	$nodeMap->NodeAdminURL = $node->adminUrl;
-
-	$nodeMap->NodeID = $node->id;
-
-	$nodeMap->id = $node->id;
-
-	$nodeMap->parent_id = $node->parent_id;
+        die("Invalid request argument");
+    }
 
 
 
-	$request->setAttribute("nodeMap", $nodeMap);
+    $nodeMap = new phpobject();
 
-	$request->setAttribute("nodeIsRoot", $node->isRoot());
+    $nodeMap->NodeShortname = $node->shortname;
 
-	$request->setAttribute("node", $node);
+    $nodeMap->NodeDynamicTemplate = $node->dynamicTemplate;
+
+    $nodeMap->NodeAdminURL = $node->adminUrl;
+
+    $nodeMap->NodeID = $node->id;
+
+    $nodeMap->id = $node->id;
+
+    $nodeMap->parent_id = $node->parent_id;
 
 
 
-	usetemplate("nodes/properties");
+    $request->setAttribute("nodeMap", $nodeMap);
 
+    $request->setAttribute("nodeIsRoot", $node->isRoot());
+
+    $request->setAttribute("node", $node);
+
+
+
+    usetemplate("nodes/properties");
 }
 
+function properties_update($request) {
 
+    global $session;
 
-function properties_update($request1) {
+    $node_id = (int) $request->getParameter("node_id");
 
-	global $session,$request;
+    $node = Node::findById($node_id);
 
-	$node_id = (int)$request->getParameter("node_id");
+    if ($node == null) {
 
-	$node =  Node::findById($node_id);
+        die("Invalid request argument");
+    }
 
-	if ($node == null) {
 
-		die("Invalid request argument");
 
-	}
+    $nodeClass = $node->getNodeClass();
 
 
 
-	$nodeClass = $node->getNodeClass();
+    $parent = $node->getParent();
 
 
 
-	$parent = $node->getParent();
+    //now validate node fields
 
+    $fieldErrors = array();
 
+    $NodeShortname = $request->getParameter("NodeShortname");
 
-	//now validate node fields
+    $NodeDynamicTemplate = $request->getParameter("NodeDynamicTemplate");
 
-	$fieldErrors = array();
+    $NodeAdminURL = $request->getParameter("NodeAdminURL");
 
-	$NodeShortname = $request->getParameter("NodeShortname");
 
-	$NodeDynamicTemplate = $request->getParameter("NodeDynamicTemplate");
 
-	$NodeAdminURL = $request->getParameter("NodeAdminURL");
+    if ($parent != null) {
 
+        if ($NodeShortname == null) {
 
+            $NodeShortname = "";
+        }
 
-	if ($parent != null) {
+        if (!Validator::validateShortname($NodeShortname)) {
 
-		if ($NodeShortname == null) {
+            $fieldErrors["NodeShortname"] = "Bad shorname";
+        }
+    } else {
 
-			$NodeShortname = "";
+        $NodeShortname = "";
+    }
 
-		}
 
-		if(!Validator::validateShortname($NodeShortname)) {
 
-			$fieldErrors["NodeShortname"] = "Bad shorname";
+    if ($parent != null) {
 
-		}
+        if ($NodeShortname == null)
+            $NodeShortname = "";
 
-	} else {
+        if (strlen($NodeShortname) == 0)
+            $fieldErrors["NodeShortname"] = "Required field";
+    } else {
 
-		$NodeShortname = "";
+        $NodeShortname = "";
+    }
 
-	}
 
 
+    if (!($NodeShortname == $node->shortname) && ($parent != null) && $parent->hasChildren($NodeShortname)) {
 
-	if ($parent != null) {
+        $fieldErrors["NodeShortname"] = "Duplicate shortname in this subtree";
+    }
 
-		if ($NodeShortname == null)
 
-			$NodeShortname = "";
 
-		if (strlen($NodeShortname) == 0)
+    if ($NodeDynamicTemplate == null)
+        $NodeDynamicTemplate = "";
 
-			$fieldErrors["NodeShortname"] = "Required field";
+    if ($NodeAdminURL == null)
+        $NodeAdminURL = "";
 
-	} else {
 
-		$NodeShortname = "";
 
-	}
+    if (sizeof($fieldErrors) == 0) {
 
+        $node_id = $node->id;
 
+        $node->setShortname($NodeShortname);
 
-	if (!($NodeShortname == $node->shortname) && ($parent != null) && $parent->hasChildren($NodeShortname)) {
+        $node->dynamicTemplate = $NodeDynamicTemplate;
 
-		$fieldErrors["NodeShortname"] = "Duplicate shortname in this subtree";
+        $node->adminUrl = $NodeAdminURL;
 
-	}
+        $node->store();
 
 
 
-	if ($NodeDynamicTemplate == null)
+        header("Location: /admin/nodes.php?do=properties&msg=Node_properties_update_success&reload=true&node_id=" . $node_id);
+    }
 
-		$NodeDynamicTemplate = "";
 
-	if ($NodeAdminURL == null)
 
-		$NodeAdminURL = "";
+    $nodeMap = new phpobject();
 
+    $nodeMap->NodeShortname = $NodeShortname;
 
+    $nodeMap->NodeDynamicTemplate = $NodeDynamicTemplate;
 
-	if (sizeof($fieldErrors) == 0) {
+    $nodeMap->NodeAdminURL = $NodeAdminURL;
 
-		$node_id = $node->id;
+    $nodeMap->NodeID = $node->id;
 
-		$node->setShortname($NodeShortname);
+    $nodeMap->id = $node->id;
 
-		$node->dynamicTemplate = $NodeDynamicTemplate;
+    $nodeMap->parent_id = $node->parent_id;
 
-		$node->adminUrl = $NodeAdminURL;
 
-		$node->store();
 
+    $request->setAttribute("nodeMap", $nodeMap);
 
+    $request->setAttribute("node", $node);
 
-		header("Location: /admin/nodes.php?do=properties&msg=Node_properties_update_success&reload=true&node_id=".$node_id);
+    $request->setAttribute("nodeIsRoot", $node->isRoot());
 
-	}
+    $request->setAttribute("validationErrors", $fieldErrors);
 
 
 
-	$nodeMap = new phpobject();
-
-	$nodeMap->NodeShortname = $NodeShortname;
-
-	$nodeMap->NodeDynamicTemplate = $NodeDynamicTemplate;
-
-	$nodeMap->NodeAdminURL = $NodeAdminURL;
-
-	$nodeMap->NodeID = $node->id;
-
-	$nodeMap->id = $node->id;
-
-	$nodeMap->parent_id = $node->parent_id;
-
-
-
-	$request->setAttribute("nodeMap", $nodeMap);
-
-	$request->setAttribute("node", $node);
-
-	$request->setAttribute("nodeIsRoot", $node->isRoot());
-
-	$request->setAttribute("validationErrors", $fieldErrors);
-
-
-
-	usetemplate("nodes/properties");
-
+    usetemplate("nodes/properties");
 }
 
+function dependencies($request) {
 
+    global $session;
 
-function dependencies($request1) {
+    $node_id = (int) $request->getParameter("node_id");
 
-	global $session,$request;
+    $node = Node::findById($node_id);
 
-	$node_id = (int)$request->getParameter("node_id");
+    if ($node == null) {
 
-	$node = Node::findById($node_id);
+        Header("Location: /admin/main.php");
+        die();
 
-	if ($node == null) {
+        return;
+    }
 
-		Header("Location: /admin/main.php");die();
-
-		return;
-
-	}
-
-	$action = $request->getParameter("action");
-
-
-
-	if ($action == "adddep") {
-
-		$class_id = (int)$request->getParameter("class_id");
-
-		$nc =  NodeClass::findById($class_id);
-
-		$node->addDependentClass($nc);
-
-		header("Location: /admin/nodes.php?do=dependencies&node_id=".$node->id);
-
-	} else if ($action == "removedep") {
-
-		$class_id = (int)$request->getParameter("class_id");
-
-		$node->removeDepend(NodeClass::findById($class_id));
-
-		header("Location: /admin/nodes.php?do=dependencies&node_id=".$node->id);
-
-	}
+    $action = $request->getParameter("action");
 
 
 
-	$deps = $node->findDepends();
+    if ($action == "adddep") {
 
-	$nodeClass = $node->getNodeClass();
+        $class_id = (int) $request->getParameter("class_id");
 
-	$classDeps = $nodeClass->getDependentClasses();
+        $nc = NodeClass::findById($class_id);
 
-	$allClasses =  NodeClass::findAll();
+        $node->addDependentClass($nc);
 
-	$availClasses = array();
+        header("Location: /admin/nodes.php?do=dependencies&node_id=" . $node->id);
+    } else if ($action == "removedep") {
 
-	foreach ($allClasses as $nodeClass)
+        $class_id = (int) $request->getParameter("class_id");
 
-		if (!in_array($nodeClass->id, array_keys ($classDeps)) && !in_array($nodeClass->id, array_keys ($deps))) {
+        $node->removeDepend(NodeClass::findById($class_id));
 
-			$availClasses[] = $nodeClass;
-
-		}
-
-
-
-	$request->setAttribute("availClasses", $availClasses);
-
-	$request->setAttribute("nodeDeps", $deps);
+        header("Location: /admin/nodes.php?do=dependencies&node_id=" . $node->id);
+    }
 
 
 
-	$request->setAttribute("node", $node);
+    $deps = $node->findDepends();
 
-	usetemplate("nodes/dependencies");
+    $nodeClass = $node->getNodeClass();
 
+    $classDeps = $nodeClass->getDependentClasses();
+
+    $allClasses = NodeClass::findAll();
+
+    $availClasses = array();
+
+    foreach ($allClasses as $nodeClass)
+        if (!in_array($nodeClass->id, array_keys($classDeps)) && !in_array($nodeClass->id, array_keys($deps))) {
+
+            $availClasses[] = $nodeClass;
+        }
+
+
+
+    $request->setAttribute("availClasses", $availClasses);
+
+    $request->setAttribute("nodeDeps", $deps);
+
+
+
+    $request->setAttribute("node", $node);
+
+    usetemplate("nodes/dependencies");
 }
+function permissions($request) {
+
+    global $session;
+
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
 
 
-function permissions($request1) {
+    $node_id = (int) $request->getParameter("node_id");
 
-	global $session,$request;
+    $node = Node::findById($node_id);
 
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+    if ($node == null) {
 
+        Header("Location: /admin/main.php");
+        die();
 
-
-	$node_id = (int)$request->getParameter("node_id");
-
-	$node =  Node::findById($node_id);
-
-	if ($node == null) {
-
-		Header("Location: /admin/main.php");die();
-
-		return;
-
-	}
+        return;
+    }
 
 
 
-	$action = $request->getParameter("action");
+    $action = $request->getParameter("action");
 
-	$recurs = $request->getParameter("recursive");
+    $recurs = $request->getParameter("recursive");
+    if ($action != null) {
 
-	if ($action != null) {
+        $cg = UserGroup::findAll();
 
-		$cg = UserGroup::findAll();
+        if (sizeof($cg) != 0) {
+            
+            foreach ($cg as $ug) {
 
-		if (sizeof($cg) != 0) {
-
-			foreach ($cg as $ug) {
-
-				if ($ug->id == $currentLoggedUser->group->id || $ug->id == 1)
-
-					continue;
-
-				$ngr = new NodeGroupRights($ug, $node);
-
-				if ($request->getParameter($ug->id . "_r") == null) {
-
-					$ngr->unsetViewRight();
-
-				} else {
-
-					$ngr->setViewRight();
-
-				}
-
-				if ($request->getParameter($ug->id . "_d") == null) {
-
-					$ngr->unsetDeleteRight();
-
-				} else {
-
-					$ngr->setDeleteRight();
-
-				}
-
-				if ($request->getParameter($ug->id . "_w") == null) {
-
-					$ngr->unsetWriteRight();
-
-				} else {
-
-					$ngr->setWriteRight();
-
-				}
-
-				$ngr->store();
-
-				if ($recurs != null) {
-
-					$node->setRightsToChildren($ug, $ngr->getRights());
-
-				}
-
-			}
-
-		}
-
-		header("Location: /admin/nodes.php?do=permissions&node_id=".$node->id."&msg=Node_permissions_update_successefull&reload=true");
-
-	}
+                if ($ug->id == $currentLoggedUser->group->id || $ug->id == 1)
+                    continue;
+                if(isset($_POST['recursive']) && $_POST['recursive'] == 1 && $_POST['run_group']!=0 && $ug->id!=$_POST['run_group']){
+                    continue;
+                }
+                
+                $ngr = new NodeGroupRights($ug, $node);
 
 
+                if ($request->getParameter($ug->id . "_r") == null) {
 
-	$groups = UserGroup::findAll();
+                    $ngr->unsetViewRight();
+                } else {
 
-	$rights = array();
+                    $ngr->setViewRight();
+                }
 
-	foreach ($groups as $g) {
+                if ($request->getParameter($ug->id . "_d") == null) {
 
-		$rights[] = new NodeGroupRights($g, $node);
+                    $ngr->unsetDeleteRight();
+                } else {
 
-	}
+                    $ngr->setDeleteRight();
+                }
 
-	$request->setAttribute("groups", $groups);
+                if ($request->getParameter($ug->id . "_w") == null) {
 
-	$request->setAttribute("rights", $rights);
+                    $ngr->unsetWriteRight();
+                } else {
 
-	$request->setAttribute("node", $node);
+                    $ngr->setWriteRight();
+                }
 
-	usetemplate("nodes/permissions");
 
+                if ($request->getParameter($ug->id . "_r_c") == null) {
+
+                    $ngr->unsetViewRightForChildren();
+                } else {
+
+                    $ngr->setViewRightForChildren();
+                }
+
+                if ($request->getParameter($ug->id . "_d_c") == null) {
+
+                    $ngr->unsetDeleteRightForChildren();
+                } else {
+
+                    $ngr->setDeleteRightForChildren();
+                }
+
+                if ($request->getParameter($ug->id . "_w_c") == null) {
+
+                    $ngr->unsetWriteRightForChildren();
+                } else {
+
+                    $ngr->setWriteRightForChildren();
+                }
+
+                //----------
+
+                $ngr->store();
+                //edump($_POST['recursive']);
+//                                echo $ngr->getRightsForChildren();
+//                                die();
+                if (isset($_POST['recursive']) && $_POST['recursive'] == 1) {
+
+                    $node->setRightsToChildren($ug, $ngr->getRightsForChildren());
+                }
+//				if ($recurs != null) {
+//
+//					$node->setRightsToChildren($ug, $ngr->getRights());
+//
+//				}
+            }
+        }
+
+        header("Location: /admin/nodes.php?do=permissions&node_id=" . $node->id . "&msg=Node_permissions_update_successefull&reload=true");
+    }
+
+
+
+    $groups = UserGroup::findAll();
+
+    $rights = array();
+
+    foreach ($groups as $g) {
+
+        $rights[] = new NodeGroupRights($g, $node);
+    }
+
+    $request->setAttribute("groups", $groups);
+
+    $request->setAttribute("rights", $rights);
+
+    $request->setAttribute("node", $node);
+
+    usetemplate("nodes/permissions");
 }
+/*
+function permissions($request) {
 
-function multi_children_sort($request1){
+    global $session;
 
-	global $session,$request;
-
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
-
-
-
-	$node_id = (int)$request->getParameter("node_id");
-
-	$node = Node::findById($node_id);
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
 
 
-	preg_match_all("|([0-9]+)|i",$_POST["node_ids"],$matches);
+    $node_id = (int) $request->getParameter("node_id");
 
-	foreach($matches[1] as $k=>$v){
+    $node = Node::findById($node_id);
 
-			$params = array(
+    if ($node == null) {
 
-							array($k+1, $v),
+        Header("Location: /admin/main.php");
+        die();
 
-						);
+        return;
+    }
 
-			$sql = "UPDATE dbm_nodes SET subtree_order=? WHERE id=?";
 
-			$batch = array($sql);
 
-			DBUtils::execBatch($batch, $params);	
+    $action = $request->getParameter("action");
 
-	}
+    $recurs = $request->getParameter("recursive");
 
-	$c = $node->getChildrenForGroup($currentLoggedUser->group->id);
+    if ($action != null) {
 
-	$request->setAttribute("children", $c);
+        $cg = UserGroup::findAll();
 
-	$request->setAttribute("parents", $node->getParentList());
+        if (sizeof($cg) != 0) {
 
-	$request->setAttribute("node", $node);
+            foreach ($cg as $ug) {
 
-		usetemplate("nodes/children_sort");
+                if ($ug->id == $currentLoggedUser->group->id || $ug->id == 1)
+                    continue;
+
+                $ngr = new NodeGroupRights($ug, $node);
+
+                if ($request->getParameter($ug->id . "_r") == null) {
+
+                    $ngr->unsetViewRight();
+                } else {
+
+                    $ngr->setViewRight();
+                }
+
+                if ($request->getParameter($ug->id . "_d") == null) {
+
+                    $ngr->unsetDeleteRight();
+                } else {
+
+                    $ngr->setDeleteRight();
+                }
+
+                if ($request->getParameter($ug->id . "_w") == null) {
+
+                    $ngr->unsetWriteRight();
+                } else {
+
+                    $ngr->setWriteRight();
+                }
+
+                //----------
+                if ($request->getParameter($ug->id . "_r_c") == null) {
+
+                    $ngr->unsetViewRightForChildren();
+                } else {
+
+                    $ngr->setViewRightForChildren();
+                }
+
+                if ($request->getParameter($ug->id . "_d_c") == null) {
+
+                    $ngr->unsetDeleteRightForChildren();
+                } else {
+
+                    $ngr->setDeleteRightForChildren();
+                }
+
+                if ($request->getParameter($ug->id . "_w_c") == null) {
+
+                    $ngr->unsetWriteRightForChildren();
+                } else {
+
+                    $ngr->setWriteRightForChildren();
+                }
+                //----------
+
+                $ngr->store();
+//                                echo $ngr->getRightsForChildren();
+//                                die();
+                $node->setRightsToChildren($ug, $ngr->getRightsForChildren());
+//				if ($recurs != null) {
+//
+//					$node->setRightsToChildren($ug, $ngr->getRights());
+//
+//				}
+            }
+        }
+
+        header("Location: /admin/nodes.php?do=permissions&node_id=" . $node->id . "&msg=Node_permissions_update_successefull&reload=true");
+    }
+
+
+
+    $groups = UserGroup::findAll();
+
+    $rights = array();
+
+    foreach ($groups as $g) {
+
+        $rights[] = new NodeGroupRights($g, $node);
+    }
+
+    $request->setAttribute("groups", $groups);
+
+    $request->setAttribute("rights", $rights);
+
+    $request->setAttribute("node", $node);
+
+    usetemplate("nodes/permissions");
+}*/
+
+function multi_children_sort($request) {
+
+    global $session;
+
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+
+
+
+    $node_id = (int) $request->getParameter("node_id");
+
+    $node = Node::findById($node_id);
+
+
+
+    preg_match_all("|([0-9]+)|i", $_POST["node_ids"], $matches);
+
+    foreach ($matches[1] as $k => $v) {
+
+        $params = array(
+            array($k + 1, $v),
+        );
+
+        $sql = "UPDATE dbm_nodes SET subtree_order=? WHERE id=?";
+
+        $batch = array($sql);
+
+        DBUtils::execBatch($batch, $params);
+    }
+
+    $c = $node->getChildrenForGroup($currentLoggedUser->group->id);
+
+    $request->setAttribute("children", $c);
+
+    $request->setAttribute("parents", $node->getParentList());
+
+    $request->setAttribute("node", $node);
+
+    usetemplate("nodes/children_sort");
 
 
 
 //print_r($matches[1]);
-
 }
 
-function children_sort($request1) {
+function children_sort($request) {
 
-	global $session,$request;
+    global $session;
 
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
-
-
-
-	$node_id = (int)$request->getParameter("node_id");
-
-	$node = Node::findById($node_id);
-
-	if ($node == null) {
-
-		Header("Location: /admin/main.php");die();
-
-		return;
-
-	}
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
 
 
-	$action = $request->getParameter("action");
+    $node_id = (int) $request->getParameter("node_id");
 
-	if ($action != null) {
+    $node = Node::findById($node_id);
 
-		$kid_action = $request->getParameter("kid_act");
+    if ($node == null) {
 
-		$kid_id = $request->getParameter("kid_id");
+        Header("Location: /admin/main.php");
+        die();
 
-
-
-		$kid = Node::findById($kid_id);
-
-
-
-		if ($kid_action=="up") {
-
-			$kid->moveUpInSubtreeOrder();
-
-		} else if ($kid_action == "down") {
-
-			$kid->moveDownInSubtreeOrder();
-
-		} else if ($kid_action == "top") {
-
-			$kid->moveHomeInSubtreeOrder();
-
-		} else if ($kid_action == "bottom") {
-
-			$kid->moveEndInSubtreeOrder();
-
-		}
+        return;
+    }
 
 
 
-	}
+    $action = $request->getParameter("action");
+
+    if ($action != null) {
+
+        $kid_action = $request->getParameter("kid_act");
+
+        $kid_id = $request->getParameter("kid_id");
 
 
 
-	$c = $node->getChildrenForGroup($currentLoggedUser->group->id);
-
-	$request->setAttribute("children", $c);
-
-	$request->setAttribute("parents", $node->getParentList());
-
-	$request->setAttribute("node", $node);
+        $kid = Node::findById($kid_id);
 
 
 
-	usetemplate("nodes/children_sort");
+        if ($kid_action == "up") {
 
+            $kid->moveUpInSubtreeOrder();
+        } else if ($kid_action == "down") {
+
+            $kid->moveDownInSubtreeOrder();
+        } else if ($kid_action == "top") {
+
+            $kid->moveHomeInSubtreeOrder();
+        } else if ($kid_action == "bottom") {
+
+            $kid->moveEndInSubtreeOrder();
+        }
+    }
+
+
+
+    $c = $node->getChildrenForGroup($currentLoggedUser->group->id);
+
+    $request->setAttribute("children", $c);
+
+    $request->setAttribute("parents", $node->getParentList());
+
+    $request->setAttribute("node", $node);
+
+
+
+    usetemplate("nodes/children_sort");
 }
 
+function move_node_xmltree($request) {
 
+    global $session;
 
 
 
-function move_node_xmltree($request1) {
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
-	global $session,$request;
 
 
+    Header("Content-Type: text/xml; charset=" . ADMIN_CHARSET);
 
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+    print("<?xml version='1.0' encoding='" . ADMIN_CHARSET . "'?>");
 
+    print("<TreeNode>");
 
 
-	Header("Content-Type: text/xml; charset=".ADMIN_CHARSET);
 
-	print("<?xml version='1.0' encoding='".ADMIN_CHARSET."'?>");
+    $target_id = (int) $request->getParameter("node_id");
 
-	print("<TreeNode>");
+    $generate_from_id = (int) $request->getParameter("parent_id");
 
 
 
-	$target_id = (int)$request->getParameter("node_id");
+    $target = Node::findById($target_id);
 
-	$generate_from_id = (int)$request->getParameter("parent_id");
+    $current = null;
 
+    if ($generate_from_id == -1) {
 
+        $current = Node::findRoot();
 
-	$target = Node::findById($target_id);
 
-	$current = null;
 
-	if ($generate_from_id == -1) {
+        $hasAllowedChildren = $current->hasChildrenForMoveNodeTree($currentLoggedUser, $target);
 
-		$current = Node::findRoot();
+        $cdeps = $current->findAllDepends();
 
+        $isValid = $currentLoggedUser->canEditNode($current) && !$current->equals($target) && !$current->equals($target->getParent()) && $cdeps[$target->nodeClassId] != null;
 
 
-		$hasAllowedChildren = $current->hasChildrenForMoveNodeTree($currentLoggedUser, $target);
 
-		$cdeps = $current->findAllDepends();
+        print("<TreeNode NodeId=\"tree");
 
-		$isValid = $currentLoggedUser->canEditNode($current) && !$current->equals($target) && !$current->equals($target->getParent()) && $cdeps[$target->nodeClassId]!=null;
+        print($current->id);
 
+        print("\" Title=\"");
 
+        print(prepareStringForXML($current->name));
 
-		print("<TreeNode NodeId=\"tree");
+        print('"');
 
-		print($current->id);
+        if ($isValid) {
 
-		print("\" Title=\"");
+            print(" Href=\"javascript: selectNode(");
 
-		print(prepareStringForXML($current->name));
+            print($current->id);
 
-		print('"');
+            print(")\"");
+        }
 
-		if ($isValid) {
 
-			print(" Href=\"javascript: selectNode(");
 
-			print($current->id);
+        if ($hasAllowedChildren) {
 
-			print(")\"");
+            print(" expanded=\"true\"");
 
-		}
+            print('>');
 
 
 
-		if ($hasAllowedChildren) {
+            print(move_node_xmltree_getNodeXML($current, $target, $currentLoggedUser));
 
-			print(" expanded=\"true\"");
 
-			print('>');
 
+            print("</TreeNode>");
+        } else {
 
+            print("/>");
+        }
+    } else {
 
-			print(move_node_xmltree_getNodeXML($current, $target, $currentLoggedUser));
+        $current = Node::findById($generate_from_id);
 
+        if ($current != null) {
 
+            print(move_node_xmltree_getNodeXML($current, $target, $currentLoggedUser));
+        }
+    }
 
-			print("</TreeNode>");
 
-		} else {
 
-			print("/>");
-
-		}
-
-	} else {
-
-		$current = Node::findById($generate_from_id);
-
-		if ($current != null) {
-
-			print(move_node_xmltree_getNodeXML($current, $target, $currentLoggedUser));
-
-		}
-
-	}
-
-
-
-	print("</TreeNode>");
-
+    print("</TreeNode>");
 }
-
-
 
 function move_node_xmltree_getNodeXML($node, $target, $currentLoggedUser) {
 
-	$strBuffer = "";
+    $strBuffer = "";
 
-	$children = $node->getChildrenForUser($currentLoggedUser);
+    $children = $node->getChildrenForUser($currentLoggedUser);
 
-	for ($i = 0; $i < sizeof($children); $i++) {
+    for ($i = 0; $i < sizeof($children); $i++) {
 
-		$child = $children[$i];
-
-
-
-		$title = $child->name;
+        $child = $children[$i];
 
 
 
-		$hasAllowedChildren = $child->hasChildrenForMoveNodeTree($currentLoggedUser, $target);
-
-		$tparent = $target->getParent();
-
-		$cdeps = $child->findAllDepends();
-
-		$isValid = $child->id!=$target->id && $child->id != $tparent->id && $currentLoggedUser->canEditNode($child) && $cdeps[$target->nodeClassId]!= null;
+        $title = $child->name;
 
 
 
-		if ($hasAllowedChildren || $isValid) {
+        $hasAllowedChildren = $child->hasChildrenForMoveNodeTree($currentLoggedUser, $target);
 
-			$src = "";
+        $tparent = $target->getParent();
 
-			if ($hasAllowedChildren) {
+        $cdeps = $child->findAllDepends();
 
-				$src = " NodeXmlSrc=\"/admin/nodes.php?do=move_node_xmltree&amp;node_id=" . $target->id . "&amp;parent_id=" . $child->id . "\"";
-
-			}
+        $isValid = $child->id != $target->id && $child->id != $tparent->id && $currentLoggedUser->canEditNode($child) && $cdeps[$target->nodeClassId] != null;
 
 
 
-			$strBuffer .= "<TreeNode NodeId=\"tree" . $child->id . "\" Title=\"" . prepareStringForXML($title) . "\" " . $src;
+        if ($hasAllowedChildren || $isValid) {
 
-			if ($isValid) {
+            $src = "";
 
-				$strBuffer .= " Href=\"javascript:selectNode(" . $child->id . ")\"";
+            if ($hasAllowedChildren) {
 
-			}
-
-
-
-			$strBuffer .= ">";
-
-			$strBuffer .= "</TreeNode>";
-
-		}
-
-	}
+                $src = " NodeXmlSrc=\"/admin/nodes.php?do=move_node_xmltree&amp;node_id=" . $target->id . "&amp;parent_id=" . $child->id . "\"";
+            }
 
 
 
-	return $strBuffer;
+            $strBuffer .= "<TreeNode NodeId=\"tree" . $child->id . "\" Title=\"" . prepareStringForXML($title) . "\" " . $src;
 
+            if ($isValid) {
+
+                $strBuffer .= " Href=\"javascript:selectNode(" . $child->id . ")\"";
+            }
+
+
+
+            $strBuffer .= ">";
+
+            $strBuffer .= "</TreeNode>";
+        }
+    }
+
+
+
+    return $strBuffer;
 }
-
-
 
 function move_node_treeconfig($request) {
 
-	$node_id = (int)$request->getParameter("node_id");
+    $node_id = (int) $request->getParameter("node_id");
 
 
 
-	Header("Content-Type: text/xml; charset=".ADMIN_CHARSET);
+    Header("Content-Type: text/xml; charset=" . ADMIN_CHARSET);
 
-	echo "<?xml version='1.0' encoding='".ADMIN_CHARSET."'?>";
+    echo "<?xml version='1.0' encoding='" . ADMIN_CHARSET . "'?>";
 
-	echo "<deeptreeconfig>";
+    echo "<deeptreeconfig>";
 
-	echo "  <TopXMLSrc>/admin/nodes.php?do=move_node_xmltree&amp;node_id=" . $node_id . "&amp;parent_id=-1</TopXMLSrc>";
+    echo "  <TopXMLSrc>/admin/nodes.php?do=move_node_xmltree&amp;node_id=" . $node_id . "&amp;parent_id=-1</TopXMLSrc>";
 
-	echo "  <TreeLabel>Test tree</TreeLabel>";
+    echo "  <TreeLabel>Test tree</TreeLabel>";
 
-	echo "  <StartPage>/</StartPage>";
+    echo "  <StartPage>/</StartPage>";
 
-	echo "  <ErrorPage>http://www.microsoft.com</ErrorPage>";
+    echo "  <ErrorPage>http://www.microsoft.com</ErrorPage>";
 
-	echo "  <ContentTarget>fraContent</ContentTarget>";
+    echo "  <ContentTarget>fraContent</ContentTarget>";
 
-	echo "  <TreeId>cmtree</TreeId>";
+    echo "  <TreeId>cmtree</TreeId>";
 
-	echo "  <TreeRootPath>/admin/main.php</TreeRootPath>";
+    echo "  <TreeRootPath>/admin/main.php</TreeRootPath>";
 
-	echo "  <Locale>en-us</Locale>";
+    echo "  <Locale>en-us</Locale>";
 
-	echo "  <LocaleTextDirection>LTR</LocaleTextDirection>";
+    echo "  <LocaleTextDirection>LTR</LocaleTextDirection>";
 
-	echo "</deeptreeconfig>";
-
+    echo "</deeptreeconfig>";
 }
 
+function moveselectednode($request) {
+    $nodes = explode(',', $request->getParameter("node_ids"));
+
+    //p($nodes,1);
+    global $session;
+
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
 
-
-
-function move_node_form($request1) {
-
-	global $session,$request;
-
-	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
-
-	$node_id = (int)$request->getParameter("node_id");
-
-
-
-	$target = Node::findById($node_id);
-
-	$root = Node::findRoot();
-
-
-
-	$hasAllowedChildren = $root->hasChildrenForMoveNodeTree($currentLoggedUser, $target);
-
-	$rdeps = $root->findAllDepends();
-
-	$isValid = $root->id != $target->id && !$root->equals($target->getParent()) && $currentLoggedUser->canEditNode($root) && $rdeps[$target->nodeClassId] != null;
-
-
-
-	if (!$hasAllowedChildren && !$isValid) {
-
-		$request->setAttribute("NoValidNodes", true);
-
-	}
-
-	usetemplate("nodes/move_node");
-
+    foreach ($nodes as $k => &$v) {
+        $node_id = (int) $v;
+        $target = Node::findById($node_id);
+        $root = Node::findRoot();
+        $hasAllowedChildren = $root->hasChildrenForMoveNodeTree($currentLoggedUser, $target);
+        $rdeps = $root->findAllDepends();
+        $isValid = $root->id != $target->id && !$root->equals($target->getParent()) && $currentLoggedUser->canEditNode($root) && $rdeps[$target->nodeClassId] != null;
+        if (!$hasAllowedChildren && !$isValid) {
+            $request->setAttribute("NoValidNodes", true);
+        }
+    }
+    usetemplate("nodes/move_nodes");
 }
 
+function move_node_form($request) {
+
+    global $session;
+
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+
+    $node_id = (int) $request->getParameter("node_id");
 
 
-function move_node($request1) {
 
-	global $session,$request;
+    $target = Node::findById($node_id);
 
-	$node = Node::findById((int)$request->getParameter("node_id"));
+    $root = Node::findRoot();
 
-	$request->setAttribute("oldParent",$node->getParent());
 
-	$node->moveToNewParent((int)$request->getParameter("np_id"));
 
-	usetemplate("nodes/move_node_ok");
+    $hasAllowedChildren = $root->hasChildrenForMoveNodeTree($currentLoggedUser, $target);
 
+    $rdeps = $root->findAllDepends();
+
+    $isValid = $root->id != $target->id && !$root->equals($target->getParent()) && $currentLoggedUser->canEditNode($root) && $rdeps[$target->nodeClassId] != null;
+
+
+
+    if (!$hasAllowedChildren && !$isValid) {
+
+        $request->setAttribute("NoValidNodes", true);
+    }
+
+    usetemplate("nodes/move_node");
 }
 
+function move_nodes($request) {
+
+    global $session;
+    $nodes = explode(',', $request->getParameter("node_ids"));
+    foreach ($nodes as $k => &$v) {
+        $node_id = (int) $v;
+        $node = Node::findById($node_id);
+        $request->setAttribute("oldParent", $node->getParent());
+        $node->moveToNewParent((int) $request->getParameter("np_id"));
+    }
+    usetemplate("nodes/move_nodes_ok");
+}
+
+function move_node($request) {
 
 
+    global $session;
 
+    $node = Node::findById((int) $request->getParameter("node_id"));
 
-/*
+    $request->setAttribute("oldParent", $node->getParent());
 
-function importxmlform(&$request) {
+    $node->moveToNewParent((int) $request->getParameter("np_id"));
 
-	global $session;
-
-		$node_id = (int)$request->getParameter("id");
-
-
-
-		$node = Node::findById($node_id);
-
-		if (node == null) {
-
-			$request->setAttribute("error_msg", "Invalid request argument");
-
-		}
-
-		$request->setAttribute("node", node);
-
-
-
-		usetemplate(request, response, "nodes/importxml");
-
-	} catch (ServletException e) {
-
-		throw e;
-
-	} catch (Exception e) {
-
-		e.printStackTrace(System.err);
-
-	}
-
+    usetemplate("nodes/move_node_ok");
 }
 
 /*
 
-function importxml(&$request) {
+  function importxmlform(&$request) {
 
-	global $session;
+  global $session;
 
-		$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
-
-		$node_id = (int)$request->getParameter("id");
+  $node_id = (int)$request->getParameter("id");
 
 
 
-		$node = Node::findById($node_id);
+  $node = Node::findById($node_id);
 
-		if (node == null) {
+  if (node == null) {
 
-			$request->setAttribute("error_msg", "Invalid request argument");
+  $request->setAttribute("error_msg", "Invalid request argument");
 
-		}
+  }
 
-
-
-		Validator validationErrors = new Validator();
+  $request->setAttribute("node", node);
 
 
 
-		String xmlFilePath = $request->getParameter("xmlfile.file");
+  usetemplate(request, response, "nodes/importxml");
 
-				FileReader fr = new FileReader(xmlFilePath);
+  } catch (ServletException e) {
 
-			Node.importFromXML(fr, node, currentLoggedUser);
+  throw e;
 
-		} catch(Throwable e) {
+  } catch (Exception e) {
 
-			validationErrors.setErrorMsg("xmlfile", e.getMessage());
+  e.printStackTrace(System.err);
 
-		}
+  }
+
+  }
+
+  /*
+
+  function importxml(&$request) {
+
+  global $session;
+
+  $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+
+  $node_id = (int)$request->getParameter("id");
 
 
 
-		$request->setAttribute("validationErrors", validationErrors.getValidationErrors());
+  $node = Node::findById($node_id);
 
-		$request->setAttribute("node", node);
+  if (node == null) {
+
+  $request->setAttribute("error_msg", "Invalid request argument");
+
+  }
+
+
+
+  Validator validationErrors = new Validator();
+
+
+
+  String xmlFilePath = $request->getParameter("xmlfile.file");
+
+  FileReader fr = new FileReader(xmlFilePath);
+
+  Node.importFromXML(fr, node, currentLoggedUser);
+
+  } catch(Throwable e) {
+
+  validationErrors.setErrorMsg("xmlfile", e.getMessage());
+
+  }
+
+
+
+  $request->setAttribute("validationErrors", validationErrors.getValidationErrors());
+
+  $request->setAttribute("node", node);
 
 
 
 
-		usetemplate(request, response, "nodes/importxml");
+  usetemplate(request, response, "nodes/importxml");
 
-	} catch (ServletException e) {
+  } catch (ServletException e) {
 
-		throw e;
+  throw e;
 
-	} catch (Exception e) {
+  } catch (Exception e) {
 
-		e.printStackTrace(System.err);
+  e.printStackTrace(System.err);
 
-	}
+  }
 
+  }
+
+  /*
+
+  function exportxmlform(&$request) {
+
+  global $session;
+
+  $node_id = (int)$request->getParameter("id");
+
+
+
+  $node = Node::findById($node_id);
+
+  if (node == null) {
+
+  $request->setAttribute("error_msg", "Invalid request argument");
+
+  }
+
+  $request->setAttribute("node", node);
+
+
+
+  usetemplate(request, response, "nodes/exportxml");
+
+  } catch (ServletException e) {
+
+  throw e;
+
+  } catch (Exception e) {
+
+  e.printStackTrace(System.err);
+
+  }
+
+  }
+
+  /*
+
+  function exportxml(&$request) {
+
+  global $session;
+
+  $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+
+  $node_id = (int)$request->getParameter("id");
+
+
+
+  $node = Node::findById($node_id);
+
+  if (node == null) {
+
+  $request->setAttribute("error_msg", "Invalid request argument");
+
+  }
+
+
+
+  boolean exportNode = $request->getParameter("exportnode") != null;
+
+  Reader xmlReader;
+
+  if (exportNode == false) {
+
+  xmlReader = node.exportChildrenToXML();
+
+  } else {
+
+  xmlReader = node.exportToXML();
+
+  }
+
+  response.addHeader("Content-disposition", "filename=" + node.shortname + ".xmld");
+
+  response.addHeader("Pragma", "no-cache");
+
+  response.addHeader("Expires", "0");
+
+  response.setContentType("application/octetstream");
+
+  int i;
+
+  Writer out = response.getWriter();
+
+  while ((i=xmlReader.read()) != -1) {
+
+  out.write(i);
+
+  }
+
+  out.flush();
+
+  } catch (Exception e) {
+
+  e.printStackTrace(System.err);
+
+  }
+
+  }
+
+ */
+
+function children_sort_class($request) {
+
+    global $session;
+
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+
+
+
+    $node_id = (int) $request->getParameter("node_id");
+
+    $node = Node::findById($node_id);
+
+    if ($node == null) {
+
+        Header("Location: /admin/main.php");
+        die();
+
+        return;
+    }
+
+
+    $c = $node->getChildrenOfClassesForGroup($currentLoggedUser->group->id, array($_GET['class']));
+
+
+
+    $nodeClass = NodeClass::findByShortname($_GET['class']);
+    $shownFieldDefs = array();
+    $fieldDefs = $nodeClass->getFieldDefs();
+    $fieldDefsKeys = array_keys($fieldDefs);
+    foreach ($fieldDefsKeys as $fdk) {
+        $fieldDef = $fieldDefs[$fdk];
+        if ($fieldDef->shown) {
+            $shownFieldDefs[] = $fieldDef;
+        }
+    }
+    //print_r($shownFieldDefs);
+    //exit();
+    $node->shownFields = $shownFieldDefs;
+    $node->nodeClass = $nodeClass;
+
+
+
+    $request->setAttribute("children", $c);
+
+    $request->setAttribute("parents", $node->getParentList());
+
+    $request->setAttribute("node", $node);
+
+
+    usetemplate("nodes/children_sort_class");
 }
 
-/*
+function multi_children_sort_class($request) {
 
-function exportxmlform(&$request) {
+    global $session;
+    $sorts = explode(',', $_POST['sorts']);
+    $node_ids = explode(',', $_POST['node_ids']);
 
-	global $session;
-
-		$node_id = (int)$request->getParameter("id");
-
-
-
-		$node = Node::findById($node_id);
-
-		if (node == null) {
-
-			$request->setAttribute("error_msg", "Invalid request argument");
-
-		}
-
-		$request->setAttribute("node", node);
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
 
 
-		usetemplate(request, response, "nodes/exportxml");
+    $node_id = (int) $request->getParameter("node_id");
 
-	} catch (ServletException e) {
+    $node = Node::findById($node_id);
+    foreach ($node_ids as $k => $v) {
+        $params = array(
+            array($sorts[$k], $v),
+        );
 
-		throw e;
+        $sql = "UPDATE dbm_nodes SET subtree_order=? WHERE id=?";
 
-	} catch (Exception e) {
+        $batch = array($sql);
 
-		e.printStackTrace(System.err);
-
-	}
-
+        DBUtils::execBatch($batch, $params);
+    }
+    header('Location: /admin/nodes.php?do=children_sort_class&node_id=' . $node->id . '&class=' . $_POST['class'] . '&reload=1');
+    exit();
 }
 
-/*
-
-function exportxml(&$request) {
-
-	global $session;
-
-		$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
-
-		$node_id = (int)$request->getParameter("id");
+//sdump(ST-getmicrotime1());
 
 
+function comments($request) {
 
-		$node = Node::findById($node_id);
+    global $session;
 
-		if (node == null) {
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
-			$request->setAttribute("error_msg", "Invalid request argument");
+    $node_id = (int) $request->getParameter("node_id");
 
-		}
+    $node = Node::findById($node_id);
 
+    if ($node == null) {
 
+        Header("Location: /admin/main.php");
+        die();
 
-		boolean exportNode = $request->getParameter("exportnode") != null;
+        return;
+    }
 
-		Reader xmlReader;
+    //$action = $request->getParameter("action");
+    //$request->setAttribute("children", $c);
+    //$request->setAttribute("parents", $node->getParentList());
 
-		if (exportNode == false) {
-
-			xmlReader = node.exportChildrenToXML();
-
-		} else {
-
-			xmlReader = node.exportToXML();
-
-		}
-
-		response.addHeader("Content-disposition", "filename=" + node.shortname + ".xmld");
-
-		response.addHeader("Pragma", "no-cache");
-
-		response.addHeader("Expires", "0");
-
-		response.setContentType("application/octetstream");
-
-		int i;
-
-		Writer out = response.getWriter();
-
-		while ((i=xmlReader.read()) != -1) {
-
-			out.write(i);
-
-		}
-
-		out.flush();
-
-	} catch (Exception e) {
-
-		e.printStackTrace(System.err);
-
-	}
-
+    $request->setAttribute("node", $node);
+    usetemplate("nodes/comments");
 }
 
-*/
+function add_comment($request) {
+    $node_id = (int) $request->getParameter("node_id");
+    $parent_id = (int) $request->getParameter("parent_id");
+    $name = $request->getParameter("name");
+    $text = $request->getParameter("text");
+    global $MDB;
+//    $MDB->Query("SELECT id FROM dbm_nodes WHERE name = '". db_escape($name) . "' AND class_id = 212");
+//    $res = $MDB->NextResult();
+//    $user_id = $res ? $res['id'] : 0;
+    if ($id = addComment($node_id, $parent_id, $name, $text, $user_id))
+        die(getCommentPage($id, $node_id, ADMIN_COMMENTS_PER_PAGE));
+    else
+        die('false');
+}
+
+function remove_comments($request) {
+    global $MDB;
+    $comments = explode('|', $request->getParameter("comments"));
+    foreach ($comments as $k => $v)
+        $comments[$k] = (int) $v;
+    if (sizeof($comments)) {
+        $MDB->QDel("dbm_comments", 'id=' . implode(" OR id=", $comments));
+        $node_id = (int) $request->getParameter("node_id");
+        $node = QNode::getInstance($node_id);
+        if ($node->nodeClassId == 213)
+            $MDB->QUpdate("dbm_nfv_idea", array('comments_count' => getNumberOfComments($node_id), "last_comment_time" => date('Y-m-d H:i:s')), "node_id = $node_id");
+        if ($node->nodeClassId == 218)
+            $MDB->QUpdate("dbm_nfv_blog_item", array('counter' => getNumberOfComments($node_id), "date_last" => date('Y-m-d H:i:s')), "node_id = $node_id");
+    }
+    die('true');
+}
+
+function block_comments($request) {
+    global $MDB;
+    $comments = explode('|', $request->getParameter("comments"));
+    foreach ($comments as $k => $v)
+        $comments[$k] = (int) $v;
+    if (sizeof($comments)) {
+        $MDB->QUpdate("dbm_comments", array('active' => $request->getParameter("active")), 'id=' . implode(" OR id=", $comments));
+    }
+    die('true');
+}
+
+function save_comment($request) {
+    global $MDB;
+    $MDB->QUpdate("dbm_comments", array('text' => CProtect::short_html($request->getParameter("text"), 2000)), "id = " . (int) $request->getParameter("id"));
+    die('true');
+}
+
+function seo($request) {
+
+    global $session;
+    global $MDB;
+    global $SETUP_LANGUAGES;
+    global $SETUP_LANGUAGES_TITLE;
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+
+    $node_id = (int) $request->getParameter("node_id");
+
+    $node = Node::findById($node_id);
+
+    if ($node == null) {
+
+        Header("Location: /admin/main.php");
+        die();
+
+        return;
+    }
+
+    //$action = $request->getParameter("action");
+    //$request->setAttribute("children", $c);
+    //$request->setAttribute("parents", $node->getParentList());
+    //error_reporting(E_ALL);
+    //ini_set('display_errors','On');
+    $request->setAttribute("node", $node);
+    if (isset($_GET['do1']) && $_GET['do1'] == 'update') {
+        $MDB->Query("SELECT * FROM dbm_seo WHERE node_id = $node_id AND lang='" . $_GET['lang'] . "'");
+        $seo = $MDB->NextResult();
+        if ($seo) {
+            $MDB->QUpdate('dbm_seo', array(
+                'lang' => $_GET['lang'],
+                'node_id' => $_GET['node_id'],
+                'seo_title' => $_POST['seo_title'],
+                'seo_keywords' => $_POST['seo_keywords'],
+                'seo_description' => $_POST['seo_description'],
+                'seo_google' => $_POST['seo_google'],
+                'seo_google_childs' => $_POST['seo_google_childs']
+                    ), " node_id = $node_id AND lang='" . $_GET['lang'] . "'");
+        } else {
+            $MDB->QIns('dbm_seo', array(
+                'lang' => $_GET['lang'],
+                'node_id' => $_GET['node_id'],
+                'seo_title' => $_POST['seo_title'],
+                'seo_keywords' => $_POST['seo_keywords'],
+                'seo_description' => $_POST['seo_description'],
+                'seo_google' => $_POST['seo_google'],
+                'seo_google_childs' => $_POST['seo_google_childs']
+            ));
+        }
+        header('Location: /admin/nodes.php?do=seo&node_id=' . $node_id . ' &do1=success');
+        exit();
+    }
+    if (isset($_GET['lang']))
+        usetemplate("nodes/seo_lang");
+    else
+        usetemplate("nodes/seo");
+}
+
+function clone_node($request) {
+    global $session;
+    global $MDB;
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
+    $node_id = (int) $request->getParameter("id");
+    $node = Node::findById($node_id);
+    if ($node == null) {
+        Header("Location: /admin/main.php");
+        die();
+    }
+    $cloneSubNodes = $request->getParameter("clonesubnodes") == 'true' ? true : false;
+    cloneNode($node_id, $node->getParent()->id, $request->getParameter("clonesubnodes") == 'true' ? true : false);
+    header('Location: /admin/nodes.php?do=main&id=' . $node->getParent()->id . '&msg=Clone_success&reload=1');
+    exit();
+}
+
+function cloneNode($node_id, $parent_id, $cloneSubNodes, $is_child = false) {
+    global $MDB;
+    $node = QNode::getInstance($node_id);
+    $class = NodeClass::findById($node->nodeClassId);
+    $clone = QNode::createNode(QNode::getInstance($parent_id)->absolutePath, $node->name . ($is_child ? '' : '_copy'), $is_child ? $node->shortname : DBUtils::getNextSequnceID("nodes"), $class->shortname);
+    $clone->fields = $node->fields;
+    $clone->dynamicTemplate = $node->dynamicTemplate;
+    $MDB->Query("SELECT * FROM dbm_class_fields");
+    $r = $MDB->getRecords();
+    foreach ($r as $k => $v)
+        $class_fields[$v['id']] = $v['type_id'];
+    if ($clone->fields)
+        foreach ($clone->fields as $k => $v) {
+            if (in_array($class_fields[$v->fieldDefId], array(9, 15))) //file, server file
+                $clone->fields[$k]->value = '';
+            if (in_array($class_fields[$v->fieldDefId], array(14, 24)) && $clone->fields[$k]->value) { //new image
+                //edump($class->fieldDefs['photo'],'',10);
+                $cloneImageDir =  $clone->getHref();
+                $fileName = explode('/', $clone->fields[$k]->value);
+                $fileName = array_pop($fileName);
+                $imgFolders = array('i', 'o', 'ithumb', 'ithumb2', 'ithumb3');
+                foreach ($imgFolders as $imgFolder) {
+                    if (file_exists($_SERVER["DOCUMENT_ROOT"] . "/s/$imgFolder" . $clone->fields[$k]->value)) {
+                        FileWorks::mkdir_recursive($_SERVER["DOCUMENT_ROOT"] . "/s/$imgFolder$cloneImageDir");
+                        copy($_SERVER["DOCUMENT_ROOT"] . "/s/$imgFolder" . $clone->fields[$k]->value, $_SERVER["DOCUMENT_ROOT"] . "/s/$imgFolder$cloneImageDir/$fileName");
+                    }
+                }
+                $clone->fields[$k]->value = "$cloneImageDir/$fileName";
+            }
+        }
+    $clone->store();
+    if ($cloneSubNodes) {
+        $kids = $node->getChildrenIds();
+        if ($kids)
+            foreach ($kids as $k => $v)
+                cloneNode($v, $clone->id, $cloneSubNodes, true);
+    }
+}
+
+function multiphoto($request) {
+
+    global $session;
+    $node_id = (int) $request->getParameter("node_id");
+    if (isset($_SESSION['multiphoto'][$node_id])) {
+        //unset($_SESSION['multiphoto'][$node_id]);
+    }
+
+    if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/s/tmp/multiphoto/' . session_id() . '/' . $node_id . '/')) {
+        //FileWorks::rmdir_recursive($_SERVER['DOCUMENT_ROOT'] .'/files/tmp/multiphoto/'.session_id().'/'.$node_id.'/', true);
+    }
+    $currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
 
 
+    $node = Node::findById($node_id);
+
+    if ($node == null) {
+
+        Header("Location: /admin/main.php");
+        die();
+
+        return;
+    }
+    $class = NodeClass::findById($node->nodeClassId);
+    $request->setAttribute("class", $class);
+    $request->setAttribute("node", $node);
+    $request->setAttribute("node_id", $node_id);
+    //dump($class->fieldDefs['multiphoto'],'',9);
+    usetemplate("nodes/multiphoto");
+}
+
+function multiphoto_save($request) {
+
+    global $session;
+    $node_id = (int) $request->getParameter("node_id");
+    $node = Node::findById($node_id);
+
+    $class = NodeClass::findById($node->nodeClassId);
+    //sdump($class->fieldDefs['photo']->fieldParameters['save_original'],'',9);
+    //edump($request);
+    $use_watermak = (int) $request->getParameter("use_watermak");
+
+    $config = $class->fieldDefs['multiphoto']->fieldParameters['default_value'];
+
+    $exp = explode(":", $config);
+    $fclass = NodeClass::findById($exp[0]);
+    $field = $fclass->getFieldDef((int) trim($exp[1]));
+    $watermark_positions = array(
+        'cb', 'cc', 'lb', 'lt', 'rb', 'rt'
+    );
+    $fieldDef=$field;
+    // edump($fieldDef);
+    if (isset($_SESSION['multiphoto'][$node_id])) {
+        foreach ($_SESSION['multiphoto'][$node_id] as $k => $v) {
+
+            $new_node = QNode::createNode($node->getHref(), 'photo', '', $fclass->shortname, array('use_watermark_' . $field->shortname => '1'));
+                    
+            if ($fieldDef->fieldParameters["parent_save"] == 'false') {
+                $prefix = '';
+                $imgPath = QNode::getImgPath($new_node);
+            } else {
+                $prefix = $new_node->id . '_';
+                $imgPath = QNode::getImgPath($new_node->getParent());
+            }
+
+
+            FileWorks::mkdir_recursive(FIELD_IMGLIB_THUMBNAILS_DIR .  $imgPath . '/');
+            FileWorks::mkdir_recursive(FIELD_IMGLIB_DIR . $imgPath . '/');
+            
+            if ($fieldDef->fieldParameters["save_original"]) {
+                FileWorks::mkdir_recursive(FIELD_IMGLIB_ORIGINAL_DIR . $imgPath . '/');
+                @copy($_SERVER['DOCUMENT_ROOT'] . '/s/tmp/multiphoto/' . session_id() . '/' . $node_id . '/'. $v, FIELD_IMGLIB_ORIGINAL_DIR .  $imgPath . '/' . $prefix . $v);
+                //edump($_SERVER['DOCUMENT_ROOT'] . '/s/tmp/multiphoto/' . session_id() . '/' . $node_id . '/'. $v, FIELD_IMGLIB_ORIGINAL_DIR .  $imgPath . '/' . $prefix . $v);
+            }
+
+            @copy($_SERVER['DOCUMENT_ROOT'] . '/s/tmp/multiphoto/' . session_id() . '/' . $node_id . '/thumb_' . $k, FIELD_IMGLIB_THUMBNAILS_DIR .  $imgPath . '/' . $prefix . $v);
+            @copy($_SERVER['DOCUMENT_ROOT'] . '/s/tmp/multiphoto/' . session_id() . '/' . $node_id . '/crop_' . $k, FIELD_IMGLIB_DIR  . $imgPath . '/' . $prefix . $v);
+            if ($use_watermak == 1 && $field->fieldTypeId == 24) {
+                $size = getimagesize(FIELD_IMGLIB_DIR . $imgPath . '/' . $prefix . $v);
+
+                $thumb = PhpThumbFactory::create(FIELD_IMGLIB_DIR .  $imgPath . '/' . $prefix . $v);
+                $thumb->resize($size[0]);
+                foreach ($watermark_positions as $k1 => $v1) {
+                    if (strlen($field->fieldParameters[$v1]) && file_exists($_SERVER['DOCUMENT_ROOT'] . $field->fieldParameters[$v1])) {
+                        $mark_image = $_SERVER['DOCUMENT_ROOT'] . $field->fieldParameters[$v1];
+                        $position = $v1;
+                        $padding = (int) $field->fieldParameters[$v1 . '_padding'];
+
+                        $thumb->createWatermark($mark_image, $position, $padding);
+                    }
+                }
+                $thumb->save(preg_replace('/\/+/', '/', FIELD_IMGLIB_DIR .  $imgPath . '/' . $prefix . $v));
+            }
+            QNode::updateNode($new_node, array($field->shortname => preg_replace('/\/+/', '/',  $imgPath . '/' . $prefix . $v)));
+        }
+        unset($_SESSION['multiphoto'][$node_id]);
+    }
+
+    if (file_exists($_SERVER['DOCUMENT_ROOT'] . '/s/tmp/multiphoto/' . session_id() . '/' . $node_id . '/')) {
+        FileWorks::rmdir_recursive($_SERVER['DOCUMENT_ROOT'] . '/s/tmp/multiphoto/' . session_id() . '/' . $node_id . '/', true);
+    }
+    header('Location: /admin/nodes.php?do=main&id=' . $node_id);
+}
 ?>

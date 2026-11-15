@@ -22,7 +22,7 @@
 		function onCompleteUpload(t)
 		{
 			var tt=eval(t);
-			t='/imglib/_newimage/tmp/'+tt[0].folder+'/end/'+tt[0].img_name;
+			t='/s/tmp/'+tt[0].folder+'/end/'+tt[0].img_name;
 			cropper_info.folder=tt[0].folder;
 			cropper_info.image=tt[0].img_name;
 			cropper_info.original_width=tt[0].width;

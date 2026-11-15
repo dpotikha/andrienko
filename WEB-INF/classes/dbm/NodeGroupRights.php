@@ -3,9 +3,15 @@
 DEFINE("VIEW_RIGHT_MASK", 0x01);
 DEFINE("WRITE_RIGHT_MASK", 0x02);
 DEFINE("DELETE_RIGHT_MASK", 0x04);
+DEFINE("VIEW_RIGHT_FOR_CHILDREN_MASK", 0x08);
+DEFINE("WRITE_RIGHT_FOR_CHILDREN_MASK", 0x10);
+DEFINE("DELETE_RIGHT_FOR_CHILDREN_MASK", 0x20);
 DEFINE("NOT_VIEW_RIGHT_MASK", 0x7E);
 DEFINE("NOT_WRITE_RIGHT_MASK", 0x7D);
 DEFINE("NOT_DELETE_RIGHT_MASK", 0x7B);
+DEFINE("NOT_VIEW_RIGHT_FOR_CHILDREN_MASK", 0x77);
+DEFINE("NOT_WRITE_RIGHT_FOR_CHILDREN_MASK", 0x6F);
+DEFINE("NOT_DELETE_RIGHT_FOR_CHILDREN_MASK", 0x5F);
 
 class NodeGroupRights {
     var $rights = 0;
@@ -50,12 +56,69 @@ class NodeGroupRights {
         $this->rights &= NOT_WRITE_RIGHT_MASK;
     }
 
+    //--------------------
+    function hasViewRightForChildren() {
+        return ($this->rights & VIEW_RIGHT_FOR_CHILDREN_MASK) != 0;
+    }
+    function getViewRightForChildren() {
+    	return $this->hasViewRightForChildren();
+    }
+
+    function hasWriteRightForChildren() {
+        return ($this->rights & WRITE_RIGHT_FOR_CHILDREN_MASK) != 0;
+    }
+    function hasDeleteRightForChildren() {
+		return ($this->rights & DELETE_RIGHT_FOR_CHILDREN_MASK) != 0;
+    }
+    function getWriteRightForChildren() {
+        return $this->hasWriteRightForChildren();
+    }
+    function getDeleteRightForChildren() {
+        return $this->hasDeleteRightForChildren();
+    }
+
+    function setViewRightForChildren() {
+        $this->rights |= VIEW_RIGHT_FOR_CHILDREN_MASK;
+    }
+    function setWriteRightForChildren() {
+        $this->rights |= WRITE_RIGHT_FOR_CHILDREN_MASK;
+    }
+    function setDeleteRightForChildren() {
+        $this->rights |= DELETE_RIGHT_FOR_CHILDREN_MASK;
+    }
+    function unsetDeleteRightForChildren() {
+        $this->rights &= NOT_DELETE_RIGHT_FOR_CHILDREN_MASK;
+    }
+
+    function unsetViewRightForChildren() {
+        $this->rights &= NOT_VIEW_RIGHT_FOR_CHILDREN_MASK;
+    }
+    function unsetWriteRightForChildren() {
+        $this->rights &= NOT_WRITE_RIGHT_FOR_CHILDREN_MASK;
+    }
+    //--------------------
 
     var $group = null;
     var $node = null;
 
     function getRights() {
         return $this->rights;
+    }
+    function getRightsForChildren() {
+        $t = 0;
+        if ($this->hasViewRightForChildren()) {
+            $t |= VIEW_RIGHT_MASK;
+            $t |= VIEW_RIGHT_FOR_CHILDREN_MASK;
+        }
+        if ($this->hasWriteRightForChildren()) {
+            $t |= WRITE_RIGHT_MASK;
+            $t |= WRITE_RIGHT_FOR_CHILDREN_MASK;
+        }
+        if ($this->hasDeleteRightForChildren()) {
+            $t |= DELETE_RIGHT_MASK;
+            $t |= DELETE_RIGHT_FOR_CHILDREN_MASK;
+        }
+        return $t;
     }
     function setRights($rights) {
         $this->rights = $rights ;

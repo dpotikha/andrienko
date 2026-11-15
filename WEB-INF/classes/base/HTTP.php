@@ -8,71 +8,77 @@ class HTTPRequest {
 
     function prepare() {
         foreach ( $_GET as $k=>$v ) {
-        	if (false) {
-        		if (!is_array($v)) {
-            		$this->parameters[$k] = stripslashes($v);
-            	} else {
-            		$this->parameters[$k] = array();
-            		foreach ($v as $_k=>$_v) {
-            			$this->parameters[$k][$_k] = stripslashes($_v);
-            		}
-            	}
+            if (false) {
+                if (!is_array($v)) {
+                    $this->parameters[$k] = stripslashes($v);
+                } else {
+                    $this->parameters[$k] = array();
+                    foreach ($v as $_k=>$_v) {
+                        if(!is_array($_v))
+                            $this->parameters[$k][$_k] = stripslashes($_v);
+                        else
+                            $this->parameters[$k][$_k] = $_v;
+                    }
+                }
             } else {
-            	$this->parameters[$k] = $_GET[$k];
+                $this->parameters[$k] = $_GET[$k];
             }
         }
         foreach ( $_POST as $k=>$v ) {
-        	if (false) {
-            	if (!is_array($v)) {
-            		$this->parameters[$k] = stripslashes($v);
-            	} else {
-            		$this->parameters[$k] = array();
-            		foreach ($v as $_k=>$_v) {
-            			$this->parameters[$k][$_k] = stripslashes($_v);
-            		}
-            	}
+            if (false) {
+                if (!is_array($v)) {
+                    $this->parameters[$k] = stripslashes($v);
+                } else {
+                    $this->parameters[$k] = array();
+                    foreach ($v as $_k=>$_v) {
+                        if(!is_array($_v))
+                            $this->parameters[$k][$_k] = stripslashes($_v);
+                        else
+                            $this->parameters[$k][$_k] = $_v;
+                    }
+                }
             } else {
-	            $this->parameters[$k] = $_POST[$k];
-	        }
+                $this->parameters[$k] = $_POST[$k];
+            }
         }
 
-        foreach ($_FILES as $pfname => $pf){
-            if( is_array($pf["name"]) ){
+        foreach ($_FILES as $pfname => $pf) {
+            if( is_array($pf["name"]) ) {
                 $this->parameters[$pfname] = array();
-                for($i = 0; $i < sizeof($pf["name"]); $i++){
+                for($i = 0; $i < sizeof($pf["name"]); $i++) {
                     $this->parameters[$pfname][$i] = new UploadedFile(
-                        array( "name" => $pf["name"][$i], "type" => $pf["type"][$i],
-                                "tmp_name" => $pf["tmp_name"][$i], "size" => $pf["size"][$i] ) );
+                            array( "name" => $pf["name"][$i], "type" => $pf["type"][$i],
+                                    "tmp_name" => $pf["tmp_name"][$i], "size" => $pf["size"][$i] ) );
                 }
-            }else{
+            }else {
                 $this->parameters[$pfname] =  new UploadedFile($pf) ;
             }
         }
     }
 
-    function getParameter($paramName){
-    	$paramName = $this->parametersPrefix . $paramName;
-    	if (array_key_exists($paramName, $this->parameters)) {
-        	return $this->parameters[$paramName];
+    function getParameter($paramName) {
+        $paramName = $this->parametersPrefix . $paramName;
+        if (array_key_exists($paramName, $this->parameters)) {
+            return $this->parameters[$paramName];
         } else {
-        	$res = null;
-        	return $res;
+            $res = null;
+            return $res;
         }
     }
 
-	function getAttribute($attName) {
-		return $this->attributes[$attName];
-	}
+    function getAttribute($attName) {
+        return $this->attributes[$attName];
+    }
 
-	function setAttribute($attName, $value) {
-		$this->attributes[$attName] = $value;
-	}
+    function setAttribute($attName, $value) {
+        $this->attributes[$attName] = $value;
+    }
 
-    function getServerName(){
+    function getServerName() {
         return $_SERVER["SERVER_NAME"];
     }
 
-    function getServerPort(){
+    function getServerPort() {
         return $_SERVER["SERVER_PORT"];
     }
 
@@ -91,7 +97,7 @@ class HTTPRequest {
     }
 }
 
-class UploadedFile extends PHPObject{
+class UploadedFile extends PHPObject {
     var $name = "";
     var $type = "";
     var $tmp_name = "";
@@ -99,18 +105,21 @@ class UploadedFile extends PHPObject{
 
     function __construct($vals = null) {
         if($vals != null) {
-            $this->name = name2shortname($vals["name"]);
+			$exp=explode('.',$vals["name"]);
+			$ext=array_pop($exp);
+			$vals["name"]=implode('.',$exp);
+            $this->name = name2shortname($vals["name"]).'.'.name2shortname($ext);
             $this->type = $vals["type"];
             $this->tmp_name = $vals["tmp_name"];
             $this->size = $vals["size"];
         }
-     }
+    }
 
-    function isValid(){
+    function isValid() {
         return is_uploaded_file($this->tmp_name);
     }
 
-    function isEmpty()  {
+    function isEmpty() {
         return ( ( ($this->name == "none")  ||  ( $this->name == "" ) ) && ($this->size == 0) );
     }
 
@@ -119,11 +128,11 @@ class UploadedFile extends PHPObject{
     }
 
     function moveTo($destDir, $destName = null) {
-        if($destName == null ){
+        if($destName == null ) {
             $destName = $this->name;
         }
         $ret = move_uploaded_file($this->tmp_name, trim("$destDir/$destName"));
-        @chmod(trim("$destDir/$destName"), 0644);
+        @chmod(trim("$destDir/$destName"), 0777);
         return $ret;
     }
 }
@@ -162,6 +171,9 @@ class HTTPSession {
      * @param confParams array config. params from conf.xml
      */
     function __construct ( $confParams ) {
+        if(isset($_POST['SESSION_KEY'])){
+           session_id($_POST['SESSION_KEY']);
+        }
         session_name($confParams["name"]);
         session_start();
         $this->id = session_id();
@@ -177,6 +189,7 @@ class HTTPSession {
      * @return void
      */
     function setAttribute ( $name, $value ) {
+        
         $_SESSION[$name] = $value;
     }
 
@@ -187,7 +200,7 @@ class HTTPSession {
      * @return mixed
      */
     function getAttribute ( $name ) {
-        if(isset($_SESSION[$name])) {
+        if(isset($_SESSION[$name]) ) {
             return $_SESSION[$name];
         }
         return null;
@@ -200,9 +213,8 @@ class HTTPSession {
      * @return void
      */
     function removeAttribute ( $name ) {
-        global $HTTP_SESSION_VARS;
-		unset($HTTP_SESSION_VARS[$name]);
-		unset($_SESSION[$name]);
+        
+        unset($_SESSION[$name]);
     }
 
     /**
@@ -218,8 +230,8 @@ class HTTPSession {
 global $request;
 
 if ($request == null) {
-	$request = new HTTPRequest();
-	$request->prepare();
+    $request = new HTTPRequest();
+    $request->prepare();
 }
 
 $sessParams = array("name"=>"PHPSESSID");

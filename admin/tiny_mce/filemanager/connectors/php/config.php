@@ -35,7 +35,7 @@ $fckphp_config['prot'].="://";
 /*------------------------------------------------------------------------------*/
 /* The physical path to the document root, Set manually if not using apache	*/
 /*------------------------------------------------------------------------------*/
-$fckphp_config['basedir']=$_SERVER['DOCUMENT_ROOT'];
+$fckphp_config['basedir']=$_SERVER['DOCUMENT_ROOT'].'';
 //$fckphp_config['basedir'] = 'D:\Work\FCKEditor\www\FCKeditor.V2\editor\filemanager\browser\mcpuk' ;
 /*==============================================================================*/
 
@@ -50,7 +50,7 @@ $fckphp_config['urlprefix']=$fckphp_config['prot'].$_SERVER['SERVER_NAME'];
 /*------------------------------------------------------------------------------*/
 /* Path to user files relative to the document root (no trailing slash)		*/
 /*------------------------------------------------------------------------------*/
-$fckphp_config['UserFilesPath'] = "" ;
+$fckphp_config['UserFilesPath'] = "/s/" ;
 /*==============================================================================*/
 
 

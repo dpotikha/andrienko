@@ -44,6 +44,7 @@ $newarr=array();
 			$newarr[$k]["ch"]=($hasAllowedChildren)?1:0;
 			$newarr[$k]["tb"]=0;//0-none;1-bottom;2-top
 			$newarr[$k]["page"]=1;//0-none;1-bottom;2-top
+                        $newarr[$k]["isvalid"]=($isValid)?1:0;
 			$k++;
 		}
 			

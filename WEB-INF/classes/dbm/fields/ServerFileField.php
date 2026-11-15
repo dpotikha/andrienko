@@ -23,7 +23,7 @@ class ServerFileField extends Field {
 			if ($del == "1") {
 				$this->value = "";
 			} else {
-				if (strlen($v) == 0 && $fieldDef->required) {
+				if (mb_strlen($v) == 0 && $fieldDef->required) {
 					$verror = $AdminTrnsl["RequiredField"];
 					break;
 				}
@@ -43,7 +43,7 @@ class ServerFileField extends Field {
 			if (!file_exists($f)) {
 				return $this->getDefaultParamersForIncludeControlJSP();
 			} else {
-				$params["filename"] = substr($fname, strpos($fname, '/'));
+				$params["filename"] = mb_substr($fname, strpos($fname, '/'));
 				$params["name"] = $params["filename"];
 
 				$params["fileext"] = getFileExt($params["filename"]);
@@ -62,8 +62,8 @@ class ServerFileField extends Field {
 					$params["sizeFormatted"] = ($fsize) . " b";
 				}
 
-				$params["fileurl"] = "/files" . $fname;
-				$params["url"] = "/files" . $fname;
+				$params["fileurl"] = "/s/files" . $fname;
+				$params["url"] = "/s/files" . $fname;
 			}
 		} else {
 			return $this->getDefaultParamersForIncludeControlJSP();
@@ -93,7 +93,7 @@ class ServerFileField extends Field {
 		$fname = $this->value;
 		$file = FIELD_SERVERFILES_DIR . $fname;
 		if (file_exists($file)) {
-			return "<a href='/files" . $fname . "'>" . $fname . "</a>";
+			return "<a href='/s/files" . $fname . "'>" . $fname . "</a>";
 		} else {
 			return "";
 		}

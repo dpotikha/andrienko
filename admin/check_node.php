@@ -1,63 +1,82 @@
 <?php
-	
-	function checkNodeName(&$NodeName,$node){
-		$node=Node::findById($node->id);
-		if($node->dynamicTemplate=="book"&&$node->tfields["counter"]>0){
-			$contactNode=Node::findByPath("/contacts");
-			$childs=$node->getChildrenOfClass("notice");
-			$book_id=$node->id;
-			$bookNode=$node;
-			foreach($childs as $k=>$v){
-				$member_id=$v->fields["member"]->value;
-				$member_node=Node::findById($member_id);
-				$orderNode=Node::createWithDefaultValues0("/settings/my_messages", "Книга (".$bookNode->name.") в наличии!", "", "message");
-				$orderNode->fields["member"]->value=$member_id;
-				$orderNode->fields["message"]->value="Книга <a href='".$bookNode->getHref()."'>".$bookNode->name."</a> в наличии.";
-				$orderNode->store();
 
-$admin_email = $contactNode->tfields["email"];
-$book_path="http://".$_SERVER['HTTP_HOST'].$bookNode->getHref();
-$adminEmailText = <<<EOT
-<html>
-<body>
-Книга <a href="$book_path">$bookNode->name</a> в наличии.
-</body>
-</html>
-EOT;
-	$MAIL=new mime_mail();
-	$MAIL->setCharset("utf-8");
-	$MAIL->setFrom($admin_email);
-	$MAIL->setTo($member_node->tfields["email"]);
-	$MAIL->setSubject("Книга (".$bookNode->name.") в наличии");
-	$MAIL->setBody($adminEmailText);
-	$MAIL->send();
-//		sendMail($admin_email,$member_node->tfields["email"], "Книга (".$bookNode->name.") в наличии", $adminEmailText);
+function checkNodeOnRemove($node_id) {
+    global $MDB;
+    $MDB->QDel("dbm_comments", "node_id = $node_id");
+    $MDB->QDel("dbm_seo", "node_id = $node_id");
+    $node = QNode::getInstance($node_id);
+    $parent = QNode::getInstance($node->parent_id);
 
+    $parent = QNode::getInstance($node->parent_id);
+    $MDB->QIns('dbm_log', array(
+        'user_id' => $_SESSION['CurrentAdminUser']->id,
+        'activity' => 4,
+        'node_id' => $node->id,
+        'node_name' => $node->name,
+        'parent_id' => $parent->id,
+        'parent_name' => $parent->name,
+        'ip' => QURL::getClientIP(),
+        'server' => jsonServerVars(),
+        'date' => date('Y-m-d H:i:s')
+    ));
+}
 
-				Node::remove($v->id);
-				
-				$records=Node::findByQuery("SELECT n.* FROM {notice_book} n WHERE n.book='".$book_id."' AND n.member='".$member_id."'");
-					if(count($records)>0){
-						foreach($records as $k1=>$v1)
-						Node::remove($v1->id);
-					}
-				
-				
-				
-				
-				
-			}
-		}
-	};
-	
-	function checkNodeNameByClass(&$NodeName,$nodeClass,$fieldList){
-	//echo "+++";
-		if($nodeClass->default_template=="menuweek"){
-			$NodeName=date("d.m.Y",$fieldList["date1"]->value->time)." - ".date("d.m.Y",$fieldList["date2"]->value->time);
-		}elseif($nodeClass->default_template=="weekday"){
-			$NodeName=date("d.m.Y",$fieldList["date"]->value->time);
-			
-		}
-	};
+function checkNodeName(&$NodeName, $node) {
+    global $MDB;
+    $parent = QNode::getInstance($node->parent_id);
+    if ($node->dynamicTemplate == 'question_faq') {
+        //edump($_POST);
+        if ($_POST['theme'] > 0 && $_POST['faquser'] > 0 && strlen($_POST['answer'])) {
+            //edump($node->fields['faquser']->value);
+            $themeNode=QNode::getInstance($_POST['theme']);
+            $newNode=QNode::createNode($themeNode->getHref(), $node->name, '', 'question', array(
+                'username'=>$_POST['username'],
+                'answer'=>$_POST['answer'],
+                'faquser'=>$_POST['faquser']
+            ));
+
+            $MDB->QIns('dbm_log', array(
+                'user_id' => $_SESSION['CurrentAdminUser']->id,
+                'activity' => 3,
+                'node_id' => $newNode->id,
+                'node_name' => $newNode->name,
+                'parent_id' => $themeNode->id,
+                'parent_name' => $themeNode->name,
+                'ip' => QURL::getClientIP(),
+                'server' => jsonServerVars(),
+                'date' => date('Y-m-d H:i:s')
+            ));
+            $MDB->QIns('dbm_log', array(
+                'user_id' => $_SESSION['CurrentAdminUser']->id,
+                'activity' => 4,
+                'node_id' => $node->id,
+                'node_name' => $node->name,
+                'parent_id' => $parent->id,
+                'parent_name' => $parent->name,
+                'ip' => QURL::getClientIP(),
+                'server' => jsonServerVars(),
+                'date' => date('Y-m-d H:i:s')
+            ));
+            Node::remove($node->id);
+            QUrl::redirect('/admin/nodes.php?do=main&id='.$newNode->id);
+            
+        }
+    }
+    $MDB->QIns('dbm_log', array(
+        'user_id' => $_SESSION['CurrentAdminUser']->id,
+        'activity' => 2,
+        'node_id' => $node->id,
+        'node_name' => $node->name,
+        'parent_id' => $parent->id,
+        'parent_name' => $parent->name,
+        'ip' => QURL::getClientIP(),
+        'server' => jsonServerVars(),
+        'date' => date('Y-m-d H:i:s')
+    ));
+}
+
+function checkNodeNameByClass(&$NodeName, $nodeClass, $fieldList) {
+    
+}
 
 ?>

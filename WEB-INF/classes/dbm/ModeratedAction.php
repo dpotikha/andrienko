@@ -30,7 +30,7 @@ class ModeratedAction {
 		$this->time = $rs->getDate("time");
 	}
 
-	static function& findAll() {
+	function& findAll() {
 		global $connection;
 
 		$stmt = &$connection->prepareStatement("SELECT * FROM dbm_moderation ORDER BY time DESC");

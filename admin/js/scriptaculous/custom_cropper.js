@@ -1,1 +1,435 @@
-eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('6 2={};6 n={u:0,v:0,w:0,z:0,i:0,j:0};6 o={u:0,v:0,w:0,z:0,i:0,j:0};6 F={12:{x:0,y:0},G:0,H:0};6 R=13;p 1N(a){6 b=a.S}p 1O(a,b){k(1P(14)!="1Q")14.1R(a);2=b;2.1S=2.r=2.1T=2.1U=1}p 1k(){$("I").5.9="l";$("T").5.9="l";$("U").5.9="l"}p 1l(t){6 a=1V(t);t=\'/1W/1X/1Y/\'+a[0].J+\'/1Z/\'+a[0].1m;2.J=a[0].J;2.V=a[0].1m;2.7=a[0].i;2.8=a[0].j;$("15").q=2.J;$("16").17=\'<3 m="18"><3><W>20 1n:</W></3><3 5="K:L"></3><3 5="C:X; h:s;"><19 1a="\'+t+\'" 1o="1p V"   m="1q"/></3><3 m="1r" 5="h:s;"></3><3 5="K:L"></3></3><3 m="Y" 5="9:l"><3><W>1n:</W></3><3 5="K:L"></3><3 5="C:X; h:s;"><19 1a="\'+t+\'" 1o="1p V"   m="1b"/></3><3 m="1s" 5="h:s;"></3><3 5="K:L"></3></3>\';$("I").5.9="";6 b=2.M/2.N;6 c=(2.7>2.M)?2.M:2.7;6 d=(2.8>2.N)?2.N:2.8;k(b>1&&(2.7<2.M)){d=f.g(c/b)}Z k(b<1&&(2.8<2.N)){c=f.g(d*b)}6 e=(2.D=="1t")?{x:2.M,y:2.N}:{x:2.7,y:2.8};k(2.D=="1u"||(2.D=="10"&&2.7>=2.8)||(2.D=="11"&&2.7<=2.8)){d=2.8*c/2.7}Z k(2.D=="1v"||(2.D=="10"&&2.7<=2.8)||(2.D=="11"&&2.7>=2.8)){c=2.7*d/2.8}21=1c 1w.1x(\'1q\',{G:c,H:d,1y:e,1z:O,1A:O,1B:1C,1D:\'1r\'});6 b=2.i/2.j;6 c=(2.7>2.i)?2.i:2.7;6 d=(2.8>2.j)?2.j:2.8;k(b>1&&(2.7<2.i)){d=f.g(c/b)}Z k(b<1&&(2.8<2.j)){c=f.g(d*b)}6 e=(2.E=="1t")?{x:2.i,y:2.j}:{x:2.7,y:2.8};k(2.E=="1u"||(2.E=="10"&&2.7>=2.8)||(2.E=="11"&&2.7<=2.8)){d=2.8*c/2.7}Z k(2.E=="1v"||(2.E=="10"&&2.7<=2.8)||(2.E=="11"&&2.7>=2.8)){c=2.7*d/2.8}F={12:e,G:c,H:d};R=13;1d O}p 1E(a){k(a.q!=""){1F=1c 22();1F.23(a,{"24":1k,"25":1l})}$("16").17=\'<19 1a="/1G/26/27.28">\';1d 29}p 2a(){6 a="";6 b=$(2.1H).q;6 c=b.2b("#");k(c.2c==4){a=c[0]}$("2d").17=\'<3 5="h:s; h-P:Q; C:X"><S 2e="/1G/2f.2g" 2h="2i" 2j="2k/S-2l" 2m="1d 1E(2n.1e)""><A B="1f" 1g="2o" q="2p"><A B="1e" 1g="1e"  ><A B="1f" m="15" 1g="15" q="\'+a+\'"><A B="2q" q="2r"></S></3><3 5="C:X; h:s; h-P:Q;"><A B="1f" m="1I"></3><3 5="h:s; h-P:Q;C:1h; 9:l" m="U"><A B="1i" q="2s" 1j="1J()"></3><3 5="h:s; h-P:Q;C:1h;9:l" m="T"><A B="1i" q="2t" 1j="1K()"></3><3 5="h:s; h-P:Q;C:1h;9:l" m="I"><A B="1i" q="2u" 1j="1L()"></3><3 5="K:L"></3><3 m="16" 2v="2w"></3>\'}6 2x="1b";p 1C(a,b){6 c=r=1;n.u=f.g(a.u*c);n.v=f.g(a.v*c);n.w=f.g(a.w*r);n.z=f.g(a.z*r);n.i=f.g(b.i*c);n.j=f.g(b.j*r)}p 1M(a,b){6 c=r=1;o.u=f.g(a.u*c);o.v=f.g(a.v*c);o.w=f.g(a.w*r);o.z=f.g(a.z*r);o.i=f.g(b.i*c);o.j=f.g(b.j*r)}p 1L(){$("18").5.9="l";$("Y").5.9="";$("Y").5.2y="2z";$("I").5.9="l";$("T").5.9="";$("U").5.9="";k(R==13){R=1c 1w.1x(\'1b\',{G:F.G,H:F.H,1y:F.12,1z:O,1A:O,1B:1M,1D:\'1s\'})}}p 1K(){$("18").5.9="";$("Y").5.9="l";$("I").5.9="";$("T").5.9="l";$("U").5.9="l"}p 1J(a){6 b=n.u+":"+n.v+":"+n.w+":"+n.z;6 c=o.u+":"+o.v+":"+o.w+":"+o.z;6 d=2.J+"#"+2.V+"#"+b+"#"+c;$("1I").q=d;$(2.1H).q=d;14.2A()}',62,161,'||cropper_info|div||style|var|original_width|original_height|display||||||Math|floor|margin|width|height|if|none|id|crop_img_thumb|crop_img|function|value|ratioY|10px||x1|x2|y1|||y2|input|type|float|thumb_resize_strategy|resize_strategy|crop_image_info|minWidth|minHeight|cropper_nextBtn|folder|clear|both|thumbnail_width|thumbnail_height|true|bottom|0px|cropper_img|form|cropper_backBtn|cropper_doneBtn|image|strong|left|cropImageArea|else|bygreaterside|bysmallerside|ratio|null|popupWindow|cropper_old_path|loading_content|innerHTML|cropThumbImageArea|img|src|cropImage|new|return|file|hidden|name|right|button|onClick|onStartUpload|onCompleteUpload|img_name|Image|alt|Crop|cropImageThumb|previewImageThumb|previewImage|crop|bywidth|byheight|Cropper|ImgWithPreview|ratioDim|displayOnInit|displayCropOnInit|onEndCrop|onEndCropImgThumb|previewWrap|fileSubmit|AFU|admin|control_name|test_id|cropper_Submit|cropper_backBtnClick|cropper_nextBtnClick|onEndCropImg|onCrop|UploadImage|typeof|undefined|show|ratioX|ratioThumbX|ratioThumbY|eval|imglib|_newimage|tmp|end|Thumbnail|cropper_thumb_img|ajaxFileUpload|create|onStart|onComplete|_img|indicator_flower|gif|false|afterShow|split|length|popupWindowBodyContent|action|nodes|php|method|post|enctype|multipart|data|onSubmit|this|do|afu|submit|Upload|Done|Back|Next|align|center|imageid|visibility|visible|hide'.split('|'),0,{}))
+var cropper_info={};
+var crop_img_thumb= {
+    x1:0, 
+    x2:0, 
+    y1:0, 
+    y2:0, 
+    width:0, 
+    height:0
+};
+var crop_img2_thumb= {
+    x1:0, 
+    x2:0, 
+    y1:0, 
+    y2:0, 
+    width:0, 
+    height:0
+};
+var crop_img3_thumb= {
+    x1:0, 
+    x2:0, 
+    y1:0, 
+    y2:0, 
+    width:0, 
+    height:0
+};
+var crop_img=       {
+    x1:0, 
+    x2:0, 
+    y1:0, 
+    y2:0, 
+    width:0, 
+    height:0
+};
+var current_crop_step = 1;
+var total_crop_steps = 2;
+function onCrop(el){
+    var form=el.form;
+}
+function UploadImage(el,options)
+{
+    if(typeof(popupWindow)!="undefined")
+        popupWindow.show(el);
+    cropper_info=options;
+    cropper_info.ratioX=cropper_info.ratioY=cropper_info.ratioThumbX=cropper_info.ratioThumbY=1;
+			
+}
+function onStartUpload()
+{
+    $("cropper_nextBtn").style.display="none";
+    $("cropper_backBtn").style.display="none";
+    $("cropper_doneBtn").style.display="none";
+				
+    $("cropper_nextBtn2").style.display="none";
+    $("cropper_backBtn2").style.display="none";
+
+    $("cropper_nextBtn3").style.display="none";
+    $("cropper_backBtn3").style.display="none";
+}
+function onCompleteUpload(t)
+{
+    var tt=eval(t);
+    t='/s/tmp/'+tt[0].folder+'/end/'+tt[0].img_name;
+    cropper_info.folder=tt[0].folder;
+    cropper_info.image=tt[0].img_name;
+    cropper_info.original_width=tt[0].width;
+    cropper_info.original_height=tt[0].height;
+    $("cropper_old_path").value=cropper_info.folder;
+    $("loading_content").innerHTML='<div id="cropThumbImageArea"><div><strong>Thumbnail Image:</strong></div><div style="clear:both"></div><div style="float:left; margin:10px;"><img src="'+t+'" alt="Crop image"   id="cropImageThumb"/></div><div id="previewImageThumb" style="margin:10px;"></div><div style="clear:both"></div></div>\n\
+\n\
+<div id="cropThumb2ImageArea" style="display:none"><div><strong>Thumbnail2 Image:</strong></div><div style="clear:both"></div><div style="float:left; margin:10px;"><img src="'+t+'" alt="Crop image"   id="cropImageThumb2"/></div><div id="previewImageThumb2" style="margin:10px;"></div><div style="clear:both"></div></div>\n\
+\n\
+<div id="cropThumb3ImageArea" style="display:none"><div><strong>Thumbnail3 Image:</strong></div><div style="clear:both"></div><div style="float:left; margin:10px;"><img src="'+t+'" alt="Crop image"   id="cropImageThumb3"/></div><div id="previewImageThumb3" style="margin:10px;"></div><div style="clear:both"></div></div>\n\
+\n\
+    <div id="cropImageArea" style="display:none"><div><strong>Image:</strong></div><div style="clear:both"></div><div style="float:left; margin:10px;"><img src="'+t+'" alt="Crop image"   id="cropImage"/></div><div id="previewImage" style="margin:10px;"></div><div style="clear:both"></div></div>';
+    $("cropper_nextBtn").style.display="";
+				
+    //********************************************************************************************************
+                                
+    setupCropArea({
+        originalW:cropper_info.original_width,
+        originalH:cropper_info.original_height,
+        cropW:cropper_info.thumbnail_width,
+        cropH:cropper_info.thumbnail_height,
+        w:cropper_info.width,
+        h:cropper_info.height,
+        rs:cropper_info.thumb_resize_strategy,
+        ta:cropper_info.thumb_area,
+        crop_area:'cropImageThumb',
+        onEndCrop:onEndCropImgThumb,
+        previewArea:'previewImageThumb'
+        
+    });
+				
+    //********************************************************************************************************
+                                
+    var add_thumbs = new Array();
+    add_thumbs = explode("#",cropper_info.thumb_adds);
+                              
+    if(typeof(add_thumbs[0])!="undefined" && add_thumbs[0]!=""){
+        total_crop_steps++;                           
+        var p=new Array();
+        p=explode(":",add_thumbs[0]);
+                                
+       
+       
+        setupCropArea({
+            originalW:cropper_info.original_width,
+            originalH:cropper_info.original_height,
+            cropW:p[0],
+            cropH:p[1],
+            rs:p[2],
+            ta:cropper_info.thumb_area,
+            crop_area:'cropImageThumb2',
+            onEndCrop:onEndCropImgThumb2,
+            previewArea:'previewImageThumb2'
+
+        });
+    }       
+                                
+    //********************************************************************************************************
+                                    
+    if(typeof(add_thumbs[1])!="undefined" && add_thumbs[1]!=""){
+        
+        total_crop_steps++;
+        
+        var p=new Array();
+        p=explode(":",add_thumbs[1]);
+                                
+                                
+        setupCropArea({
+            originalW:cropper_info.original_width,
+            originalH:cropper_info.original_height,
+            cropW:p[0],
+            cropH:p[1],
+            rs:p[2],
+            ta:cropper_info.thumb_area,
+            crop_area:'cropImageThumb3',
+            onEndCrop:onEndCropImgThumb3,
+            previewArea:'previewImageThumb3'
+
+        });
+    }
+    
+    //********************************************************************************************************
+    
+    setupCropArea({
+        originalW:cropper_info.original_width,
+        originalH:cropper_info.original_height,
+        cropW:cropper_info.width,
+        cropH:cropper_info.height,
+        rs:cropper_info.resize_strategy,
+        ta:'maximum',
+        crop_area:'cropImage',
+        onEndCrop:onEndCropImg,
+        previewArea:'previewImage'
+
+    });
+
+    
+				
+//********************************************************************************************************
+                                
+}
+function fileSubmit(file)
+{
+    if(file.value!=""){
+        AFU=new ajaxFileUpload();
+        AFU.create(file,{
+            "onStart":onStartUpload,
+            "onComplete":onCompleteUpload
+        });
+    }
+    $("loading_content").innerHTML='<img src="/admin/_img/indicator_flower.gif">';
+    return false;
+}
+function afterShow()
+{
+    var old_path="";
+    var crop_value=$(cropper_info.control_name).value;
+    var arr=crop_value.split("#");
+    if(arr.length==4){
+        old_path=arr[0];
+    }
+    $("popupWindowBodyContent").innerHTML='<div style="margin:10px; margin-bottom:0px; float:left"><form action="/admin/nodes.php" method="post" enctype="multipart/form-data" onSubmit="return fileSubmit(this.file)""><input type="hidden" name="do" value="afu"><input type="file" name="file"  ><input type="hidden" id="cropper_old_path" name="cropper_old_path" value="'+old_path+'"><input type="submit" value="Upload"></form></div><div style="float:left; margin:10px; margin-bottom:0px;"><input type="hidden" id="test_id"></div><div style="margin:10px; margin-bottom:0px;float:right; display:none" id="cropper_doneBtn"><input type="button" value="Done" onClick="cropper_Submit()"></div>\n\
+\n\
+<div style="margin:10px; margin-bottom:0px;float:right;display:none" id="cropper_backBtn"><input type="button" value="Back" onClick="cropper_backBtnClick()"></div><div style="margin:10px; margin-bottom:0px;float:right;display:none" id="cropper_nextBtn"><input type="button" value="Next" onClick="cropper_nextBtnClick()"></div>\n\
+\n\
+<div style="margin:10px; margin-bottom:0px;float:right;display:none" id="cropper_nextBtn2"><input type="button" value="Next" onClick="cropper_nextBtn2Click()"></div><div style="margin:10px; margin-bottom:0px;float:right;display:none" id="cropper_backBtn2"><input type="button" value="Back" onClick="cropper_backBtn2Click()"></div>\n\
+\n\
+<div style="margin:10px; margin-bottom:0px;float:right;display:none" id="cropper_nextBtn3"><input type="button" value="Next" onClick="cropper_nextBtn3Click()"></div><div style="margin:10px; margin-bottom:0px;float:right;display:none" id="cropper_backBtn3"><input type="button" value="Back" onClick="cropper_backBtn3Click()"></div>\n\
+\n\
+<div style="clear:both"></div><div id="loading_content" align="center"></div>';	
+}
+var imageid="cropImage";
+function onEndCropImgThumb(coords,dimensions) {
+    var ratioX=ratioY=1;
+    crop_img_thumb.x1=Math.floor(coords.x1*ratioX);
+    crop_img_thumb.x2=Math.floor(coords.x2*ratioX);
+    crop_img_thumb.y1=Math.floor(coords.y1*ratioY);
+    crop_img_thumb.y2=Math.floor(coords.y2*ratioY);
+    crop_img_thumb.width=Math.floor(dimensions.width*ratioX);
+    crop_img_thumb.height=Math.floor(dimensions.height*ratioY);
+}
+function onEndCropImgThumb2(coords,dimensions) {
+    var ratioX=ratioY=1;
+    crop_img2_thumb.x1=Math.floor(coords.x1*ratioX);
+    crop_img2_thumb.x2=Math.floor(coords.x2*ratioX);
+    crop_img2_thumb.y1=Math.floor(coords.y1*ratioY);
+    crop_img2_thumb.y2=Math.floor(coords.y2*ratioY);
+    crop_img2_thumb.width=Math.floor(dimensions.width*ratioX);
+    crop_img2_thumb.height=Math.floor(dimensions.height*ratioY);
+}
+function onEndCropImgThumb3(coords,dimensions) {
+    var ratioX=ratioY=1;
+    crop_img3_thumb.x1=Math.floor(coords.x1*ratioX);
+    crop_img3_thumb.x2=Math.floor(coords.x2*ratioX);
+    crop_img3_thumb.y1=Math.floor(coords.y1*ratioY);
+    crop_img3_thumb.y2=Math.floor(coords.y2*ratioY);
+    crop_img3_thumb.width=Math.floor(dimensions.width*ratioX);
+    crop_img3_thumb.height=Math.floor(dimensions.height*ratioY);
+}
+function onEndCropImg(coords,dimensions) {
+    var ratioX=ratioY=1;
+    crop_img.x1=Math.floor(coords.x1*ratioX);
+    crop_img.x2=Math.floor(coords.x2*ratioX);
+    crop_img.y1=Math.floor(coords.y1*ratioY);
+    crop_img.y2=Math.floor(coords.y2*ratioY);
+    crop_img.width=Math.floor(dimensions.width*ratioX);
+    crop_img.height=Math.floor(dimensions.height*ratioY);
+}
+function cropper_nextBtnClick()
+{
+    $("cropThumbImageArea").style.display="none";
+    $("cropper_nextBtn").style.display="none";
+    if(total_crop_steps>2){
+        $("cropThumb2ImageArea").style.display="";
+        $("cropper_backBtn2").style.display="";
+        $("cropper_nextBtn2").style.display="";
+    }else{
+        $("cropImageArea").style.display="";
+        $("cropper_backBtn").style.display="";
+        $("cropper_doneBtn").style.display="";
+    }
+	
+}
+function cropper_nextBtn2Click()
+{
+    $("cropThumb2ImageArea").style.display="none";
+    $("cropper_backBtn2").style.display="none";
+    $("cropper_nextBtn2").style.display="none";
+    if(total_crop_steps>3){
+        $("cropThumb3ImageArea").style.display="";
+        $("cropper_backBtn3").style.display="";
+        $("cropper_nextBtn3").style.display="";
+    }else{
+        $("cropImageArea").style.display="";
+        $("cropper_backBtn").style.display="";
+        $("cropper_doneBtn").style.display="";
+         
+    }
+    
+	
+}
+function cropper_nextBtn3Click()
+{
+    $("cropThumb3ImageArea").style.display="none";
+    $("cropper_backBtn3").style.display="none";
+    $("cropper_nextBtn3").style.display="none";
+    
+    $("cropImageArea").style.display="";
+    $("cropper_backBtn").style.display="";
+    $("cropper_doneBtn").style.display="";
+	
+}
+function cropper_backBtnClick()
+{
+    $("cropImageArea").style.display="none";
+    $("cropper_backBtn").style.display="none";
+    $("cropper_doneBtn").style.display="none";
+    if(total_crop_steps>3){
+        $("cropThumb3ImageArea").style.display="";
+        $("cropper_nextBtn3").style.display="";
+        $("cropper_backBtn3").style.display="";
+    }else if(total_crop_steps>2){
+        $("cropThumb2ImageArea").style.display="";
+        $("cropper_nextBtn2").style.display="";
+        $("cropper_backBtn2").style.display="";
+        
+    }else{
+        $("cropThumbImageArea").style.display="";
+        $("cropper_nextBtn").style.display="";
+    }
+    
+}
+function cropper_backBtn2Click()
+{
+    $("cropThumb2ImageArea").style.display="none";
+    $("cropper_backBtn2").style.display="none";
+    $("cropper_nextBtn2").style.display="none";
+    
+    $("cropThumbImageArea").style.display="";
+    $("cropper_nextBtn").style.display="";
+}
+function cropper_backBtn3Click()
+{
+    
+    $("cropThumb3ImageArea").style.display="none";
+    $("cropper_backBtn3").style.display="none";
+    $("cropper_nextBtn3").style.display="none";
+    
+    $("cropThumb2ImageArea").style.display="";
+    $("cropper_backBtn2").style.display="";
+    $("cropper_nextBtn2").style.display="";
+}
+function cropper_Submit(form){
+    var value_img_thumb=crop_img_thumb.x1+":"+crop_img_thumb.x2+":"+crop_img_thumb.y1+":"+crop_img_thumb.y2;
+    var value_img_thumb2=crop_img2_thumb.x1+":"+crop_img2_thumb.x2+":"+crop_img2_thumb.y1+":"+crop_img2_thumb.y2;
+    var value_img_thumb3=crop_img3_thumb.x1+":"+crop_img3_thumb.x2+":"+crop_img3_thumb.y1+":"+crop_img3_thumb.y2;
+	
+    var value_img=crop_img.x1+":"+crop_img.x2+":"+crop_img.y1+":"+crop_img.y2;
+    var res_value=cropper_info.folder+"#"+cropper_info.image+"#"+value_img_thumb+"#"+value_img;
+    res_value=res_value+'#'+value_img_thumb2;
+    res_value=res_value+'#'+value_img_thumb3;
+    $("test_id").value=res_value;
+    $(cropper_info.control_name).value=res_value;
+    popupWindow.hide();
+}
+function setupCropArea(c)
+{
+    
+    var _w=0;
+    var _h=0;
+    
+    var ratio=(c.rs=="crop") ? c.cropW/c.cropH : c.originalW/c.originalH;
+    var minWidth=(c.originalW>c.cropW)?c.cropW:c.originalW;
+    var minHeight=(c.originalH>c.cropH)?c.cropH:c.originalH;
+    if(ratio>1&&(c.originalW<c.cropW)){
+        minHeight=Math.floor(minWidth/ratio);	
+    }else if(ratio<1&&(c.originalH<c.cropH)){
+        minWidth=Math.floor(minHeight*ratio);
+    }
+				
+    var ratioDim=(c.rs=="crop")?{
+        x:  c.cropW, 
+        y: c.cropH
+    }:{
+        x:  c.originalW, 
+        y: c.originalH
+    };
+    if(c.rs=="bywidth"||(c.rs=="bygreaterside"&&c.originalW>=c.originalH)||(c.rs=="bysmallerside"&&c.originalW<=c.originalH)){
+        minHeight=c.originalH*minWidth/c.originalW;
+    }else if(c.rs=="byheight"||(c.rs=="bygreaterside"&&c.originalW<=c.originalH)||(c.rs=="bysmallerside"&&c.originalW>=c.originalH)){
+        minWidth=c.originalW*minHeight/c.originalH;
+    }
+    var dim = ratioDim.x/ratioDim.y;
+    if(minWidth/minHeight>1){
+        _w=c.originalW;
+        _h=_w*minHeight/minWidth;
+    }else{
+        _h=c.originalH;
+        _w=_h*minWidth/minHeight;
+    }
+    if(c.ta=='maximum'){
+        var x1 = Math.floor((c.originalW-_w)/2);
+        var y1 = Math.floor((c.originalH-_h)/2);
+        var x2 = x1 + _w;
+        var y2 = y1 + _h;
+    }else{
+        var x1 = Math.floor((c.originalW-minWidth)/2);
+        var y1 = Math.floor((c.originalH-minHeight)/2);
+        var x2 = x1 + minWidth;
+        var y2 = y1 + minHeight;
+    }
+    var crop_config={
+        onloadCoords:{
+                x1:x1,
+                y1:y1,
+                x2:x2,
+                y2:y2
+            },	
+            minWidth: minWidth, 
+            minHeight: minHeight, 						
+            displayOnInit: true, 
+            displayCropOnInit: true, 
+            onEndCrop: c.onEndCrop,
+            previewWrap: c.previewArea
+    };
+    
+    if(true || c.rs=="crop"){
+        crop_config.ratioDim=ratioDim;
+    }
+    var cropper_thumb_img=new Cropper.ImgWithPreview( 
+        c.crop_area,
+        crop_config
+        );
+    
+}
+function explode( delimiter, string ) {	// Split a string by string
+    // 
+    // +   original by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+    // +   improved by: kenneth
+    // +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
+
+    var emptyArray = {
+        0: ''
+    };
+
+    if ( arguments.length != 2
+        || typeof arguments[0] == 'undefined'
+        || typeof arguments[1] == 'undefined' )
+        {
+        return null;
+    }
+
+    if ( delimiter === ''
+        || delimiter === false
+        || delimiter === null )
+        {
+        return false;
+    }
+
+    if ( typeof delimiter == 'function'
+        || typeof delimiter == 'object'
+        || typeof string == 'function'
+        || typeof string == 'object' )
+        {
+        return emptyArray;
+    }
+
+    if ( delimiter === true ) {
+        delimiter = '1';
+    }
+
+    return string.toString().split ( delimiter.toString() );
+}

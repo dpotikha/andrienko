@@ -17,11 +17,11 @@ class ImageField extends StringField {
 		$verror = null;
 		do {
 			$fieldDef = $this->getFieldDef();
-			if ((strlen($rValue) == 0) && $fieldDef->required) {
+			if ((mb_strlen($rValue) == 0) && $fieldDef->required) {
 				$verror = 'RequiredField';
 				break;
 			}
-			if (strlen($rValue) != 0) {
+			if (mb_strlen($rValue) != 0) {
 				$img = ImgLibImage::findByUrl($rValue);
 				if ($img == null) {
 					$verror = "Image not found!";
@@ -47,14 +47,14 @@ class ImageField extends StringField {
 
 		$size_tag = "";
 		$url = $this->value;
-		if ($url != null && strlen($url) != 0) {
+		if ($url != null && mb_strlen($url) != 0) {
 			$img = ImgLibImage::findByUrl($url);
 
 			if ($img != null) {
 				$params["size_tag"] = " width=" . $img->getWidth() . " height=" . $img->getHeight();
 				$params["width"] = $img->getWidth();
 				$params["height"] = $img->getHeight();
-				$params["url"] = "/imglib" . $img->getUrl();
+				$params["url"] = "/s/i" . $img->getUrl();
 				$params["relurl"] = $img->getUrl();
 				$fsize = $img->getFileSize();
 				$params["size"] = $fsize;
@@ -69,7 +69,7 @@ class ImageField extends StringField {
 	}
 
 	function getHtmlVisualValue() {
-		return ($this->value) ? "<img src=\"/imglib_thumbnails/".$this->value."\" border=0>" : "&nbsp;";
+		return ($this->value) ? "<img src=\"/s/ithumb".$this->value."\" border=0>" : "&nbsp;";
 	}
 }
 

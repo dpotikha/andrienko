@@ -1,7 +1,7 @@
 <?php
 
 require_once ("directory.php");
-
+require_once 'gd/ThumbLib.inc.php';
 class imageClass
 {
 
@@ -140,7 +140,7 @@ class imageClass
     {
     
         // get target file extension
-        $targetFileExtension = strtolower(substr($this->targetFile, strrpos($this->targetFile, ".") + 1));
+        $targetFileExtension = mb_strtolower(mb_substr($this->targetFile, strrpos($this->targetFile, ".") + 1));
         
         // image saving process goes according to required extension
         switch ($targetFileExtension) {

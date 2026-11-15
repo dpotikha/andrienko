@@ -107,6 +107,37 @@ class Node {
 		$new_id = -1;
 		DBUtils::startTransaction();
 		$new_id = $predefinedID == -1 ? DBUtils::getNextSequnceID("nodes") : $predefinedID;
+		$nodeClass = NodeClass::findById($class_id);
+
+		if($shortname=='' && $name!=''){
+			$new_shortname = preg_replace('/^(.*)-$/i','$1',name2shortname(CProtect::string($name,64)));
+
+			if($new_shortname!=''){
+				if($nodeClass->checkFlag('FRIENDLY_URL')){
+					$href = $parent->getHref(). '/' . $new_shortname;
+					if(!(Node::findByPath($href))){
+						$shortname = $new_shortname;
+					}elseif(!(Node::findByPath($href . '-' . $new_id))){
+						$shortname = $new_shortname . '-' .$new_id;
+					}
+				}
+
+			}
+		}else{
+			$new_shortname = preg_replace('/^(.*)-$/i','$1',name2shortname(CProtect::string($shortname,64)));
+			if($new_shortname!=''){
+					$href = $parent->getHref(). '/' . $new_shortname;
+					if(is_null(Node::findByPath($href))){
+						$shortname = $new_shortname;
+					}elseif(is_null(Node::findByPath($href . '-' . $new_id))){
+						$shortname = $new_shortname . '-' .$new_id;
+					}
+			}else{
+				$shortname = '';
+			}
+			
+		}
+		
 		$lastInThisSubtree = $parent->getLastSubtreeOrder();
 		$subtree_order = $lastInThisSubtree + 1;
 
@@ -127,11 +158,11 @@ class Node {
 			$create_params[8] = 1;
 			$create_params[9] = "/";
 		}
-
-		$create_sql = "INSERT INTO dbm_nodes (id, name, shortname, dynamic_template, class_id, parent_id, owner, admin_url, subtree_order, absolute_path, time_created, time_updated) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+                $create_params[]=md5($create_params[9]);
+		$create_sql = "INSERT INTO dbm_nodes (id, name, shortname, dynamic_template, class_id, parent_id, owner, admin_url, subtree_order, absolute_path, time_created, time_updated, md5_path) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
 		DBUtils::execUpdate($create_sql, $create_params);
 
-		$nodeClass = NodeClass::findById($class_id);
+		
 		$owner = User::findById($owner_id);
 		if ($owner == null) {
 			DBUtils::rollback();
@@ -146,13 +177,17 @@ class Node {
 
 			while ($rs->next()) {
 				$update_params[0] = $rs->getInt(1);
-				$update_params[2] = $rs->getInt(2);
+				//$update_params[2] = $rs->getInt(2);
+                                if ($rs->getInt(1) == 1)
+                                    // was "| VIEW_RIGHT_FOR_CHILDREN_MASK_MASK" (undefined, so 0 on PHP 5): admins get 55, as on all existing nodes
+                                    $update_params[2] = VIEW_RIGHT_MASK | WRITE_RIGHT_MASK | DELETE_RIGHT_MASK | WRITE_RIGHT_FOR_CHILDREN_MASK | DELETE_RIGHT_FOR_CHILDREN_MASK;
+                                else $update_params[2] = getRightsFromParent($rs->getInt(2));
 				DBUtils::execUpdate($update_sql, $update_params);
 			}
 		} else {
 			//give rights to owner
 			$update_params[0] = $owner->group->id;
-			$update_params[2] = VIEW_RIGHT_MASK | WRITE_RIGHT_MASK | DELETE_RIGHT_MASK;
+			$update_params[2] = VIEW_RIGHT_MASK | WRITE_RIGHT_MASK | DELETE_RIGHT_MASK | WRITE_RIGHT_FOR_CHILDREN_MASK | DELETE_RIGHT_FOR_CHILDREN_MASK;
 			DBUtils::execUpdate($update_sql, $update_params);
 
 			//ant not give to others
@@ -206,7 +241,7 @@ class Node {
 		DBUtils::execUpdate($fv_sql, $fv_params);
 
 		DBUtils::commit();
-
+		checkNodeAfterCreate($nodeClass, $new_id);
 		return $new_id;
 	}
 
@@ -225,16 +260,18 @@ class Node {
 			"UPDATE dbm_nodes SET name=?, shortname=?, dynamic_template=?, admin_url=?, absolute_path=?, time_updated=? WHERE id=?",
 			array( $this->name, ($this->parent != null) ? $this->shortname : "", $this->dynamicTemplate, $this->adminUrl, $this->absolutePath, new Date(), $this->id)
 		);
+                global $MDB;
+                $MDB->Query('UPDATE dbm_nodes SET md5_path=md5(absolute_path) WHERE id='.$this->id);
 
 		//if shotname was changed - update all children's paths
 		if (($this->oldshortname != null) && ($this->parent_id != null)) {
 			$sql = "UPDATE dbm_nodes SET absolute_path = CONCAT(?, '/', ?, substring(absolute_path from ?)) WHERE id=?";
 
 			$parentPreStr = "";
-			$addN = 2 + strlen($this->oldshortname);
+			$addN = 2 + mb_strlen($this->oldshortname);
 			if (!$this->parent->isRoot()) {
 				$parentPreStr = $this->parent->absolutePath;
-				$addN += strlen($parentPreStr);
+				$addN += mb_strlen($parentPreStr);
 			}
 			$params = array( $parentPreStr, $this->shortname, $addN, null );
 
@@ -242,6 +279,9 @@ class Node {
 			while ($rs->next()) {
 				$params[3] = $rs->getInt(1);
 				DBUtils::execUpdate($sql, $params);
+                                global $MDB;
+                                $MDB->Query('UPDATE dbm_nodes SET md5_path=md5(absolute_path) WHERE id='.$params[3]);
+
 			}
 
 			$this->oldshortname = null;
@@ -721,7 +761,13 @@ class Node {
 			_dump($path);
 			die("Invalid call to Node::findByPath()");
 		}
-
+                global $MDB;
+                       $MDB->Query('SELECT id FROM dbm_nodes WHERE md5_path="'.md5($path).'" and absolute_path="'.$path.'"');
+                       if(!$MDB->NumRows()){
+                           return false;
+                       }
+                        $res=$MDB->NextResult();
+                        return Node::findById($res['id']);
 		if (!$_USE_NODES_CACHE_ || !array_key_exists($path, $_NODES_CACHE_BY_PATH)) {
 			$params = array( $path );
 			$nrs = DBUtils::execSelect("SELECT * FROM dbm_nodes WHERE absolute_path=?", $params);
@@ -817,7 +863,7 @@ class Node {
 	}
 
 	function getChildrenIds() {
-		$sql = "SELECT id FROM dbm_nodes WHERE parent_id=" . $this->id;
+		$sql = "SELECT id FROM dbm_nodes WHERE parent_id=" . $this->id . " ORDER BY subtree_order";
 
 		$rs =  DBUtils::execSelect($sql);
 		$ids = array();
@@ -847,6 +893,20 @@ class Node {
 		$params = array($this->id, $class_id);
 		return DBUtils::execCountSelect("SELECT COUNT(*) FROM dbm_nodes WHERE parent_id=? AND class_id=?", $params);
 	}
+        
+        function getChildrenCountOfClassWithFilter($class_id_or_nc, $params=array()) {
+		$nc = _getNodeClass($class_id_or_nc);
+		$class_id = $nc->id;
+                $where=array();
+                foreach($params as $k=>$v){
+                    $where[] = 'c.'.$k.'=?';
+                }
+                $params = array_merge(array($this->id, $class_id), array_values($params));
+                return DBUtils::execCountSelect("SELECT COUNT(*) FROM dbm_nodes as n, dbm_nfv_".$nc->shortname." as c WHERE c.node_id=n.id AND n.parent_id=? AND n.class_id=?".(count($where) ? (' AND '.implode(' AND ',$where)) : ''), $params);
+	}
+        
+        
+		
 
 	function getChildrenCountOfClassForGroup($group_id, $class_id_or_nc) {
 		$nc = _getNodeClass($class_id_or_nc);
@@ -892,6 +952,9 @@ class Node {
 	function getChildrenOfClass($class_id_or_nc, $orderBy = "subtree_order", $offset=-1, $limit=-1) {
 		return $this->getChildrenOfClasses(array($class_id_or_nc), $orderBy, $offset, $limit);
 	}
+        function getChildrenOfClassWithFilter($class_id_or_nc, $orderBy = "subtree_order", $offset=-1, $limit=-1, $filter=array()) {
+		return $this->getChildrenOfClassesWithFilter(array($class_id_or_nc), $orderBy, $offset, $limit, $filter);
+	}
 
 	function getChildrenOfClassForGroup($group_id, $class_id_or_nc, $orderBy = "subtree_order", $offset=-1, $limit=-1) {
 		return $this->getChildrenOfClassesForGroup($group_id, array($class_id_or_nc), $orderBy, $offset, $limit);
@@ -899,6 +962,9 @@ class Node {
 
 	function getChildrenOfClasses($classes, $orderBy="n.subtree_order", $offset=-1, $limit=-1) {
 		return $this->getChildrenOfClassesForGroup($groupId = -1, $classes, $orderBy, $offset, $limit);
+	}
+        function getChildrenOfClassesWithFilter($classes, $orderBy, $offset, $limit, $filter) { // defaults before a required param were never usable
+		return $this->getChildrenOfClassesForGroupWithFilter($groupId = -1, $classes, $orderBy, $offset, $limit, $filter);
 	}
 
 	function getChildrenOfClassesForGroup($groupId, $classes, $orderBy="n.subtree_order", $offset=-1, $limit=-1) {
@@ -908,13 +974,11 @@ class Node {
 			$classShortnames[] = $nc->shortname;
 		}
 		if(count($classes)==1&&$orderBy=='ForAdminTree'){
-			$orderBy=$classes[0]->orderBy;
+			$orderBy=mb_strlen($classes[0]->orderBy)?$classes[0]->orderBy:"n.subtree_order";
 		}elseif($orderBy=='ForAdminTree'){
 			$orderBy="n.subtree_order";
 		}
-		if(!strlen($orderBy)){
-			$orderBy='n.subtree_order';	
-		}
+
 		$params = array($this->id);
 
 		$dbmQL = "SELECT n.* FROM {" . implode(",", $classShortnames) . "} n WHERE n.parent_id=?" .
@@ -924,7 +988,39 @@ class Node {
 
 		return $nodes;
 	}
+	function getChildrenOfClassesForGroupWithFilter($groupId, $classes, $orderBy="n.subtree_order", $offset=-1, $limit=-1, $params=array()) {
+                
+                $nc = _getNodeClass(array_shift($classes));
+                $classShortname = $nc->shortname;
+              
+                
+                
+                $where=array();
+                foreach($params as $k=>$v){
+                    $where[] = 'n.'.$k.'=?';
+                }
+                $params = array_merge(array($this->id), array_values($params));
+               
 
+		$dbmQL = "SELECT n.* FROM {" . $classShortname . "} n WHERE n.parent_id=?" .(count($where) ? (' AND '.implode(' AND ',$where)) : '').
+					" ORDER BY " . $orderBy;
+		$nodes = Node::findByQuery($dbmQL, $params, $offset, $limit, $groupId);
+
+		return $nodes;
+	}
+	function getChildrenForAdminTree1($user, $offset=-1, $limit=-1,$order_by='n.subtree_order') {
+		$allClasses = $this->findAllDepends();
+		$classes = array();
+		foreach($allClasses as $c) {
+			//if ($c->showAtAdminTree == true) {
+				$classes[] = $c;
+			//}
+		}
+		$group = $user->group;
+		if(!count($classes))return array();
+		return $this->getChildrenOfClassesForGroup($group->id, $classes, $order_by, $offset, $limit);
+	}
+	
 	function getChildrenForAdminTree($user, $offset=-1, $limit=-1,$order_by='n.subtree_order') {
 		$allClasses = $this->findAllDepends();
 		$classes = array();
@@ -945,6 +1041,21 @@ class Node {
 			if ($c->showAtAdminTree == true) {
 				$classes[] = $c;
 			}
+		}
+
+		if (sizeof($classes) == 0) {
+			return 0;
+		} else {
+			return $this->getChildrenCountOfClassesForGroup($user->group->id, $classes);
+		}
+	}
+	function getChildrenCountForAdminTree1($user) {
+		$allClasses = $this->findAllDepends();
+		$classes = array();
+		foreach($allClasses as $c) {
+			//if ($c->showAtAdminTree == true) {
+				$classes[] = $c;
+			//}
 		}
 
 		if (sizeof($classes) == 0) {
@@ -1135,6 +1246,7 @@ class Node {
 			$new_parent_id = $new_parent_id->id;
 		}
 		$moveToNewParentapSQL = "UPDATE dbm_nodes SET absolute_path = CONCAT(?, substring(absolute_path from ?)) WHERE id=?";
+
 		$oldPath = $this->absolutePath;
 		do {
 			if ($this->parent_id == null) {
@@ -1150,13 +1262,16 @@ class Node {
 			$sql = "UPDATE dbm_nodes SET parent_id=?, absolute_path=?, subtree_order=? WHERE id=?";
 			$params = array( $new_parent_id, $this->absolutePath, $new_parent->getLastSubtreeOrder() + 1, $this->id);
 			DBUtils::execUpdate($sql, $params);
-
-			$params2 = array( $this->absolutePath, strlen($oldAbsolutePath) + 1, null );
+                         global $MDB;
+                        $MDB->Query('UPDATE dbm_nodes SET md5_path=md5(absolute_path) WHERE id='.$this->id);
+			$params2 = array( $this->absolutePath, mb_strlen($oldAbsolutePath) + 1, null );
 
 			$rs = DBUtils::execSelect("SELECT child_id FROM dbm_nodes_submission WHERE parent_id=" . $this->id);
 			while ($rs->next()) {
 				$params2[2] = $rs->getInt(1);
 				DBUtils::execUpdate($moveToNewParentapSQL, $params2);
+                                global $MDB;
+                                $MDB->Query('UPDATE dbm_nodes SET md5_path=md5(absolute_path) WHERE id='.$params2[2]);
 			}
 
 			Node::recursiveUpdateSubmission($this, $new_parent_id);
@@ -1180,6 +1295,8 @@ class Node {
 
 		DBUtils::execUpdate("INSERT INTO dbm_nodes_submission (child_id, parent_id, level_diff) VALUES(" . $node->id . "," . $new_parent_id . ",1)");
 		$children = $node->getChildren();
+                global $MDB;
+                $MDB->Query('UPDATE dbm_nodes SET md5_path=md5(absolute_path) WHERE id='.$node->id);
 		for($i=0;$i<sizeof($children);$i++) {
 			Node::recursiveUpdateSubmission($children[$i], $node->id);
 		}
@@ -1385,4 +1502,20 @@ function _getNodeClass($class_id_or_nc) {
 	return $nc;
 }
 
+function getRightsFromParent($parentRights) {
+    $t = 0;
+    if (($parentRights & VIEW_RIGHT_FOR_CHILDREN_MASK) != 0) {
+        $t |= VIEW_RIGHT_MASK;
+        $t |= VIEW_RIGHT_FOR_CHILDREN_MASK;
+    }
+    if (($parentRights & WRITE_RIGHT_FOR_CHILDREN_MASK) != 0) {
+        $t |= WRITE_RIGHT_MASK;
+        $t |= WRITE_RIGHT_FOR_CHILDREN_MASK;
+    }
+    if (($parentRights & DELETE_RIGHT_FOR_CHILDREN_MASK) != 0) {
+        $t |= DELETE_RIGHT_MASK;
+        $t |= DELETE_RIGHT_FOR_CHILDREN_MASK;
+    }
+    return $t;
+}
 ?>

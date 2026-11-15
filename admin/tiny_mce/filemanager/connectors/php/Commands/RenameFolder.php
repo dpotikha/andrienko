@@ -29,7 +29,7 @@ class RenameFolder {
 		$this->raw_cwd=$cwd;
 		if($type=="File")$type1="files";
 		if($type=="Flash")$type1="flash";
-		if($type=="Image")$type1="imglib";
+		if($type=="Image")$type1="i";
 		$this->actual_cwd=str_replace("//","/",($fckphp_config['UserFilesPath']."/$type1/".$this->raw_cwd));
 		$this->real_cwd=str_replace("//","/",($this->fckphp_config['basedir']."/".$this->actual_cwd));
 		$this->foldername=str_replace(array("..","/"),"",$_GET['FolderName']);
