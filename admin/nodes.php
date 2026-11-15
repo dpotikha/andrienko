@@ -149,6 +149,8 @@ function contenttree($request1) {
 
 
 
+	$rootMap = new PHPObject(); // PHP 8 no longer creates an object on property write
+
 	$rootMap->node = $root;
 
 	$ndGR = new NodeGroupRights($currentLoggedUser->group, $root);
@@ -160,6 +162,8 @@ function contenttree($request1) {
 	$rootMap->hasDeleteRight = $ndGR->hasDeleteRight();
 
 
+
+	$item = new PHPObject();
 
 	$item->nodes = array($rootMap);
 
@@ -333,6 +337,8 @@ function generateTempLogin(){
 	
 }
 function addnode_form($request1) {
+
+	global $session,$request; // was declared after the class 207 branch used $request
 	if($_GET['class_id']==207){
 		$arr=generateTempLogin();
 		$request->setAttribute('login',$arr['login']);
@@ -340,7 +346,6 @@ function addnode_form($request1) {
 		$request->setAttribute('date_start',date('d.m.Y H:i:s'));
 		$request->setAttribute('date_end',date('d.m.Y H:i:s',time()+31*24*3600));
 	}
-	global $session,$request;
 
 	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
@@ -945,11 +950,9 @@ function deletenode($request1) {
 
 function deleteselectednode($request1){
 
-	//print_r($request->getParameter("delete_node"));
+	global $session,$request; // was declared after the first $request use: multi-delete was a fatal error
 
 	$deletenodes=$request->getParameter("delete_node");
-
-	global $session,$request;
 
 	$currentLoggedUser = $session->getAttribute(SESSION_LOGGED_USER_ATTR);
 
