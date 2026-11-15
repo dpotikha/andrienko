@@ -61,7 +61,7 @@ $project2= &$projects[1];
 <?php  } ?>
 </td>
 <td width="100%" class="contentRightTd" <?php  if ($CurrentNode->isRoot()) {?> id="contentRightTdIndex"<?php  } ?>>
-<?php  if (file_exists("/_img/photo/photo_".$CurrentNode->shortname."jpg")) {?>
+<?php  if (file_exists($_SERVER["DOCUMENT_ROOT"]."/_img/photo/photo_".$CurrentNode->shortname.".jpg")) {?>
 <img src="/_img/photo/photo_<?= $CurrentNode->shortname ?>.jpg" width="353" height="392" alt="" style="display:block;background-color:#C1C1C1;">
 <?php } elseif (defined("OVERRIDE_NODE_PHOTO_ID")) {?>
 <img src="/_img/photo/photo_<?= OVERRIDE_NODE_PHOTO_ID?>.jpg" width="353" height="392" alt="" style="display:block;background-color:#C1C1C1;">
