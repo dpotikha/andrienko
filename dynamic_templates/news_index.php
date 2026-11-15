@@ -1,51 +1,28 @@
-<?php  tinclude("_head") ?>
-<?= $CurrentNode->tfields["text"]?>
-<?php 
-$news = Node::findByQuery("SELECT n.* FROM {news_item} n" .
-	" ORDER BY n.date DESC");
-$newsCount = Node::findCountByQuery("SELECT COUNT(*) FROM {news_item} n");
-	
-$rpp = 10;
-$lpp = 10;
-$pageNum = (int)$request->getParameter("page");
-$offset = $pageNum * $rpp;
-
+<?php
+tinclude("_head");
+// one page per year; the year chips list every year that has news
+$years = array();
+foreach (Node::findByQuery("SELECT n.* FROM {news_item} n ORDER BY n.date DESC") as $n) {
+	$y = (int)$n->tfields["date"]["year"];
+	if ($y) $years[$y][] = $n;
+}
+$year = (int)$request->getParameter("year");
+if (!isset($years[$year])) $year = (int)key($years);
 ?>
-<?php  for($i=$offset; $i < ($offset + $rpp) && $i < $newsCount; $i++) { 
-	$n =& $news[$i];
-	$img = $n->tfields["photo"];
-?>
-<div class="newsMain" id="bgNo">
-	<h6 style="padding-left:0px"><?= siteFormattedDate($n->tfields["date"]["formatted_date"]) ?></h6>
-	<a href="<?= $n->getHref() ?>" class="newsName">
-	<?= $n->name ?>
-	</a>
-	<table cellpadding="0" cellspacing="0" border="0" class="newsContent" id="bgNo" width="453">
-		<tr>
-			<td>
-			<?php  if ($img["url"]) { ?>
-				<table cellpadding="0" cellspacing="0" border="0" id="shadowTab">
-					<tr>
-						<td><img src="/_img/s.gif" width="5" height="<?= $img["thumbheight"]+18 ?>" alt="" class="shadowImgTL"></td>
-						<td><div class="shadowImgDetailTL_01">
-								<div class="shadowImgDetailBR_01" id="shadowNews"> <a href="<?= $n->getHref() ?>"><img src="<?= $img["thumburl"] ?>" width="<?= $img["thumbwidth"] ?>" height="<?= $img["thumbheight"] ?>" alt=""></a></div>
-							</div></td>
-					</tr>
-					<tr>
-						<td colspan="2" align="right"><img src="/_img/s.gif" width="90" height="5" alt=""></td>
-					</tr>
-				</table>
-				<?php  } ?>
-			</td>
-			<td  class="textNews"><?= $n->tfields["announce"] ?>
-				<div class="newsLinkDetail"><a href="<?= $n->getHref() ?>">Читать подробнее</a><img src="/_img/arrow_02.gif" width="18" height="7" alt=""></div></td>
-		</tr>
-	</table>
-</div>
-<?php  } ?>
-<?php  if ($newsCount > $rpp) { ?>
-<div class="pager"><table class="pager">
-<?php  HTMLWriter::draw_paging_links($offset, $rpp, $lpp, $newsCount, array(), array(), "_draw_paging_link");?> 
-</table></div>
-<?php  } ?>
-<?php  tinclude("_foot") ?>
+<section class="wrap page-head" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:20px;padding-top:48px">
+	<h1 class="h1"><?= e($CurrentNode->name) ?></h1>
+	<nav class="chips" aria-label="Роки">
+<?php foreach (array_keys($years) as $y) { ?>
+		<a class="chip" href="<?= e($CurrentNode->getHref()) ?>?year=<?= $y ?>"<?= $y == $year ? ' aria-current="page"' : '' ?>><?= $y ?></a>
+<?php } ?>
+	</nav>
+</section>
+<?php if (strlen(trim(plainText($CurrentNode->tfields["text"] ?? '')))) { ?>
+<div class="wrap rich"><?= $CurrentNode->tfields["text"] ?></div>
+<?php } ?>
+<section class="wrap" style="padding-top:8px;padding-bottom:64px">
+<?php foreach ($years[$year] ?? array() as $n) { ?>
+	<?= listRow($n, "photo", e($n->tfields["date"]["formatted_date"])) ?>
+<?php } ?>
+</section>
+<?php tinclude("_foot") ?>

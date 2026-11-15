@@ -1,88 +1,24 @@
-<?php  tinclude("_head") ?>
-<?= $CurrentNode->tfields["text"]?>
-<style>
-.cform .name {padding-top:9px}
-INPUT, TEXTAREA {background:D9D9D9; font:normal 11px Tahoma; padding:0px 3px; line-height:15px}
-#red {color:#990000}
-.oligat {border:none; border-left:2px solid #990000}
-.error {border:2px solid #990000;color:#990000}
-.submit {font-size:11px; cursor:pointer; line-height:11px; padding:0px}
-</style>
-<h3 style="margin-top:10px!important">Написать мне письмо</h3>
-<form action="<?= $CurrentNode->getHref() ?>" method="post">
-<input type="hidden" name="do" value="send">
-<table cellspacing="0" cellpadding="4" width="100%" class="cform">
-<col width="30%"/>
-<col width="70%"/>
-<tr>
-<td></td>
-<td>
-<span id="red">* Обязательные поля</span></td></tr>
-<?php  if($errors["name"]){ ?>
-<tr>
-<td class="name">Имя <span id="red">*</span></td>
-<td>
-<input name="name" type="text" class="oligat error" style="width:100%" value="<?=$errors["name"]?>" onfocus="if(this.value=='<?=prepareStringForHTML($errors["name"])?>'){this.value='';this.style.color='#000'}" onblur="if(this.value==''){this.value='<?=prepareStringForHTML($errors["name"])?>';this.style.color='#990000'}">
-</td>
-</tr>
-<?php  } else { ?>
-<tr>
-<td class="name">Имя <span id="red">*</span></td>
-<td>
-<input name="name" type="text" class="oligat" style="width:100%" value="<?=prepareStringForHTML($form->name)?>">
-</td>
-</tr>
-<?php  } ?>
-
-<?php  if($errors["email"]){ ?>
-<tr>
-<td class="name">E-Mail <span id="red">*</span></td>
-<td>
-<input name="email" type="text" class="oligat error" style="width:100%" value="<?=$errors["email"]?>" onfocus="if(this.value=='<?=prepareStringForHTML($errors["email"])?>'){this.value='';this.style.color='#000'}" onblur="if(this.value==''){this.value='<?=prepareStringForHTML($errors["email"])?>';this.style.color='#990000'}">
-</td>
-</tr>
-<?php  } else { ?>
-<tr>
-<td class="name">E-Mail <span id="red">*</span></td>
-<td>
-<input name="email" type="text" class="oligat" style="width:100%" value="<?=prepareStringForHTML($form->email)?>">
-</td>
-</tr>
-<?php  } ?>
-
-<tr>
-<td class="name" nowrap="nowrap">Контактный телефон</td>
-<td>
-<input name="phone" class="oligat" type="text" style="width:100%" value="<?=prepareStringForHTML($form->phone)?>">
-</td>
-</tr>
-
-<?php  if($errors["text"]){ ?>
-<tr>
-<td class="name">Текст сообщения <span id="red">*</span></td>
-<td>
-<textarea name="text" class="oligat error" rows="5" style="width:100%" onfocus="if(this.value=='<?=prepareStringForHTML($errors["text"])?>'){this.value='';this.style.color='#000'}" onblur="if(this.value==''){this.value='<?=prepareStringForHTML($errors["text"])?>';this.style.color='#990000'}"><?=$errors["text"]?></textarea>
-</td>
-</tr>
-<?php  } else { ?>
-<tr>
-<td class="name">Текст сообщения <span id="red">*</span></td>
-<td>
-<textarea name="text" class="oligat" rows=5 style="width:100%"><?=prepareStringForHTML($form->text)?></textarea>
-</td>
-</tr>
-<?php  } ?>
-<tr>
-<td></td><td><div class="g-recaptcha" data-sitekey="6LcnXmQUAAAAAH5m6ITv_L-4dl1IgYZA_-RRICC8"></div>
-<span id="red"><?=$errors["captcha"]?></span>
-</td>
-</tr>
-
-<td style="border:none"></td>
-<td colspan="5" style="border:none">
-<input type="submit" value="Отправить" class="submit">
-<input type="reset" value="Сброс" class="submit">
-</td></tr>
-</table>
-</form>
-<?php  tinclude("_foot") ?>
+<?php
+tinclude("_head", array("extraHead" => "<script src=\"https://www.google.com/recaptcha/api.js\" async defer></script>\n"));
+$form = $form ?? null;
+$errors = $errors ?? array();
+$val = function ($k) use ($form) { return $form ? e($form->$k ?? '') : ''; };
+$err = function ($k) use ($errors) { return isset($errors[$k]) ? '<span class="error">' . ($k == 'captcha' ? 'Підтвердьте, що ви не робот' : 'Обов’язкове поле') . '</span>' : ''; };
+?>
+<section class="wrap split" style="padding-top:48px;padding-bottom:64px">
+	<div class="main" style="flex:1 1 420px">
+		<h1 class="h1" style="margin-bottom:28px"><?= e($CurrentNode->name) ?></h1>
+		<div class="rich"><?= $CurrentNode->tfields["text"] ?></div>
+	</div>
+	<form class="form-box" action="<?= e($CurrentNode->getHref()) ?>" method="post" style="flex:1 1 460px;min-width:0">
+		<input type="hidden" name="do" value="send">
+		<label>Ім’я *<input name="name" type="text" required autocomplete="name" value="<?= $val('name') ?>"><?= $err('name') ?></label>
+		<label>E-mail *<input name="email" type="email" required autocomplete="email" value="<?= $val('email') ?>"><?= $err('email') ?></label>
+		<label>Контактний телефон<input name="phone" type="tel" autocomplete="tel" value="<?= $val('phone') ?>"></label>
+		<label>Текст повідомлення *<textarea name="text" rows="6" required><?= $val('text') ?></textarea><?= $err('text') ?></label>
+		<div class="g-recaptcha" data-sitekey="6LcnXmQUAAAAAH5m6ITv_L-4dl1IgYZA_-RRICC8" style="margin-bottom:8px"></div>
+		<p style="margin:0 0 18px"><?= $err('captcha') ?></p>
+		<button type="submit">НАДІСЛАТИ</button>
+	</form>
+</section>
+<?php tinclude("_foot") ?>

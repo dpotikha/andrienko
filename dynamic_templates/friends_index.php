@@ -1,52 +1,33 @@
-<?php 
+<?php
 tinclude("_head");
-
-if (strlen(trim($CurrentNode->tfields["text"]))) {
-echo "<p>".$CurrentNode->tfields["text"]."</p>";
-}
-
 $friends = $CurrentNode->getChildren();
-foreach($friends as $f) { 
-$img 	 = $f->tfields["photo"];
-$web_url = ((strlen($f->tfields["url"])) ? ("<h6 style=\"margin-top:3px\">Веб-сайт: <a href='".externalURL($f->tfields["url"])."'>".humanLikeUrl($f->tfields["url"])."</a></h6>") : "");
 ?>
-<div class="newsMain" id="bgNo">
-<table cellpadding="0" cellspacing="0" class="newsContent">
-<tr>
-<td width="5">
-<?php  if ($img["url"]) { ?>
-
-<table cellpadding="0" cellspacing="0" id="shadowTab">
-<tr>
-<td><img src="/_img/s.gif" width="5" height="<?= $img["thumbheight"]+18 ?>" alt="" class="shadowImgTL"></td>
-<td><div class="shadowImgDetailTL_01">
-<div class="shadowImgDetailBR_01" id="shadowNews">
-<?php  if (strlen($f->tfields["article_name"]) && strlen($f->tfields["article_text"])) { ?>
-<a href="<?= $f->getHref() ?>"><img src="<?= $img["thumburl"] ?>" width="<?= $img["thumbwidth"] ?>" height="<?= $img["thumbheight"] ?>" alt=""></a>
-<?php  } else { ?>
-<img src="<?= $img["thumburl"] ?>" width="<?= $img["thumbwidth"] ?>" height="<?= $img["thumbheight"] ?>" alt="">
-<?php  } ?>
-</div>
-</div></td>
-</tr>
-<tr>
-<td colspan="2" align="right"><img src="/_img/s.gif" width="90" height="5" alt=""></td>
-</tr>
-</table>
-<?php  } ?>
-</td>
-<td class="textNews">
-<b style="color:#424242"><?= $f->name ?></b>
-<?php  if ($web_url) {?><?= $web_url ?><?php  } ?>
-<?php  if ($f->tfields["announce"]) {?><div style="margin-top:8px"><?= $f->tfields["announce"] ?></div><?php  } ?>
-<?php  if (strlen($f->tfields["article_name"]) && strlen($f->tfields["article_text"])) { ?>
-<div class="newsLinkDetail" style="text-align:left"><a href="<?= $f->getHref() ?>"><?= $f->tfields["article_name"] ?></a><img src="/_img/arrow_02.gif" width="18" height="7" alt=""></div></td>
-<?php  } ?>
-</tr>
-</table>
-</div>
-<?php 
-}
-
-tinclude("_foot");
+<section class="wrap page-head" style="padding-top:48px">
+	<p class="kicker">Колеги · автори · партнери</p>
+	<h1 class="h1"><?= e($CurrentNode->name) ?></h1>
+</section>
+<?php if (strlen(plainText($CurrentNode->tfields["text"] ?? ''))) { ?>
+<div class="wrap rich" style="max-width:780px"><?= $CurrentNode->tfields["text"] ?></div>
+<?php } ?>
+<section class="wrap" style="padding-top:24px;padding-bottom:64px">
+	<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:40px 24px">
+<?php foreach ($friends as $f) {
+	// a friend gets a page of their own only when there is an article about them (as before)
+	$hasPage = strlen(trim($f->tfields["article_name"] ?? '')) && strlen(trim($f->tfields["article_text"] ?? ''));
+	$url = trim($f->tfields["url"] ?? '');
+	$ann = plainText($f->tfields["announce"] ?? '');
 ?>
+		<article>
+			<?= $hasPage ? '<a href="' . e($f->getHref()) . '" tabindex="-1" aria-hidden="true">' : '' ?><?= frameImg($f->tfields["photo"] ?? null, $f->name, 'frame frame-34') ?><?= $hasPage ? '</a>' : '' ?>
+			<h2 class="h3" style="font-size:18px;margin-top:14px"><?= $hasPage ? '<a href="' . e($f->getHref()) . '">' . e($f->name) . '</a>' : e($f->name) ?></h2>
+<?php if ($ann !== '') { ?>
+			<p class="body" style="margin:6px 0 0;font-size:15px;line-height:1.5"><?= e($ann) ?></p>
+<?php } ?>
+<?php if ($url !== '' && strpos($url, '@') === false) { ?>
+			<a class="mono" style="display:inline-block;margin-top:8px;font-size:13px;color:var(--accent)" href="<?= e(externalURL($url)) ?>"><?= e(humanLikeUrl(externalURL($url))) ?></a>
+<?php } ?>
+		</article>
+<?php } ?>
+	</div>
+</section>
+<?php tinclude("_foot") ?>

@@ -1,68 +1,71 @@
-<?php  tinclude("_head") ?>
-<?php 
-$videoFiles = $CurrentNode->getChildrenOfClass("video");
-$audioFiles = $CurrentNode->getChildrenOfClass("audio");
+<?php
+tinclude("_head");
+$photos = array();
+foreach ($CurrentNode->getChildrenOfClass("photo") as $p) {
+	if (hasImg($p->tfields["photo"])) $photos[] = $p;
+}
+$media = array_merge($CurrentNode->getChildrenOfClass("video"), $CurrentNode->getChildrenOfClass("audio"));
+$section = $CurrentNode->getParent();
+$siblings = array();
+foreach ($section->getChildren() as $s) {
+	if ($s->id != $CurrentNode->id) $siblings[] = $s;
+}
 ?>
-<?= $CurrentNode->tfields["text"]; ?>
-
-<?php  if ($videoFiles) {?>
-<div class="video">
-<h3>Смотреть</h3>
-	<?php  foreach($videoFiles as $k=>$v) {?>
-    <a href="<?=$v->tfields["file"]["url"]?>"><?=$v->name?></a>
-    <?php  }?>
-</div>
-<?php  }?>
-
-
-<?php  if ($audioFiles) {?>
-<div class="video audio">
-<h3>Слушать</h3>
-	<?php  foreach($audioFiles as $k=>$v) {?>
-    <a href="<?=$v->tfields["file"]["url"]?>"><?=$v->name?></a>
-    <?php  }?>
-</div>
-<?php  }?>
-
-<?php 
-$photoes = $CurrentNode->getChildrenOfClass("photo");
-if (count($photoes)) { ?>
-<p>&nbsp;</p>
-<table width="100%" celpadding="0" cellspacing="0" class="contentDetailTab">
-<?php  for ($i=1; $i<=count($photoes); $i++) {
-	$p =& $photoes[$i-1];
-	$img = $p->tfields["photo"];
-	if ($i%2 == 1) { ?>
-	<tr>
-	<?php  } ?>
-		<td id="pad">
-			<table cellpadding="0" cellspacing="0" >
-				<tr>
-					<?php  if ($img["thumburl"]) { ?>
-					<td>
-					 <table cellpadding="0" cellspacing="0">
-					  <tr>
-					   <td><img src="/_img/s.gif" width="5" height="<?= $img["thumbheight"]+28 ?>" alt="" class="shadowImgTL"></td>
-					   <td><div class="shadowImgDetailTL_01">
-							<div class="shadowImgDetailBR_01"><a href="<?= $p->getHref() ?>" onclick="enlarge(this, '', <?= $img['width']+30 ?>, <?= $img['height']+90 ?>); return false;"><img src="<?= $img["thumburl"] ?>" width="<?= $img["thumbwidth"] ?>" height="<?= $img["thumbheight"] ?>" alt=""></a></div>
-						   </div></td>
-					   <td><img src="/_img/s.gif" width="5" height="<?= $img["thumbheight"]+28 ?>" alt="" class="shadowImgBR"></td>
-					   <?php  } ?>
-					  </tr>
-					  <tr>
-					   <td colspan="3" align="right" style="vertical-align:top;"><img src="/_img/s.gif" width="103" height="5" alt="" class="shadowImgRNews"></td>
-					  </tr>
-					 </table>
-					</td>
-					
-					<td class="text" rowspan="2"><?php  if ($p->tfields["name_"]) {?><?= $p->tfields["name_"] ?><?php  } ?></td>
-				</tr>
-			</table>
-		</td>
-	<?php  if ($i%2 == 0 || $i == count($photoes)) { ?>
-	</tr>
-	<?php  } ?>	
-<?php  } ?>
-</table>
-<?php  } ?>	
-<?php  tinclude("_foot") ?>
+<?= crumbs($CurrentNode) ?>
+<section class="wrap page-head">
+	<p class="kicker"><?= e($section->name) ?></p>
+	<h1 class="h1" style="max-width:900px"><?= e($CurrentNode->name) ?></h1>
+</section>
+<?php if ($photos) { $first = $photos[0]; $fi = $first->tfields["photo"]; ?>
+<section class="wrap" aria-label="Галерея" style="padding-bottom:24px">
+	<figure class="stage" style="margin:0">
+		<div class="stage-img" title="Відкрити на весь екран"><img src="<?= e($fi["url"]) ?>" alt="<?= e(plainText($first->tfields["name_"] ?? '')) ?>"></div>
+		<figcaption class="stage-bar">
+			<span class="stage-cap"><?= e(plainText($first->tfields["name_"] ?? '')) ?></span>
+			<span style="display:flex;align-items:center;gap:8px">
+				<span class="stage-n muted">1 / <?= count($photos) ?></span>
+				<button type="button" data-s="prev" aria-label="Попередній кадр">←</button>
+				<button type="button" data-s="next" aria-label="Наступний кадр">→</button>
+			</span>
+		</figcaption>
+	</figure>
+	<div class="thumbs">
+<?php foreach ($photos as $k => $p) { $pi = $p->tfields["photo"]; $cap = plainText($p->tfields["name_"] ?? ''); ?>
+		<a class="js-view" id="p<?= (int)$p->id ?>" data-group="project" data-caption="<?= e($cap) ?>" href="<?= e($pi["url"]) ?>"<?= $k == 0 ? ' aria-current="true"' : '' ?>><span class="frame"><img src="<?= e(!empty($pi["thumburl"]) ? $pi["thumburl"] : $pi["url"]) ?>" alt="<?= e($cap) ?>" loading="lazy"></span></a>
+<?php } ?>
+	</div>
+</section>
+<?php } ?>
+<section class="wrap project-body" style="padding-top:24px;padding-bottom:64px">
+	<div class="rich"><?= $CurrentNode->tfields["text"] ?></div>
+	<aside>
+<?php if ($media) { ?>
+		<div class="mono muted" style="font-size:12px;letter-spacing:.08em;margin-bottom:8px">ВІДЕО Й АУДІО</div>
+		<ul class="media-list">
+<?php foreach ($media as $m) {
+	$url = $m->tfields["file"]["url"] ?? '';
+	$ext = strtolower(pathinfo(parse_url($url, PHP_URL_PATH) ?: '', PATHINFO_EXTENSION));
+?>
+			<li><?= e($m->name) ?>
+<?php if (in_array($ext, array("mp3", "m4a", "ogg", "wav"))) { ?>
+				<audio controls preload="none" src="<?= e($url) ?>"></audio>
+<?php } elseif (in_array($ext, array("mp4", "webm", "m4v"))) { ?>
+				<video controls preload="none" src="<?= e($url) ?>"></video>
+<?php } elseif ($url) { ?>
+				<br><a class="more" href="<?= e($url) ?>">Завантажити файл (<?= e($ext) ?>)</a>
+<?php } ?>
+			</li>
+<?php } ?>
+		</ul>
+<?php } ?>
+<?php if ($siblings) { ?>
+		<div class="rule side-list" style="padding-top:16px;margin-top:<?= $media ? 24 : 8 ?>px">
+			<div class="mono muted" style="font-size:12px;letter-spacing:.08em;margin-bottom:8px">ІНШЕ: <?= e(mb_strtoupper($section->name)) ?></div>
+<?php foreach ($siblings as $s) { ?>
+			<a href="<?= e($s->getHref()) ?>"><?= e($s->name) ?></a>
+<?php } ?>
+		</div>
+<?php } ?>
+	</aside>
+</section>
+<?php tinclude("_foot") ?>

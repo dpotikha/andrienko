@@ -1,28 +1,52 @@
-<?php  tinclude("_head");
-
-$filmsList = $CurrentNode->getChildren();
-
-if (sizeof($filmsList)) { ?>
-
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr>
-<td><img src="/_img/s.gif" width="6" height="5" alt=""></td>
-<td>
-
-<table cellpadding="0" cellspacing="0" border="0" class="filmography" width="100%">
-<?php  for ($i=0; $i<sizeof($filmsList); $i++) { 
-$fl =& $filmsList[$i];
-//$img = $wl->tfields["main_img"];
-$linkedNode = $fl->fields["link"]->getLinkedNode();?>
-<tr><td width="9%"><?= $fl->tfields["year"]["year"]?></td><td width="49%" class="name"><?php  if ($linkedNode) {?><a href="<?= $linkedNode->getHref()?>"><?php  } ?><?= $fl->name ?><?php  if ($linkedNode) {?></a><?php  } ?></td><td width="21%"><?php if ($fl->tfields["position"]) {?><?= $fl->tfields["position"] ?><?php } else {?>&nbsp;<?php  } ?></td><td width="21%" class="role"><?php if ($fl->tfields["roles"]) {?><?= nl2br($fl->tfields["roles"]) ?><?php } else {?>&nbsp;<?php  } ?></td></tr>
-<?php  } ?>
-</table>
-<?php  } else { ?>
-<?= $CurrentNode->tfields["text"]?> 
-<?php  } ?>
-
-</td>
-</tr>
-</table>
-
-<?php  tinclude("_foot") ?>
+<?php
+tinclude("_head");
+$films = $CurrentNode->getChildren();
+usort($films, function ($a, $b) {
+	return (int)$b->tfields["year"]["year"] <=> (int)$a->tfields["year"]["year"];
+});
+$decades = array();
+foreach ($films as $f) {
+	$y = (int)$f->tfields["year"]["year"];
+	if ($y) $decades[intdiv($y, 10) * 10] = true;
+}
+krsort($decades);
+?>
+<?= crumbs($CurrentNode) ?>
+<section class="wrap page-head">
+	<p class="kicker">Кіно · серіали · телепроєкти · дубляж</p>
+	<h1 class="h1" style="margin-bottom:28px"><?= e($CurrentNode->name) ?></h1>
+<?php if ($films) { ?>
+	<div class="chips" role="group" aria-label="Десятиліття">
+		<button type="button" class="chip" data-decade="all" aria-pressed="true">УСІ</button>
+<?php foreach (array_keys($decades) as $dc) { ?>
+		<button type="button" class="chip" data-decade="<?= $dc ?>" aria-pressed="false"><?= $dc ?>-ті</button>
+<?php } ?>
+	</div>
+<?php } ?>
+</section>
+<section class="wrap" style="padding-top:8px;padding-bottom:64px">
+<?php if ($films) { ?>
+	<div class="scroll-x">
+		<table class="film-table">
+			<thead><tr><th scope="col" style="width:80px">РІК</th><th scope="col">НАЗВА</th><th scope="col">РОБОТА · РОЛЬ</th><th scope="col">СТУДІЯ / КАНАЛ</th><th scope="col">ФОРМАТ</th></tr></thead>
+			<tbody>
+<?php foreach ($films as $f) {
+	$y = (int)$f->tfields["year"]["year"];
+	$work = array_filter(array(trim($f->tfields["position"] ?? ''), trim(plainText($f->tfields["roles"] ?? ''))), 'strlen');
+?>
+				<tr data-decade="<?= $y ? intdiv($y, 10) * 10 : '' ?>">
+					<td><?= $y ?: '' ?></td>
+					<td><a href="<?= e($f->getHref()) ?>"><?= e($f->name) ?></a></td>
+					<td><?= e(implode(' · ', $work)) ?></td>
+					<td><?= e($f->tfields["studio"] ?? '') ?></td>
+					<td><?= e($f->tfields["series"] ?? '') ?></td>
+				</tr>
+<?php } ?>
+			</tbody>
+		</table>
+	</div>
+<?php } else { ?>
+	<div class="rich"><?= $CurrentNode->tfields["text"] ?></div>
+<?php } ?>
+</section>
+<?php tinclude("_foot") ?>

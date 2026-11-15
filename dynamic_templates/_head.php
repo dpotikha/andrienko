@@ -1,128 +1,46 @@
-<?php 
-$root = Node::findRoot();
-$topSection = getTopSection($CurrentNode);
-//$topSections = $root->getChildrenOfClasses(array("section", "section_text"));
-//$l2Section = getL2pSection($CurrentNode);
-//$l3Section = getL3pSection($CurrentNode);
-$parents = $CurrentNode->getParentList();
-array_shift($parents);
-$CurrentNodeNodeClass = $CurrentNode->getNodeClass();
-if (!in_array($CurrentNodeNodeClass->shortname, array("news_item", "article", "pub"))) {
-	$parents[] = $CurrentNode;
+<?php
+// page header for the "Екран" design; optional tinclude params: $pageTitle, $extraHead
+$path = $CurrentNode->absolutePath;
+$navItems = array(
+	array('/about', 'Про нього'),
+	array('/work', 'Діяльність'),
+	array('/about/filmography', 'Фільмографія'),
+	array('/news', 'Новини'),
+	array('/friends', 'Друзі'),
+	array('/contacts', 'Контакти'),
+);
+$activeNav = '';
+foreach ($navItems as $it) {
+	if (strpos($path . '/', $it[0] . '/') === 0 && strlen($it[0]) > strlen($activeNav)) {
+		$activeNav = $it[0];
+	}
 }
-$lastNodeInPath = array_pop($parents);
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+$title = $CurrentNode->isRoot() ? 'Віктор Андрієнко' : (isset($pageTitle) ? $pageTitle : $CurrentNode->name) . ' — Віктор Андрієнко';
+$noindex = strpos($_SERVER['HTTP_HOST'] ?? '', 'new.') === 0; // the test copy on new.viktor-andrienko.com must not be indexed
+?><!DOCTYPE html>
+<html lang="uk" data-theme="dark">
 <head>
-<title><?php  if (!$CurrentNode->isRoot()) { ?><?= $CurrentNode->name?> - <?php  } ?>Персональный сайт Виктора Андриенко</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="stylesheet" type="text/css" href="/main.css" >
-<?php  if (!$CurrentNode->isRoot()) { ?><link rel="stylesheet" type="text/css" href="/second.css" ><?php  } ?>
-<!--[if lte IE 6]>
-<style media="all" type="text/css">
-	@import "/ie.css";
-</style>
-<![endif]-->
-<style>
-	body {width:100%;padding:0px 0px 60px 0px;margin:0px;background:#7E7E7E url(/_img/bg_body.gif) repeat top left;}
-</style>
-<script src="/js.js"></script>
-<script language="javascript1.5" type="text/javascript" src="/_img/sm-iepng.js" defer="defer" charset="ISO-8859-1"></script>
-<script src='https://www.google.com/recaptcha/api.js'></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><?= e($title) ?></title>
+<?php if ($noindex) { ?><meta name="robots" content="noindex, nofollow">
+<?php } ?>
+<script>try{var t=localStorage.getItem('theme');if(t==='light'||t==='night'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Inter:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="/assets/site.css?v=1">
+<?= isset($extraHead) ? $extraHead : '' ?>
 </head>
 <body>
-<table cellpadding="0" cellspacing="0" border="0" align="center">
-<tr>
-<td><img src="/_img/s.gif" width="10" height="300" alt="" class="shadowBodyTL"></td>
-<td rowspan="2" id="widthMain" class="contentBg">
-<!-- основная часть --> 
-<div style="position:relative;top:57px;left:0px;">
-<div style="position:absolute;top:0px;left:382px;" class="menuMain">
-<table cellpadding="0" cellspacing="0" border="0" width="220">
-<tr><td><a href="/about" onMouseOver="over('menu_01')" onMouseOut="out('menu_01')"><img name="menu_01" src="/_img/menu_main_01.gif" width="210" height="31" alt=""></a></td></tr> 
-<tr><td><a href="/about/publications" onMouseOver="over('menu_01_01')" onMouseOut="out('menu_01_01')"><img name="menu_01_01" src="/_img/menu_main_01_01.gif" width="210" height="17" alt=""></a></td></tr>
-
-
-<tr><td><a href="/about/filmography" onMouseOver="over('menu_01_02')" onMouseOut="out('menu_01_02')"><img name="menu_01_02" src="/_img/menu_main_01_02.gif" width="210" height="19" alt=""></a></td></tr>
-<tr><td><a href="/about/stories" onMouseOver="over('menu_01_03')" onMouseOut="out('menu_01_03')"><img name="menu_01_03" src="/_img/menu_main_01_03.gif" width="195" height="19" alt=""></a></td></tr>
-<tr><td><a href="/news" onMouseOver="over('menu_02')" onMouseOut="out('menu_02')"><img name="menu_02" src="/_img/menu_main_02.gif" width="210" height="28" alt=""></a></td></tr> 
-<tr><td><a href="/friends" onMouseOver="over('menu_03')" onMouseOut="out('menu_03')"><img name="menu_03" src="/_img/menu_main_03.gif" width="210" height="24" alt=""></a></td></tr> 
-<tr><td><a href="/contacts" onMouseOver="over('menu_04')" onMouseOut="out('menu_04')"><img name="menu_04" src="/_img/menu_main_04.gif" width="210" height="24" alt=""></a></td></tr> 
-<tr><td><a href="/work" onMouseOver="over('menu_05')" onMouseOut="out('menu_05')"><img name="menu_05" src="/_img/menu_main_05.gif" width="210" height="29" alt=""></a></td></tr>
-</table>
-<table cellpadding="0" cellspacing="0" border="0" width="220">
-<tr><td><a href="/work/radio" onMouseOver="over('menu_05_01')" onMouseOut="out('menu_05_01')"><img name="menu_05_01" src="/_img/menu_main_05_01.gif" width="150" height="20" alt=""></a></td></tr> 
-<tr><td><a href="/work/cinema" onMouseOver="over('menu_05_02')" onMouseOut="out('menu_05_02')"><img name="menu_05_02" src="/_img/menu_main_05_02.gif" width="150" height="19" alt=""></a></td></tr> 
-<tr><td><a href="/work/broadcast" onMouseOver="over('menu_05_03')" onMouseOut="out('menu_05_03')"><img name="menu_05_03" src="/_img/menu_main_05_03.gif" width="150" height="18" alt=""></a></td></tr> 
-<tr><td><a href="/work/animation" onMouseOver="over('menu_05_04')" onMouseOut="out('menu_05_04')"><img name="menu_05_04" src="/_img/menu_main_05_04.gif" width="150" height="18" alt=""></a></td></tr> 
-<tr><td><a href="/work/stage" onMouseOver="over('menu_05_05')" onMouseOut="out('menu_05_05')"><img name="menu_05_05" src="/_img/menu_main_05_05.gif" width="150" height="23" alt=""></a></td></tr>
-</table> 
-</div>
-</div>
-<table cellpadding="0" cellspacing="0" border="0" class="tabTop" id="widthMain" align="center">
-<tr>
-<td class="left" id="widthLeft">
-<table cellpadding="0" cellspacing="0" border="0"> 
-<tr>
-<td class="menu_01"><a href="/">Главная</a></td><td class="s">&nbsp;</td>
-<td class="menu_02"><a href="/contacts">Контакты</a></td><td class="s">&nbsp;</td>
-<!-- <td class="menu_03"><a href="/announcements">Анонсы</a></td><td class="s">&nbsp;</td> -->
-</tr>
-</table>
-</td>
-<td class="right">
-<table cellpadding="0" cellspacing="0" border="0" align="right"> 
-<!-- <tr><td class="menu_04"><a href="#">Спонсоры</a></td></tr> -->
-</table>
-</td>
-</tr></table>
-<table cellpadding="0" cellspacing="0" border="0" id="widthMain" class="contentTab">
-<tr>
-<td class="contentLeftTd">
-<table cellpadding="0" cellspacing="0" border="0" width="100%">
-<tr>
-<td>
-<table cellpadding="0" cellspacing="0" border="0" width="100%" class="contentLeft" style="background-color:#bababa;">
-<tr>
-<td class="contentLeft"><a href="/"><img src="/_img/logo.gif" width="370" height="100" alt=""></a>
-<?php  if ($CurrentNode->isRoot()) { ?>
-	<br><img src="_img/img_welcom.gif" width="210" height="40" alt="">
-<?php  } else { ?>
-	<div class="menuSecond">
-	<?php  for ($i=0; $i<sizeof($parents); $i++) {
-		$p = &$parents[$i]; ?><a href="<?= $p->getHref() ?>"><?= $p->name ?></a>&nbsp;&nbsp;/&nbsp;&nbsp;<?php  } ?><a href="<?= $lastNodeInPath->getHref() ?>" style="text-decoration:none"><strong><?= $lastNodeInPath->name ?></strong></a>
+<header class="site-header">
+	<div class="wrap">
+		<a class="logo" href="/" aria-label="Віктор Андрієнко — на головну"><img src="/_img/logo.gif" width="370" height="100" alt="Підпис Віктора Андрієнка"></a>
+		<nav class="nav" aria-label="Головне меню">
+<?php foreach ($navItems as $it) { ?>
+			<a href="<?= $it[0] ?>"<?= $it[0] == $activeNav ? ' aria-current="page"' : '' ?>><?= $it[1] ?></a>
+<?php } ?>
+		</nav>
 	</div>
-	<div class="contentTextHead">
-	
-	<?php  if ($CurrentNodeNodeClass->shortname == "project") { 
-	   $_projectsSection = $parents[count($parents)-1];
-	   $_siblingProjects = $_projectsSection->getChildren();
-	   
-	   if (count($_siblingProjects) && !(count($_siblingProjects)==1 && $_siblingProjects[0]->shortname==$CurrentNode->shortname)) {
-	?>
-		
-		<div class="contentLink">
-			<?php  for ($i=0; $i < count($_siblingProjects) ; $i++ ){
-				$_siblingProject = &$_siblingProjects[$i]; ?>
-				<div<?php  if ($i == count($_siblingProjects)-1) { ?> style="background:none"<?php  } ?>><?php 
-				if ($_siblingProject->shortname == $CurrentNode->shortname) { ?>
-					<strong><nobr><?= $_siblingProject->name; ?></nobr></strong>
-				<?php  } else { ?>
-					<a href="<?= $_siblingProject->getHref(); ?>"><nobr><?= $_siblingProject->name; ?></nobr></a>
-				<?php  } ?>
-				</div>
-			<?php  } ?>
-			<br style="clear:both;">
-  		</div>
-		
-	<?php  }
-	} ?>
-	
-	<h2><?= $lastNodeInPath->name ?></h2>
-	
-	</div>
-<?php  } ?>
-</td></tr>
-<tr><td class="contentText">
-<img src="/_img/s.gif" width="43" height="98" align="right">
+</header>
+<main>
