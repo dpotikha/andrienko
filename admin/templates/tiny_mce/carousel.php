@@ -1,4 +1,4 @@
-<?
+<?php 
 require_once($_SERVER['DOCUMENT_ROOT'] . "/WEB-INF/prepend.php");
 $photoGalleryBlock = QNode::getInstance($_GET['id']);
 $photoGallery=$photoGalleryBlock->fields['node_link']->getLinkedNode();
@@ -9,7 +9,7 @@ if ($photoGallery->nodeClassId != 429)
 ?><div class="content__photo">
     <h3 class="h3"><?=$photoGalleryBlock->name?></h3>
     <div class="photoGalleryBlock" id="<?=$photoGallery->id?>"><img src="/_img/link_photogallery.jpg"></div>
-    <?/*<button class="content__prev" id="cnt-photo-prev" sourceindex="5"></button>
+    <?php /*<button class="content__prev" id="cnt-photo-prev" sourceindex="5"></button>
     <button class="content__next" id="cnt-photo-next" sourceindex="6"></button>
     <ul data-allow-wrap="false" data-cycle-carousel-visible="6" data-cycle-next="#cnt-photo-next" data-cycle-prev="#cnt-photo-prev" data-cycle-slides="&gt; li" data-cycle-timeout="0" data-cycle-fx="carousel" class="cycle-slideshow" style="position: relative; overflow: hidden; width: 960px;">
         <div class="cycle-carousel-wrap" style="margin: 0px; padding: 0px; top: 0px; left: -480px; position: absolute; white-space: nowrap;">
@@ -21,7 +21,7 @@ if ($photoGallery->nodeClassId != 429)
 </div>
 <p>&nbsp;</p>
 
-<?/*
+<?php /*
 
 <div class="newsGalleryBlock">
     <span style="display:none;" id="CAROUSEL_START_<?= $photoGallery->id ?>_ID">&nbsp;</span>

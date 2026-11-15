@@ -1,4 +1,4 @@
-<?
+<?php 
 require_once($_SERVER['DOCUMENT_ROOT'] . "/WEB-INF/prepend.php");
 $video = QNode::getInstance($_GET['id']);
 if ($video->nodeClassId != 280)

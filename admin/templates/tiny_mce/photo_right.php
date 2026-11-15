@@ -1,4 +1,4 @@
-<?
+<?php 
 require_once($_SERVER['DOCUMENT_ROOT'] . "/WEB-INF/prepend.php");
 $photoRightBlock = QNode::getInstance($_GET['id']);
 ?><figure class="figure_left">

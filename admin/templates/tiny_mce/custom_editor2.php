@@ -152,31 +152,31 @@ if(typeof(configMCE)=='undefined')
                         title : "Блок большого фото",
                             src : "/admin/templates/tiny_mce/block_photo_big.php",
                             description : ""
-                        }<? if($photoBlocks && count($photoBlocks)){ foreach($photoBlocks as $k=>$v){?>,{
+                        }<?php  if($photoBlocks && count($photoBlocks)){ foreach($photoBlocks as $k=>$v){?>,{
                             title : "Блок фото на всю страницу \"<?= addslashes($v->name)?>\"",
                             src : "/admin/templates/tiny_mce/photo_full.php?id=<?= $v->id ?>",
                             description : "Блок фото на всю страницу"
-                        }<? }}?><? if( $photoLightboxBlocks && count($photoLightboxBlocks)){ foreach($photoLightboxBlocks as $k=>$v){?>,{
+                        }<?php  }}?><?php  if( $photoLightboxBlocks && count($photoLightboxBlocks)){ foreach($photoLightboxBlocks as $k=>$v){?>,{
                             title : "Блок инфографики(Справа) \"<?= addslashes($v->name)?>\"",
                             src : "/admin/templates/tiny_mce/photo_lightbox.php?id=<?= $v->id ?>",
                             description : "Блок инфографики(Справа)"
-                        }<? }}?><? if( $photoLightboxCenterBlocks && count($photoLightboxCenterBlocks)){ foreach($photoLightboxCenterBlocks as $k=>$v){?>,{
+                        }<?php  }}?><?php  if( $photoLightboxCenterBlocks && count($photoLightboxCenterBlocks)){ foreach($photoLightboxCenterBlocks as $k=>$v){?>,{
                             title : "Блок инфографики(Центр) \"<?= addslashes($v->name)?>\"",
                             src : "/admin/templates/tiny_mce/photo_lightbox_center.php?id=<?= $v->id ?>",
                             description : "Блок инфографики(Центр)"
-                        }<? }}?><? if( $photoLightboxBigBlocks && count($photoLightboxBigBlocks)){ foreach($photoLightboxBigBlocks as $k=>$v){?>,{
+                        }<?php  }}?><?php  if( $photoLightboxBigBlocks && count($photoLightboxBigBlocks)){ foreach($photoLightboxBigBlocks as $k=>$v){?>,{
                             title : "Блок инфографики(Большой) \"<?= addslashes($v->name)?>\"",
                             src : "/admin/templates/tiny_mce/photo_lightbox_big.php?id=<?= $v->id ?>",
                             description : "Блок инфографики(Большой)"
-                        }<? }}?><? /*if($photoBlocks && count($photoBlocks)){ foreach($photoBlocks as $k=>$v){?>,{
+                        }<?php  }}?><?php  /*if($photoBlocks && count($photoBlocks)){ foreach($photoBlocks as $k=>$v){?>,{
                             title : "Блок фото на ширину контента \"<?= addslashes($v->name)?>\"",
                             src : "/admin/templates/tiny_mce/photo_center.php?id=<?= $v->id ?>",
                             description : "Блок фото на ширину контента"
-                        }<? }}*/?><? if($photoBlocks && count($photoBlocks)){ foreach($photoBlocks as $k=>$v){?>,{
+                        }<? }}*/?><?php  if($photoBlocks && count($photoBlocks)){ foreach($photoBlocks as $k=>$v){?>,{
                             title : "Блок фото справа \"<?= addslashes($v->name)?>\"",
                             src : "/admin/templates/tiny_mce/photo_right.php?id=<?= $v->id ?>",
                             description : "Блок фото справа"
-                        }<? }}?><?/*,
+                        }<?php  }}?><?php /*,
                         {
                         title : "Таблица",
                             src : "/admin/templates/tiny_mce/table.php",
@@ -192,30 +192,30 @@ if(typeof(configMCE)=='undefined')
                             src : "/admin/templates/tiny_mce/list123.php",
                             description : "Нумерованный список"
                         },*/?>
-                <? if ($photoGalleries)
+                <?php  if ($photoGalleries)
                 foreach ($photoGalleries as $k => $v) { ?>
                         ,{
                         title : "Блок фотогалерей \"<?= addslashes($v->name)?>\"",
                             src : "/admin/templates/tiny_mce/carousel.php?id=<?= $v->id ?>",
                             description : "Блок фотогалерей"
                         }
-                <? } ?>
-				<? if ($photoGalls)
+                <?php  } ?>
+				<?php  if ($photoGalls)
                 foreach ($photoGalls as $k => $v) { ?>
                         ,{
                         title : "Фотогалерея \"<?= addslashes($v->name)?>\"",
                             src : "/admin/templates/tiny_mce/photo_gallery.php?id=<?= $v->id ?>", 
 							description : "Фотогалерея"
                         }
-                <? } ?>
-                <? if ($videos)
+                <?php  } ?>
+                <?php  if ($videos)
                 foreach ($videos as $k => $v) { ?>
                         {
                         title : "Видео \"<?= addslashes($v->name)?>\"",
                             src : "/admin/templates/tiny_mce/video.php?id=<?= $v->id ?>",
                             description : "Видео"
                         },
-                <? } ?>
+                <?php  } ?>
                 ]
                 configMCE.convert_urls = false;
                 
