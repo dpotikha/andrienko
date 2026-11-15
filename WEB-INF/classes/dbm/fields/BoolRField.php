@@ -38,7 +38,7 @@ class BoolRField extends IntegerField {
 		$this->uncheckLast();
 	}
 
-	function create() {
+	function create($node_id=0) {
 		$this->uncheckLast();
 	}
 

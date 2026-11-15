@@ -45,7 +45,7 @@ class Field {
 	 * post-database create event
 	 * node, fielddef and value must be set before
 	 */
-	function create() {
+	function create($node_id=0) {
 		if ($this->nodeId == null) {
 			die("Invalid call to Field::create() - nodeId hasn't been set up.");
 		}

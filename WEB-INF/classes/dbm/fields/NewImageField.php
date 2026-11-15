@@ -201,7 +201,7 @@ class NewImageField extends Field {
 		return;
 	}
 
-	function create() {
+	function create($node_id=0) {
 		$this->update();
 	}
 

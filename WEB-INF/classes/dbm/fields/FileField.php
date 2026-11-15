@@ -95,7 +95,7 @@ class FileField extends Field {
 		copy($this->tmpFilePath, $this->filePath);
 	}
 
-	function create($node_id) {
+	function create($node_id=0) {
 		$this->fileName = $this->computeFileName($node_id, $this->fieldDefId, "");
 		$this->filePath = FILE_FIELD_DIR . DIR_SEPARATOR . $this->fileName;
 		$this->value = "";
