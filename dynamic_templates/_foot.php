@@ -69,9 +69,10 @@ $project2= &$projects[1];
 <img src="/_img/photo/photo_.jpg" width="353" height="392" alt="" style="display:block;background-color:#C1C1C1;">
 <?php  }?>
 
+<?php  $overridePhotoId = defined('OVERRIDE_NODE_PHOTO_ID') ? OVERRIDE_NODE_PHOTO_ID : ''; // only some templates define it; PHP 8 throws on an undefined constant ?>
 <?php  if ($CurrentNode->shortname != 'news') { ?>
 
-	<?php  if (OVERRIDE_NODE_PHOTO_ID != 'news') { ?>
+	<?php  if ($overridePhotoId != 'news') { ?>
 		<div class="contntDetailNewsHead"><img src="/_img/h_content_detail_news.gif" width="120" height="50" alt=""></div>
 	<?php  } else { ?>
 		<img src="/_img/no-news-bg.gif" width="353" height="10"/>
@@ -90,7 +91,7 @@ $project2= &$projects[1];
 	for ($i=0; $i<sizeof($lastNews); $i++) {
 		$n= &$lastNews[$i];
 		$img = $n->tfields["photo"];
-		if ($i == 0 && OVERRIDE_NODE_PHOTO_ID != 'news') { ?>
+		if ($i == 0 && $overridePhotoId != 'news') { ?>
 		
 		<div class="newsMain"><a href="<?= $n->getHref() ?>" id="rev" class="newsName"><?= $n->name ?></a>
 		<table cellpadding="0" cellspacing="0" class="newsContent" border="0">
@@ -124,7 +125,7 @@ $project2= &$projects[1];
 			
 		<?php  }
 		else {
-			if ( ($i==1 && OVERRIDE_NODE_PHOTO_ID!='news') || (OVERRIDE_NODE_PHOTO_ID=='news' && $i==0) ) { ?><div class="otherNews"><?php  } ?>
+			if ( ($i==1 && $overridePhotoId!='news') || ($overridePhotoId=='news' && $i==0) ) { ?><div class="otherNews"><?php  } ?>
 			
 			<div><h6 style="padding-left:0px"><?= getFormattedDate($n->tfields["date"]["formatted_date"]) ?></h6><a href="<?= $n->getHref() ?>"><?= $n->name ?></a></div>
 			
