@@ -1066,7 +1066,11 @@ _logTimeFromStart("point1");
 
 
 
-DEFINE("_CACHE_DIR_", $_SERVER["DOCUMENT_ROOT"] . "/cache");
+// The caches (USERS_CACHE holds logins and passwords) go to a "cache" folder next to the web root when it exists:
+// nginx serves static files itself, so .htaccess can't protect web-root/cache.
+$_cacheOutside = dirname(rtrim($_SERVER["DOCUMENT_ROOT"], "/")) . "/cache";
+DEFINE("_CACHE_DIR_", is_dir($_cacheOutside) ? $_cacheOutside : $_SERVER["DOCUMENT_ROOT"] . "/cache");
+unset($_cacheOutside);
 
 
 
